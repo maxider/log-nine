@@ -37,6 +37,8 @@ export const store = configureStore({
 
 export type RootState = ReturnType<typeof store.getState>;
 
+export type AppDispatcher = typeof store.dispatch;
+
 const selectTasksId = (state: RootState, id: number) => id;
 const selectTaskStatus = (state: RootState, status: TaskStatus) => status;
 export const selectTasksRecord = (state: RootState) => state.tasks.tasks;

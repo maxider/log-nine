@@ -3,8 +3,11 @@ import "./App.css";
 import { DraggableExample } from "./DraggableExample";
 import { Backdrop, Divider } from "@mui/material";
 import { loremIpsum, name } from "react-lorem-ipsum";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Task, TaskStatus } from "./Task";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, addTasks, selectTaskByStatus } from "./redux/store";
+import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export type Worker = {
   name: string;
@@ -49,8 +52,27 @@ const TaskDetails: React.FC<TaskDetailsProps> = (props) => {
   return <Backdrop open={props.open} onClick={props.onClose}></Backdrop>;
 };
 
+const useTasksByStatus = (status: TaskStatus) => {
+  return useSelector((state: RootState) => selectTaskByStatus(state, status));
+};
+
+let isSeeded = false;
+
 function App() {
   const [open, setOpen] = useState(false);
+
+  const dispatch = useDispatch();
+
+  const tasks_0 = useTasksByStatus(0);
+  const tasks_1 = useTasksByStatus(1);
+  const tasks_2 = useTasksByStatus(2);
+  const tasks_3 = useTasksByStatus(3);
+
+  useEffect(() => {
+    if (!isSeeded) {
+      seedData(dispatch);
+    }
+  }, []);
 
   return (
     <div className="flex flex-row w-screen justify-center ">
@@ -58,28 +80,28 @@ function App() {
       <StatusColumn
         header={"ToDo"}
         status={0}
-        tasks={generateInfos(0,4)}
+        tasks={tasks_0}
         onClickCard={() => setOpen(true)}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"En-Route"}
         status={1}
-        tasks={generateInfos(1,4)}
+        tasks={tasks_1}
         onClickCard={() => setOpen(true)}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"On Site"}
         status={2}
-        tasks={generateInfos(2,4)}
+        tasks={tasks_2}
         onClickCard={() => setOpen(true)}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"Returning"}
         status={3}
-        tasks={generateInfos(3,4)}
+        tasks={tasks_3}
         onClickCard={() => setOpen(true)}
       />
     </div>
@@ -138,14 +160,11 @@ export const StatusColumn: React.FC<StatusColumnProps> = ({
     </div>
   );
 };
-// {
-//   titel: loremIpsum({
-//     avgWordsPerSentence: 10,
-//     avgSentencesPerParagraph: 1,
-//     random: true,
-//     startWithLoremIpsum: false,
-//   })[0],
-//   description: loremIpsum()[0],
-//   workers: [{ name: "peter" }, { name: "Hannes" }],
-//   id: Math.floor(Math.random() * 100),
-// }
+
+const seedData = (dispatcher: Dispatch<UnknownAction>) => {
+  isSeeded = true;
+  dispatcher(addTasks(generateInfos(0, 4)));
+  dispatcher(addTasks(generateInfos(1,4)));
+  dispatcher(addTasks(generateInfos(2,4)));
+  dispatcher(addTasks(generateInfos(3,4)));
+};
