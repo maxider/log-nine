@@ -1,4 +1,4 @@
-import { TaskStatus } from './../Task';
+import { TaskStatus } from "./../Task";
 import {
   PayloadAction,
   configureStore,
@@ -52,7 +52,6 @@ export const selectTaskById = createSelector(
 );
 
 export const selectTaskByStatus = createSelector(
-  [selectTasks,selectTaskStatus],
-  (tasks, status) => tasks.filter(t => t.status === status)
-)
-
+  [selectTasks, selectTaskStatus],
+  (tasks, status) => tasks.filter((t) => t.status === status)
+);
