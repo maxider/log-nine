@@ -1,12 +1,19 @@
 import Paper from "@mui/material/Paper";
 import "./App.css";
 import { DraggableExample } from "./DraggableExample";
-import { Backdrop, Divider } from "@mui/material";
+import { Backdrop, Button, Divider } from "@mui/material";
 import { loremIpsum, name } from "react-lorem-ipsum";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Task, TaskStatus } from "./Task";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, addTasks, selectTaskByStatus } from "./redux/store";
+import {
+  RootState,
+  addTasks,
+  decrementStatus,
+  incrementStatus,
+  selectTaskById,
+  selectTaskByStatus,
+} from "./redux/store";
 import { Dispatch, UnknownAction } from "@reduxjs/toolkit";
 
 export type Worker = {
@@ -21,23 +28,23 @@ export type Trupp = {
 
 interface TaskCardProps {
   task: Task;
-  onClick?: () => void;
+  onClick: (e: React.MouseEvent, id: number) => void;
 }
 
-export const TaskCard: React.FC<TaskCardProps> = ({ task: info, onClick }) => {
+export const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
   return (
     <Paper
       className="bg-slate-600 w-248 flex flex-col hover:bg-slate-700"
-      onClick={onClick}
+      onClick={(e) => onClick(e, task.id)}
     >
       <div className="flex flex-row items-center">
-        <p className="font-semibold text-base px-3">{info.id}</p>
+        <p className="font-semibold text-base px-3">{task.id}</p>
         <Divider orientation="vertical" flexItem />
-        <p className="px-3 text-sm font-semibold">{info.titel}</p>
+        <p className="px-3 text-sm font-semibold my-2">{task.titel}</p>
       </div>
       <Divider />
       <p className="m-2 flex justify-center">
-        {info.target.name}: {info.target.sr} - {info.target.lr}
+        {task.target.name}: {task.target.sr} - {task.target.lr}
       </p>
     </Paper>
   );
@@ -46,10 +53,40 @@ export const TaskCard: React.FC<TaskCardProps> = ({ task: info, onClick }) => {
 interface TaskDetailsProps {
   onClose: () => void;
   open: boolean;
+  task: Task;
 }
 
 const TaskDetails: React.FC<TaskDetailsProps> = (props) => {
-  return <Backdrop open={props.open} onClick={props.onClose}></Backdrop>;
+  const dispatch = useDispatch();
+
+  if (!props.open) return <></>;
+
+  const task = props.task;
+  return (
+    <Backdrop open={props.open} onClick={props.onClose}>
+      <Paper className="bg-slate-600 flex flex-row w-3/4">
+        <div className="flex flex-col m-0 p-2">
+          <div className="flex flex-row gap-4 font-semibold m-2 items-center">
+            <div className="flex flex-col">
+              <h2 className="text-whitesmoke m-0">#{task.id}</h2>
+              <p className="m-0">Status: {task.status}</p>
+            </div>
+            <Divider orientation="vertical" flexItem />
+            <h2 className="text-whitesmoke m-0"> {task.titel}</h2>
+          </div>
+
+          <Divider orientation="horizontal" flexItem />
+          <p className="mx-3">{task.description}</p>
+          <div className="flex flex-row gap-4 justify-between">
+            <Button variant="contained" onClick={() => {dispatch(decrementStatus(task.id))}}>- Status</Button>
+            <Button variant="contained" onClick={() => {dispatch(incrementStatus(task.id))}}>+ Status</Button>
+          </div>
+        </div>
+        <Divider orientation="vertical" flexItem />
+        <div>Hello World</div>
+      </Paper>
+    </Backdrop>
+  );
 };
 
 const useTasksByStatus = (status: TaskStatus) => {
@@ -60,6 +97,7 @@ let isSeeded = false;
 
 function App() {
   const [open, setOpen] = useState(false);
+  const [viewedTaskId, setViewedTaskId] = useState(-1);
 
   const dispatch = useDispatch();
 
@@ -68,6 +106,10 @@ function App() {
   const tasks_2 = useTasksByStatus(2);
   const tasks_3 = useTasksByStatus(3);
 
+  const selectedTask = useSelector((state: RootState) =>
+    selectTaskById(state, viewedTaskId)
+  );
+
   useEffect(() => {
     if (!isSeeded) {
       seedData(dispatch);
@@ -75,34 +117,53 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-row w-screen justify-center ">
-      <TaskDetails onClose={() => setOpen(false)} open={open} />
+    <div className="flex flex-row w-screen justify-center bg-slate-900 text-whitesmoke">
+      <TaskDetails
+        task={selectedTask}
+        onClose={() => {
+          setOpen(false);
+          setViewedTaskId(-1);
+        }}
+        open={open}
+      />
       <StatusColumn
         header={"ToDo"}
         status={0}
         tasks={tasks_0}
-        onClickCard={() => setOpen(true)}
+        onClickCard={(e, id) => {
+          setOpen(true);
+          setViewedTaskId(id);
+        }}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"En-Route"}
         status={1}
         tasks={tasks_1}
-        onClickCard={() => setOpen(true)}
+        onClickCard={(e, id) => {
+          setOpen(true);
+          setViewedTaskId(id);
+        }}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"On Site"}
         status={2}
         tasks={tasks_2}
-        onClickCard={() => setOpen(true)}
+        onClickCard={(e, id) => {
+          setOpen(true);
+          setViewedTaskId(id);
+        }}
       />
       <Divider orientation="vertical" flexItem />
       <StatusColumn
         header={"Returning"}
         status={3}
         tasks={tasks_3}
-        onClickCard={() => setOpen(true)}
+        onClickCard={(e, id) => {
+          setOpen(true);
+          setViewedTaskId(id);
+        }}
       />
     </div>
   );
@@ -142,7 +203,7 @@ export interface StatusColumnProps {
   header: string;
   status: TaskStatus;
   tasks: Task[];
-  onClickCard: () => void;
+  onClickCard: (e: React.MouseEvent, id: number) => void;
 }
 
 export const StatusColumn: React.FC<StatusColumnProps> = ({
@@ -155,7 +216,7 @@ export const StatusColumn: React.FC<StatusColumnProps> = ({
     <div className="flex flex-col place-content-start gap-4 h-screen w-72 items-center">
       <h2 className="basis-2 flex-none">{header}</h2>
       {tasks.map((t) => {
-        return <TaskCard onClick={onClickCard} task={t} />;
+        return <TaskCard key={t.id} onClick={onClickCard} task={t} />;
       })}
     </div>
   );
@@ -164,7 +225,7 @@ export const StatusColumn: React.FC<StatusColumnProps> = ({
 const seedData = (dispatcher: Dispatch<UnknownAction>) => {
   isSeeded = true;
   dispatcher(addTasks(generateInfos(0, 4)));
-  dispatcher(addTasks(generateInfos(1,4)));
-  dispatcher(addTasks(generateInfos(2,4)));
-  dispatcher(addTasks(generateInfos(3,4)));
+  dispatcher(addTasks(generateInfos(1, 4)));
+  dispatcher(addTasks(generateInfos(2, 4)));
+  dispatcher(addTasks(generateInfos(3, 4)));
 };

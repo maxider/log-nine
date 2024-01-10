@@ -24,10 +24,22 @@ const tasksSlice = createSlice({
         state.tasks[t.id] = t;
       });
     },
+    incrementStatus(state, action: PayloadAction<number>) {
+      const curStatus = state.tasks[action.payload]?.status;
+      if (curStatus === undefined) return;
+      state.tasks[action.payload].status = Math.min(3, curStatus+1);
+    },
+    decrementStatus(state, action: PayloadAction<number>) {
+      const curStatus = state.tasks[action.payload]?.status;
+
+      if (!curStatus) return;
+
+      state.tasks[action.payload].status = Math.max(0, curStatus-1);
+    },
   },
 });
 
-export const { addTasks } = tasksSlice.actions;
+export const { addTasks,incrementStatus,decrementStatus } = tasksSlice.actions;
 
 export const store = configureStore({
   reducer: {

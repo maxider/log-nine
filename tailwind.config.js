@@ -8,6 +8,9 @@ module.exports = {
     extend: {
       width:{
         "248": "248px"
+      },
+      colors: {
+        "whitesmoke": "#f5f5f5"
       }
     },
   },
