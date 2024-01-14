@@ -1,8 +1,8 @@
 import { Worker, Trupp } from "./App";
 
 export enum Priority {
-  Urgent,
-  Low
+  Urgent=1,
+  Low=0,
 }
 
 export type Task = {

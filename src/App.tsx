@@ -129,10 +129,10 @@ function App() {
 
   const dispatch = useDispatch();
 
-  const tasks_0 = useTasksByStatus(0);
-  const tasks_1 = useTasksByStatus(1);
-  const tasks_2 = useTasksByStatus(2);
-  const tasks_3 = useTasksByStatus(3);
+  const tasks_0 = useTasksByStatus(0).sort(sortByPrio);
+  const tasks_1 = useTasksByStatus(1).sort(sortByPrio);
+  const tasks_2 = useTasksByStatus(2).sort(sortByPrio);
+  const tasks_3 = useTasksByStatus(3).sort(sortByPrio);
 
   const selectedTask = useSelector((state: RootState) =>
     selectTaskById(state, viewedTaskId)
@@ -271,4 +271,13 @@ function prioToColor(prio?: Priority): string {
   }
 
   return "";
+}
+
+function sortByPrio(a: Task, b: Task): number {
+  const prioA = a.priority ?? .5;
+  const prioB = b.priority ?? .5;
+
+  if (prioA === prioB) return 0;
+
+  return prioA > prioB ? -1 : 1;
 }
