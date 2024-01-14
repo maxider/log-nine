@@ -73,14 +73,16 @@ const TaskDetails: React.FC<TaskDetailsProps> = (props) => {
         {/* header */}
         <div className="flex flex-col m-0 p-2">
           <div className="flex flex-row gap-4 font-semibold m-2 items-center">
-            <div className={`flex flex-col items-center min-w-16 p-2 ${color}`}>
+            <div
+              className={`flex flex-col items-center min-w-16 p-2 flex-none ${color}`}
+            >
               <h2 className="m-0">#{task.id}</h2>
               <p className="m-0">Status: {task.status}</p>
             </div>
             <Divider orientation="vertical" flexItem />
-            <h2 className="whitesmoke m-0"> {task.titel}</h2>
+            <h2 className="whitesmoke m-0 flex-grow"> {task.titel}</h2>
             <Divider orientation="vertical" flexItem />
-            <div className="flex flex-col items-center min-w-24">
+            <div className="flex flex-col items-center min-w-24 flex-none">
               <h2 className="m-0">{task.target.name}</h2>
               <p className="m-0">
                 SR: {task.target.sr} LR: {task.target.lr}
