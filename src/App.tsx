@@ -274,8 +274,8 @@ function prioToColor(prio?: Priority): string {
 }
 
 function sortByPrio(a: Task, b: Task): number {
-  const prioA = a.priority ?? .5;
-  const prioB = b.priority ?? .5;
+  const prioA = a.priority ?? 0.5;
+  const prioB = b.priority ?? 0.5;
 
   if (prioA === prioB) return 0;
 
