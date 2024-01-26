@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Xml.Linq;
 
-namespace log_nine_backend
+namespace log_nine_backend.Repositories
 {
     public class Repository
     {
@@ -118,21 +118,6 @@ namespace log_nine_backend
             return (int)connection.LastInsertRowId;
         }
 
-        public int AddWorker(string name, int? logiTeamId)
-        {
-            using var connection = new SQLiteConnection(connectionString);
-            connection.Open();
-            using var command = new SQLiteCommand("INSERT INTO worker (name, logi_team_id) VALUES (@name, @logi_team_id)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@name", name),
-                    new SQLiteParameter("@logi_team_id", logiTeamId)
-            });
-            command.ExecuteNonQuery();
-
-            return (int)connection.LastInsertRowId;
-        }
-
         public JobTask? GetJobTaskById(int id)
         {
             using var connection = new SQLiteConnection(connectionString);
@@ -198,22 +183,7 @@ namespace log_nine_backend
             command.ExecuteNonQuery();
         }
 
-        public Worker? GetWorkerById(int workerId)
-        {
-            using var connection = new SQLiteConnection(connectionString);
-            connection.Open();
 
-            using var command = new SQLiteCommand("SELECT * FROM worker WHERE id = @id", connection);
-            command.Parameters.Add(new SQLiteParameter("@id", workerId));
-            using var reader = command.ExecuteReader();
-            reader.Read();
-            var worker = new Worker(
-            Convert.ToInt32(reader["id"]),
-            reader["name"].ToString()!,
-            reader["logi_team_id"] == DBNull.Value ? null : Convert.ToInt32(reader["logi_team_id"])
-            );
-            return worker;
-        }
 
         public void AssignWorkerToLogiTeam(int workerId, int logiTeamId)
         {
@@ -273,7 +243,52 @@ namespace log_nine_backend
                                               reader["name"].ToString()!
                                                          );
             return board;
-        
+
+        }
+
+        public Team GetTeamById(int id)
+        {
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+
+            using var command = new SQLiteCommand("SELECT * FROM team WHERE id = @id", connection);
+            command.Parameters.Add(new SQLiteParameter("@id", id));
+            using var reader = command.ExecuteReader();
+            reader.Read();
+            var team = new Team(
+                Convert.ToInt32(reader["id"]),
+                reader["name"].ToString()!,
+                Convert.ToInt32(reader["freq_sr"]),
+                Convert.ToInt32(reader["freq_lr"])
+            );
+            return team;
+        }
+
+        public IEnumerable<JobTask> GetJobTasksByBoardId(int boardId)
+        {
+
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+
+            using var command = new SQLiteCommand("SELECT * FROM task WHERE board_id = @board_id", connection);
+            command.Parameters.Add(new SQLiteParameter("@board_id", boardId));
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                var jobTask = new JobTask(
+                Convert.ToInt32(reader["id"]),
+                Convert.ToInt32(reader["visual_id"]),
+                reader["board_id"] == DBNull.Value ? null : Convert.ToInt32(reader["board_id"]),
+                reader["target_id"] == DBNull.Value ? null : Convert.ToInt32(reader["target_id"]),
+                reader["title"].ToString()!,
+                reader["description"].ToString()!,
+                (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
+                (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
+                (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"]));
+
+                yield return jobTask;
+            }
         }
     }
 }
@@ -284,4 +299,12 @@ public class Team
     string Name { get; }
     int FreqSr { get; }
     int FreqLr { get; }
+
+    public Team(int id, string name, int freqSr, int freqLr)
+    {
+        Id = id;
+        Name = name;
+        FreqSr = freqSr;
+        FreqLr = freqLr;
+    }
 }

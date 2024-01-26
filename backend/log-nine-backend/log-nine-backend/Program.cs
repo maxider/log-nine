@@ -1,4 +1,4 @@
-using log_nine_backend;
+using log_nine_backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +12,7 @@ builder.Services.AddSwaggerGen();
 
 const string connectionString = " Data Source=./data.db";
 builder.Services.AddSingleton<Repository>(new Repository(connectionString));
+builder.Services.AddSingleton<WorkerRepository>(new WorkerRepository(connectionString));
 builder.Services.AddSingleton<JobTaskService>();
 
 builder.Services.AddHostedService<DBSeeder>();

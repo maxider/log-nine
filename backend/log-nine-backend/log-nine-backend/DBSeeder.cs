@@ -1,5 +1,4 @@
-﻿
-using log_nine_backend;
+﻿using log_nine_backend.Repositories;
 
 public class DBSeeder : IHostedService
 {
