@@ -25,6 +25,7 @@ namespace log_nine_backend.Repositories
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS team (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "board_id REFERENCES board(id)," +
                 "name TEXT," +
                 "freq_sr INTEGER," +
                 "freq_lr INTEGER)", connection)
@@ -257,6 +258,7 @@ namespace log_nine_backend.Repositories
             reader.Read();
             var team = new Team(
                 Convert.ToInt32(reader["id"]),
+                Convert.ToInt32(reader["board_id"]),
                 reader["name"].ToString()!,
                 Convert.ToInt32(reader["freq_sr"]),
                 Convert.ToInt32(reader["freq_lr"])
@@ -276,7 +278,7 @@ namespace log_nine_backend.Repositories
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                var jobTask = new JobTask(
+                yield return new JobTask(
                 Convert.ToInt32(reader["id"]),
                 Convert.ToInt32(reader["visual_id"]),
                 reader["board_id"] == DBNull.Value ? null : Convert.ToInt32(reader["board_id"]),
@@ -286,8 +288,26 @@ namespace log_nine_backend.Repositories
                 (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
                 (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
                 (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"]));
+            }
+        }
 
-                yield return jobTask;
+        internal IEnumerable<Team> GetTeamsByBoardId(int board_id)
+        {
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+
+            using var command = new SQLiteCommand("SELECT * FROM team WHERE board_id = @board_id", connection);
+            command.Parameters.Add(new SQLiteParameter("@board_id", board_id));
+
+            using var reader = command.ExecuteReader();
+            while (reader.Read())
+            {
+                yield return new Team(
+                Convert.ToInt32(reader["id"]),
+                Convert.ToInt32(reader["board_id"]),
+                reader["name"].ToString()!,
+                Convert.ToInt32(reader["freq_sr"]),
+                Convert.ToInt32(reader["freq_lr"]));
             }
         }
     }
@@ -295,14 +315,16 @@ namespace log_nine_backend.Repositories
 
 public class Team
 {
-    int Id { get; }
-    string Name { get; }
-    int FreqSr { get; }
-    int FreqLr { get; }
+    public int Id { get; }
+    public int BoardId { get; }
+    public string Name { get; }
+    public int FreqSr { get; }
+    public int FreqLr { get; }
 
-    public Team(int id, string name, int freqSr, int freqLr)
+    public Team(int id, int boardId ,string name, int freqSr, int freqLr)
     {
         Id = id;
+        BoardId = boardId;
         Name = name;
         FreqSr = freqSr;
         FreqLr = freqLr;

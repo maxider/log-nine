@@ -1,10 +1,10 @@
 INSERT INTO board (id, name) VALUES
 	(1,"Main");
 
-INSERT INTO team (name, freq_sr, freq_lr)  values 
-    ("Gold", 420, 60),
-    ("Silver", 421, 60),
-    ("Bronz", 422, 60);
+INSERT INTO team (name,board_id, freq_sr, freq_lr)  values 
+    ("Gold", 1, 420, 60),
+    ("Silver", 1, 421, 60),
+    ("Bronz", 1, 422, 60);
 
 INSERT INTO task (visual_id, board_id, target_id, title, description, status, priority, task_type)
     VALUES

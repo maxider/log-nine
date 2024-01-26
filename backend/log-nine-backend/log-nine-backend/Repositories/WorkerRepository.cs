@@ -55,21 +55,4 @@ public class WorkerRepository
         });
         command.ExecuteNonQuery();
     }
-
-    public IEnumerable<Worker> GetWorkersByBoardId(int id)
-    {
-        using var connection = new SQLiteConnection(connectionString);
-        connection.Open();
-        using var command = new SQLiteCommand("SELECT * FROM worker WHERE logi_team_id = @id", connection);
-        command.Parameters.Add(new SQLiteParameter("@id", id));
-        using var reader = command.ExecuteReader();
-        while (reader.Read())
-        {
-            yield return new Worker(
-            Convert.ToInt32(reader["id"]),
-            reader["name"].ToString()!,
-            reader["logi_team_id"] == DBNull.Value ? null : Convert.ToInt32(reader["logi_team_id"])
-            );
-        }
-    }
 }

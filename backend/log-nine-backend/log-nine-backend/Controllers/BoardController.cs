@@ -10,9 +10,10 @@ namespace log_nine_backend.Controllers
         private readonly Repository _repository;
         private readonly WorkerRepository _workerRepository;
 
-        public BoardController(Repository repository)
+        public BoardController(Repository repository, WorkerRepository workerRepository)
         {
             _repository = repository;
+            _workerRepository = workerRepository;
         }
 
         [HttpGet("{id}/tasks")]
@@ -21,10 +22,10 @@ namespace log_nine_backend.Controllers
             return _repository.GetJobTasksByBoardId(id);
         }
 
-        [HttpGet("{id}/workers")]
-        public IEnumerable<Worker> GetWorkers(int id)
+        [HttpGet("{id}/teams")]
+        public IEnumerable<Team> GetTeams(int id)
         {
-            return _workerRepository.GetWorkersByBoardId(id);
+               return _repository.GetTeamsByBoardId(id);
         }
     }
 }
