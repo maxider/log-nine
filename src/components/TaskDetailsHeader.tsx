@@ -4,15 +4,30 @@ import { useSelector } from "react-redux";
 import { selectTeamById } from "../state/Selectors/TeamSelectors";
 import { RootState } from "../state/store";
 import { prioToColor } from "../Helpers";
+import { EditableHeader } from "./EditableText";
+import { ChangeEvent, useEffect } from "react";
+import React from "react";
 
 interface TaskDetailsHeaderProps {
   task: Task;
+  isEdit: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({ task }) => {
+const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
+  task,
+  isEdit,
+  onChange,
+}) => {
   const target = useSelector((state: RootState) =>
     selectTeamById(state, task.targetId ?? 0)
   );
+
+  const [title, setTitle] = React.useState(task.title);
+
+  useEffect(() => {
+    setTitle(task.title);
+  }, [task]);
 
   const color = prioToColor(task.priority);
 
@@ -26,7 +41,16 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({ task }) => {
           <p className="m-0">Status: {task.status}</p>
         </div>
         <Divider orientation="vertical" flexItem />
-        <h2 className="whitesmoke m-0 flex-grow"> {task.title}</h2>
+        <div className="m-0 flex-grow">
+          <EditableHeader
+            value={title}
+            isEdit={isEdit}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              onChange(e);
+            }}
+          />
+        </div>
         <Divider orientation="vertical" flexItem />
         <div className="flex flex-col items-center min-w-24 flex-none">
           <h2 className="m-0">{target?.name ?? ""}</h2>

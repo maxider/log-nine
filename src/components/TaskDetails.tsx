@@ -19,21 +19,22 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
   );
 
   const [isEdit, setIsEdit] = React.useState(false);
+  const [hasChanged, setHasChanged] = React.useState(false);
 
   const ref = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (e: MouseEvent) => {
-    console.log(e.target)
+    console.log(e.target);
     if (ref.current && !ref.current.contains(e.target as Node)) {
       onClose();
       setIsEdit(false);
     }
-  }
+  };
 
   useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -44,17 +45,23 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
       onClick={() => {
         // onClose();
         // setIsEdit(false);
-
       }}
     >
       <Paper className="bg-slate-600 w-3/4" ref={ref}>
-        <TaskDetailsHeader task={task} />
+        <TaskDetailsHeader
+          task={task}
+          isEdit={isEdit}
+          onChange={() => setHasChanged(true)}
+        />
         <Divider orientation="horizontal" flexItem />
         <TaskDetailsBody
           task={task}
           isEdit={isEdit}
           setEdit={() => {
             setIsEdit(true);
+          }}
+          onChange={() => {
+            setHasChanged(true);
           }}
         />
         <Divider orientation="vertical" flexItem />

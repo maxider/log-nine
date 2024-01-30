@@ -6,7 +6,7 @@ interface EditableTextProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-const EditableText: React.FC<EditableTextProps> = ({
+export const EditableText: React.FC<EditableTextProps> = ({
   value,
   isEdit,
   onChange,
@@ -25,4 +25,21 @@ const EditableText: React.FC<EditableTextProps> = ({
   return <p>{value}</p>;
 };
 
-export default EditableText;
+export const EditableHeader: React.FC<EditableTextProps> = ({
+  value,
+  isEdit,
+  onChange,
+}) => {
+  if (isEdit)
+    return (
+      <TextField
+        InputProps={{ className: "text-white text-2xl font-bold" }}
+        fullWidth
+        multiline
+        value={value}
+        onChange={onChange}
+      />
+    );
+
+  return <h2>{value}</h2>;
+};
