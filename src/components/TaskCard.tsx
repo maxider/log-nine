@@ -1,7 +1,11 @@
 import { useMemo } from "react";
-import { Priority, Task } from "../types/Task";
+import { Task } from "../types/Task";
 import Paper from "@mui/material/Paper";
 import Divider from "@mui/material/Divider";
+import { useSelector } from "react-redux";
+import { selectTeamById } from "../state/Selectors/TeamSelectors";
+import { RootState } from "../state/store";
+import { prioToColor } from "../Helpers";
 
 interface TaskCardProps {
   task: Task;
@@ -10,6 +14,10 @@ interface TaskCardProps {
 
 const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
   const color = useMemo(() => prioToColor(task.priority), [task]);
+
+  const target = useSelector((state: RootState) =>
+    selectTeamById(state, task.targetId ?? 0)
+  );
 
   return (
     <Paper
@@ -24,15 +32,23 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
         <p className="px-3 text-sm font-semibold my-2">{task.title}</p>
       </div>
       <Divider />
-      <p className="m-2 flex justify-center">
-        {task.target?.name}: {task.target?.sr} - {task.target?.lr}
-      </p>
+      <TeamFotter teamId={task.targetId} />
     </Paper>
   );
 };
 
-function prioToColor(priority: Priority): any {
-  return "";
-}
+const TeamFotter: React.FC<{ teamId?: number }> = ({ teamId }) => {
+  const team = useSelector((state: RootState) =>
+    selectTeamById(state, teamId ?? 0)
+  );
+
+  if (!team) return <p className="m-2 flex justify-center">No Target</p>;
+
+  return (
+    <p className="m-2 flex justify-center">
+      {team?.name}: {team?.freqSr} - {team?.freqLr}
+    </p>
+  );
+};
 
 export default TaskCard;

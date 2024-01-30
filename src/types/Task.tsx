@@ -1,9 +1,9 @@
-import { Trupp } from "../Trupp";
 import { Worker } from "./Worker";
 
 export enum Priority {
-  Urgent=1,
   Low=0,
+  Normal=1,
+  Urgent=2,
 }
 
 export type Task = {
@@ -13,7 +13,7 @@ export type Task = {
   title: string;
   description: string;
   workers: Worker[];
-  target: Trupp;
+  targetId?: number;
   status: TaskStatus;
   priority: Priority;
 };

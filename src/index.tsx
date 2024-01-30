@@ -6,12 +6,14 @@ import reportWebVitals from "./reportWebVitals";
 import { Provider } from "react-redux";
 import { store } from "./state/store";
 import { fetchTasks } from "./state/taskSlice";
+import { fetchTeams } from "./state/teamSlice";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 
 store.dispatch(fetchTasks());
+store.dispatch(fetchTeams());
 
 root.render(
   <React.StrictMode>

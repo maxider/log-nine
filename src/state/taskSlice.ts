@@ -79,28 +79,4 @@ const taskSlice = createSlice({
 
 export const { addTasks, incrementStatus, decrementStatus } = taskSlice.actions;
 
-const selectTasksId = (state: RootState, id: number) => id;
-const selectTaskStatus = (state: RootState, status: TaskStatus) => status;
-const selectTaskBoardId = (state: RootState, boardId: number) => boardId;
-
-export const selectTasks = createSelector(
-  [(state: RootState) => state.tasks],
-  (tasks) => Object.values(tasks.tasks)
-);
-
-export const selectTasksByBoardId = createSelector(
-  [selectTasks, selectTaskBoardId],
-  (tasks, boardId) => tasks.filter((t) => t.boardId === boardId)
-);
-
-export const selectTaskById = createSelector(
-  [selectTasks, selectTasksId],
-  (tasks, id) => tasks[id]
-);
-
-export const selectTaskByStatus = createSelector(
-  [selectTasks, selectTaskStatus],
-  (tasks, status) => tasks.filter((t) => t.status === status)
-);
-
 export default taskSlice.reducer;
