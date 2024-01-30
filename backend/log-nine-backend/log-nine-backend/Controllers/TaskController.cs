@@ -29,7 +29,7 @@ namespace log_nine_backend.Controllers
         [HttpPost(Name = "CreateTask")]
         public IActionResult CreateTask([FromBody] JobTaskCreationRequestParams requestParams)
         {
-            var taskId = _repository.AddJobTask(requestParams.Title, requestParams.VisualId, requestParams.Description, requestParams.Status, requestParams.Priority, requestParams.TaskType);
+            var taskId = _repository.AddJobTask(requestParams.Title, requestParams.BoardId, requestParams.VisualId, requestParams.Description, requestParams.Status, requestParams.Priority, requestParams.TaskType);
             return Ok(taskId);
         }
 

@@ -1,4 +1,5 @@
-import { Worker, Trupp } from "./App";
+import { Trupp } from "../Trupp";
+import { Worker } from "./Worker";
 
 export enum Priority {
   Urgent=1,
@@ -7,12 +8,14 @@ export enum Priority {
 
 export type Task = {
   id: number;
-  titel: string;
+  visualId: number;
+  boardId: number;
+  title: string;
   description: string;
   workers: Worker[];
   target: Trupp;
   status: TaskStatus;
-  priority?: Priority;
+  priority: Priority;
 };
 
 export enum TaskStatus {
@@ -22,4 +25,12 @@ export enum TaskStatus {
   Returning,
   Done,
   Canceled,
+}
+
+export type Team = {
+  id: number;
+  boardId: number;
+  name: string;
+  freqSr: number;
+  freqLr: number;
 }

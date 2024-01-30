@@ -10,6 +10,7 @@
     public struct JobTaskCreationRequestParams
     {
         public string Title { get; set; }
+        public int BoardId { get; set; }
         public int VisualId { get; set; }
         public string Description { get; set; }
         public JobTask.JobTaskStatus Status { get; set; }

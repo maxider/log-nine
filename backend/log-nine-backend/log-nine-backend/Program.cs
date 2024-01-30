@@ -2,6 +2,18 @@ using log_nine_backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("cors",
+                      policy =>
+                      {
+                          policy.AllowAnyHeader();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyOrigin();
+                      });
+});
+
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -31,5 +43,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors("cors");
 
 app.Run();

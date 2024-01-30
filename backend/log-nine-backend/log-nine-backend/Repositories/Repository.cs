@@ -25,7 +25,7 @@ namespace log_nine_backend.Repositories
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS team (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "board_id REFERENCES board(id)," +
+                "board_id INTEGER REFERENCES board(id)," +
                 "name TEXT," +
                 "freq_sr INTEGER," +
                 "freq_lr INTEGER)", connection)
@@ -49,8 +49,8 @@ namespace log_nine_backend.Repositories
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS task (" +
                 "id INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "visual_id INTEGER," +
-                "board_id REFERENCES board(id), " +
-                "target_id REFERENCES team(id)," +
+                "board_id INTEGER REFERENCES board(id), " +
+                "target_id INTEGER REFERENCES team(id)," +
                 "title TEXT," +
                 "description TEXT," +
                 "status INTEGER," +
@@ -65,7 +65,7 @@ namespace log_nine_backend.Repositories
                 .ExecuteNonQuery();
         }
 
-        public int AddJobTask(string title, int visual_id, string desc, JobTask.JobTaskStatus status, JobTask.JobTaskPriority prio, JobTask.JobTaskType taskType)
+        public JobTask AddJobTask(string title, int boardId,int visual_id, string desc, JobTask.JobTaskStatus status, JobTask.JobTaskPriority prio, JobTask.JobTaskType taskType)
         {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
@@ -79,11 +79,11 @@ namespace log_nine_backend.Repositories
                     new SQLiteParameter("@status", (int)status),
                     new SQLiteParameter("@prio", (int)prio),
                     new SQLiteParameter("@taskType", (int)taskType),
-                    new SQLiteParameter("@board_id", null),
+                    new SQLiteParameter("@board_id", boardId),
                     new SQLiteParameter("@target_id", null)
             });
             command.ExecuteNonQuery();
-            return (int)connection.LastInsertRowId;
+            return GetJobTaskById((int)connection.LastInsertRowId);
         }
 
         public int AddTeam(string name, int freqSr, int freqLr)
