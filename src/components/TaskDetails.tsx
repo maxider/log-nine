@@ -28,6 +28,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
     if (ref.current && !ref.current.contains(e.target as Node)) {
       onClose();
       setIsEdit(false);
+      setHasChanged(false);
     }
   };
 
@@ -40,13 +41,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
 
   if (!task) return <></>;
   return (
-    <Backdrop
-      open={open}
-      onClick={() => {
-        // onClose();
-        // setIsEdit(false);
-      }}
-    >
+    <Backdrop open={open}>
       <Paper className="bg-slate-600 w-3/4" ref={ref}>
         <TaskDetailsHeader
           task={task}
@@ -57,11 +52,16 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
         <TaskDetailsBody
           task={task}
           isEdit={isEdit}
+          hasChanged={hasChanged}
           setEdit={() => {
             setIsEdit(true);
           }}
           onChange={() => {
             setHasChanged(true);
+          }}
+          onSaved={() => {
+            setIsEdit(false);
+            setHasChanged(false);
           }}
         />
         <Divider orientation="vertical" flexItem />

@@ -1,12 +1,13 @@
 import { Divider } from "@mui/material";
 import { Task } from "../types/Task";
 import { useSelector } from "react-redux";
-import { selectTeamById } from "../state/Selectors/TeamSelectors";
+import { selectTeamById, selectTeams } from "../state/Selectors/TeamSelectors";
 import { RootState } from "../state/store";
 import { prioToColor } from "../Helpers";
 import { EditableHeader } from "./EditableText";
 import { ChangeEvent, useEffect } from "react";
 import React from "react";
+import teamSlice from "../state/teamSlice";
 
 interface TaskDetailsHeaderProps {
   task: Task;
@@ -24,6 +25,7 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
   );
 
   const [title, setTitle] = React.useState(task.title);
+  const teams = useSelector(selectTeams);
 
   useEffect(() => {
     setTitle(task.title);
@@ -53,6 +55,19 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
         </div>
         <Divider orientation="vertical" flexItem />
         <div className="flex flex-col items-center min-w-24 flex-none">
+          {/* <EditableHeader
+            value={target?.name ?? ""}
+            isEdit={isEdit}
+            autocomplete
+            options={teams.map((t) => ({
+              label: t.name,
+              id: t.id,
+            }))}
+            onChange={(e) => {
+              setTitle(e.target.value);
+              onChange(e);
+            }}
+          /> */}
           <h2 className="m-0">{target?.name ?? ""}</h2>
           <p className="m-0">
             SR: {target?.freqSr ?? ""} LR: {target?.freqLr ?? ""}

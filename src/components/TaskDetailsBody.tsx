@@ -3,20 +3,24 @@ import { Task } from "../types/Task";
 import { useDispatch } from "react-redux";
 import { decrementStatus, incrementStatus } from "../state/taskSlice";
 import React, { useEffect } from "react";
-import {EditableText} from "./EditableText";
+import { EditableText } from "./EditableText";
 
 interface TaskDetailsBodyProps {
   task: Task;
   isEdit: boolean;
+  hasChanged: boolean;
   setEdit: () => void;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;	
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onSaved: () => void;
 }
 
 const TaskDetailsBody: React.FC<TaskDetailsBodyProps> = ({
   task,
   isEdit,
+  hasChanged,
   setEdit,
   onChange,
+  onSaved,
 }) => {
   const dispatch = useDispatch();
 
@@ -47,9 +51,22 @@ const TaskDetailsBody: React.FC<TaskDetailsBodyProps> = ({
         >
           Status -
         </Button>
-        <Button variant="contained" onClick={setEdit}>
-          Edit
-        </Button>
+        {isEdit ? (
+          <Button
+            variant="contained"
+            onClick={() => {
+              setEdit();
+              onSaved();
+            }}
+            disabled={!hasChanged}
+          >
+            Save
+          </Button>
+        ) : (
+          <Button variant="contained" onClick={setEdit}>
+            Edit
+          </Button>
+        )}
         <Button
           variant="contained"
           onClick={() => {
