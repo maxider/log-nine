@@ -67,7 +67,7 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
             }}
           />
           <p className="m-0">
-            SR: {target?.freqSr ?? ""} LR: {target?.freqLr ?? ""}
+            {target ? `SR: ${target.freqSr}  LR: ${target.freqLr}` : ""}
           </p>
         </div>
       </div>
