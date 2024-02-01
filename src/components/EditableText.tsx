@@ -57,9 +57,12 @@ export const EditableCombobox: React.FC<EditableComboboxProps> = ({
   isEdit,
   options,
 }) => {
-  const value = { label: target.name, id: target.id, team: target };
+  const value = target
+    ? { label: target.name, id: target.id, team: target }
+    : undefined;
   const opts =
-    options?.map((team) => ({ label: team.name, id: team.id, team: team })) ?? [];
+    options?.map((team) => ({ label: team.name, id: team.id, team: team })) ??
+    [];
 
   return isEdit ? (
     <Autocomplete
@@ -73,6 +76,7 @@ export const EditableCombobox: React.FC<EditableComboboxProps> = ({
         groupUl: { color: "red" },
       }}
       options={opts}
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       renderOption={(props, option) => (
         <Box component="li" sx={{ color: "black" }} {...props}>
           {option.label}
@@ -92,6 +96,6 @@ export const EditableCombobox: React.FC<EditableComboboxProps> = ({
       autoHighlight
     />
   ) : (
-    <h2>{target.name}</h2>
+    <h2>{target?.name ?? "-"}</h2>
   );
 };

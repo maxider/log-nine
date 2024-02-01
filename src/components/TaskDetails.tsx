@@ -31,7 +31,6 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
       element.getAttribute("role") !== "option" &&
       element.getAttribute("role") !== "listbox"
     ) {
-      console.log(e.target as Node);
       onClose();
       setIsEdit(false);
       setHasChanged(false);

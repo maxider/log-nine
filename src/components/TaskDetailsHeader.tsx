@@ -23,14 +23,14 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
     selectTeamById(state, task.targetId ?? 0)
   );
 
-  const [title, setTitle] = React.useState(task.title);
+  const [editTitle, setEditTitle] = React.useState(task.title);
   const teams = useSelector(selectTeams);
 
-  const [myTarget, setMyTarget] = React.useState(target);
+  const [editTarget, setEditTarget] = React.useState(target);
 
   useEffect(() => {
-    setTitle(task.title);
-    setMyTarget(target);
+    setEditTitle(task.title);
+    setEditTarget(target);
   }, [task]);
 
   const color = prioToColor(task.priority);
@@ -47,10 +47,10 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
         <Divider orientation="vertical" flexItem />
         <div className="m-0 flex-grow">
           <EditableHeader
-            value={title}
+            value={editTitle}
             isEdit={isEdit}
             onChange={(e) => {
-              setTitle(e.target.value);
+              setEditTitle(e.target.value);
               onChange();
             }}
           />
@@ -58,15 +58,14 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
         <Divider orientation="vertical" flexItem />
         <div className="flex flex-col items-center min-w-24 flex-none">
           <EditableCombobox
-            target={target}
+            target={editTarget}
             isEdit={isEdit}
             options={teams}
             onChange={(target) => {
-              setMyTarget(target);
+              setEditTarget(target);
               onChange();
             }}
           />
-          {/* <h2 className="m-0">{target?.name ?? ""}</h2> */}
           <p className="m-0">
             SR: {target?.freqSr ?? ""} LR: {target?.freqLr ?? ""}
           </p>

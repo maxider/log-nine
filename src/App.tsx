@@ -3,11 +3,7 @@ import { AppDispatch, RootState } from "./state/store";
 import { addNewTask } from "./state/taskSlice";
 import TaskCard from "./components/TaskCard";
 import {
-  Autocomplete,
-  AutocompleteRenderInputParams,
-  Box,
   Button,
-  TextField,
 } from "@mui/material";
 import { selectTasksByBoardId } from "./state/Selectors/TaskSelectors";
 import React from "react";
