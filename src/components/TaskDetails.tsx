@@ -24,8 +24,14 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   const handleClickOutside = (e: MouseEvent) => {
-    console.log(e.target);
-    if (ref.current && !ref.current.contains(e.target as Node)) {
+    const element = e.target as Element;
+    if (
+      ref.current &&
+      !ref.current.contains(e.target as Node) &&
+      element.getAttribute("role") !== "option" &&
+      element.getAttribute("role") !== "listbox"
+    ) {
+      console.log(e.target as Node);
       onClose();
       setIsEdit(false);
       setHasChanged(false);

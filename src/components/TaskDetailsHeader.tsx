@@ -4,15 +4,14 @@ import { useSelector } from "react-redux";
 import { selectTeamById, selectTeams } from "../state/Selectors/TeamSelectors";
 import { RootState } from "../state/store";
 import { prioToColor } from "../Helpers";
-import { EditableHeader } from "./EditableText";
+import { EditableCombobox, EditableHeader } from "./EditableText";
 import { ChangeEvent, useEffect } from "react";
 import React from "react";
-import teamSlice from "../state/teamSlice";
 
 interface TaskDetailsHeaderProps {
   task: Task;
   isEdit: boolean;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: () => void;
 }
 
 const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
@@ -27,8 +26,11 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
   const [title, setTitle] = React.useState(task.title);
   const teams = useSelector(selectTeams);
 
+  const [myTarget, setMyTarget] = React.useState(target);
+
   useEffect(() => {
     setTitle(task.title);
+    setMyTarget(target);
   }, [task]);
 
   const color = prioToColor(task.priority);
@@ -49,26 +51,22 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = ({
             isEdit={isEdit}
             onChange={(e) => {
               setTitle(e.target.value);
-              onChange(e);
+              onChange();
             }}
           />
         </div>
         <Divider orientation="vertical" flexItem />
         <div className="flex flex-col items-center min-w-24 flex-none">
-          {/* <EditableHeader
-            value={target?.name ?? ""}
+          <EditableCombobox
+            target={target}
             isEdit={isEdit}
-            autocomplete
-            options={teams.map((t) => ({
-              label: t.name,
-              id: t.id,
-            }))}
-            onChange={(e) => {
-              setTitle(e.target.value);
-              onChange(e);
+            options={teams}
+            onChange={(target) => {
+              setMyTarget(target);
+              onChange();
             }}
-          /> */}
-          <h2 className="m-0">{target?.name ?? ""}</h2>
+          />
+          {/* <h2 className="m-0">{target?.name ?? ""}</h2> */}
           <p className="m-0">
             SR: {target?.freqSr ?? ""} LR: {target?.freqLr ?? ""}
           </p>

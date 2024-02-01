@@ -2,11 +2,18 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./state/store";
 import { addNewTask } from "./state/taskSlice";
 import TaskCard from "./components/TaskCard";
-import { Button } from "@mui/material";
+import {
+  Autocomplete,
+  AutocompleteRenderInputParams,
+  Box,
+  Button,
+  TextField,
+} from "@mui/material";
 import { selectTasksByBoardId } from "./state/Selectors/TaskSelectors";
 import React from "react";
 import TaskDetails from "./components/TaskDetails";
 import "./App.css";
+import { selectTeams } from "./state/Selectors/TeamSelectors";
 
 const App = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -18,6 +25,12 @@ const App = () => {
     selectTasksByBoardId(state, 1)
   );
   const taskStatus = useSelector((state: RootState) => state.tasks.status);
+
+  const teams = useSelector(selectTeams);
+
+  const options = teams.map((t) => {
+    return { label: t.name, id: t.id };
+  });
 
   function addTasks(): void {
     dispatch(
