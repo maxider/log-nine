@@ -15,6 +15,7 @@ export const EditableText: React.FC<EditableTextProps> = ({
   if (isEdit)
     return (
       <TextField
+      className="m-2"
         InputProps={{ className: "text-white" }}
         fullWidth
         multiline

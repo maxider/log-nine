@@ -14,10 +14,12 @@ const initialState: TeamState = {
   error: undefined,
 };
 
-export const fetchTeams = createAsyncThunk(
-  "teams/fetchTeams",
-  async (thunkApi) => {
-    const response = await axios.get("https://localhost:7060/Board/1/teams");
+export const fetchTeamsByBoardId = createAsyncThunk(
+  "tasks/fetchTeamsByBoardId",
+  async (boardId: number, thunkApi) => {
+    const response = await axios.get(
+      `https://localhost:7060/Board/${boardId}/teams`
+    );
     return response.data;
   }
 );
@@ -44,16 +46,16 @@ const teamSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTeams.pending, (state, action) => {
+    builder.addCase(fetchTeamsByBoardId.pending, (state, action) => {
       state.status = "loading";
     });
-    builder.addCase(fetchTeams.fulfilled, (state, action) => {
+    builder.addCase(fetchTeamsByBoardId.fulfilled, (state, action) => {
       state.status = "succeded";
       action.payload.forEach((t: Team) => {
         state.teams[t.id] = t;
       });
     });
-    builder.addCase(fetchTeams.rejected, (state, action) => {
+    builder.addCase(fetchTeamsByBoardId.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     });

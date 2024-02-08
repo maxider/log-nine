@@ -6,10 +6,9 @@ import { Task } from "../types/Task";
 import TaskDetailsBody from "./TaskDetailsBody";
 import TaskDetailsHeader from "./TaskDetailsHeader";
 import React, { useEffect, useRef } from "react";
+import BackdropProps from "../props/BackdropProps";
 
-interface TaskDetailsProps {
-  onClose: () => void;
-  open: boolean;
+interface TaskDetailsProps extends BackdropProps {
   taskId: number;
 }
 
@@ -47,7 +46,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
   if (!task) return <></>;
   return (
     <Backdrop open={open}>
-      <Paper className="bg-slate-600 w-3/4" ref={ref}>
+      <Paper className="w-3/4 bg-neutral-800" ref={ref}>
         <TaskDetailsHeader
           task={task}
           isEdit={isEdit}

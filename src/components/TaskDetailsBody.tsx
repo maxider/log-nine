@@ -33,7 +33,7 @@ const TaskDetailsBody: React.FC<TaskDetailsBodyProps> = ({
   return (
     <>
       <div className="mx-3">
-        <EditableText
+        <EditableText 
           value={description}
           isEdit={isEdit}
           onChange={(e) => {
@@ -42,7 +42,7 @@ const TaskDetailsBody: React.FC<TaskDetailsBodyProps> = ({
           }}
         />
       </div>
-      <div className="flex flex-row gap-4 justify-between m-2">
+      <div className="flex flex-row justify-between gap-4 m-2">
         <Button
           variant="contained"
           onClick={() => {

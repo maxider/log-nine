@@ -29,5 +29,13 @@ namespace log_nine_backend.Controllers
             var teamId = _repository.AddTeam(requestParams.Name, requestParams.FreqSr, requestParams.FreqLr);
             return Ok(teamId);
         }
+        
+        [HttpPut]
+        public IActionResult Update([FromBody] Team teamToUpdate)
+        {
+            if (_repository.GetTeamById(teamToUpdate.Id) == null)
+                return NotFound(teamToUpdate.Id);
+            return Ok(_repository.UpdateTeam(teamToUpdate));
+        }
     }
 }

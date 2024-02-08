@@ -2,125 +2,123 @@
 using System.Drawing;
 using System.Xml.Linq;
 
-namespace log_nine_backend.Repositories
-{
-    public class Repository
-    {
+namespace log_nine_backend.Repositories {
+    public class Repository {
         private readonly string connectionString;
 
-        public Repository(string connectionString)
-        {
+        public Repository(string connectionString) {
             this.connectionString = connectionString;
         }
 
-        public void CreateTables()
-        {
+        public void CreateTables() {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS board (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT)", connection)
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "name TEXT)", connection)
                 .ExecuteNonQuery();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS team (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "board_id INTEGER REFERENCES board(id)," +
-                "name TEXT," +
-                "freq_sr INTEGER," +
-                "freq_lr INTEGER)", connection)
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "board_id INTEGER REFERENCES board(id)," +
+                              "name TEXT," +
+                              "freq_sr INTEGER," +
+                              "freq_lr INTEGER)", connection)
                 .ExecuteNonQuery();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS logi_team (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name TEXT," +
-                "color TEXT," +
-                "freq_sr INTEGER," +
-                "freq_lr INTEGER)", connection)
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "name TEXT," +
+                              "color TEXT," +
+                              "freq_sr INTEGER," +
+                              "freq_lr INTEGER)", connection)
                 .ExecuteNonQuery();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS task_logi_team (" +
-                "task_id INTEGER," +
-                "logi_team_id TEXT," +
-                "freq_lr INTEGER," +
-                "PRIMARY KEY (task_id, logi_team_id))", connection)
+                              "task_id INTEGER," +
+                              "logi_team_id TEXT," +
+                              "freq_lr INTEGER," +
+                              "PRIMARY KEY (task_id, logi_team_id))", connection)
                 .ExecuteNonQuery();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS task (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "visual_id INTEGER," +
-                "board_id INTEGER REFERENCES board(id), " +
-                "target_id INTEGER REFERENCES team(id)," +
-                "title TEXT," +
-                "description TEXT," +
-                "status INTEGER," +
-                "priority INTEGER," +
-                "task_type INTEGER)", connection)
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "visual_id INTEGER," +
+                              "board_id INTEGER REFERENCES board(id), " +
+                              "target_id INTEGER REFERENCES team(id)," +
+                              "title TEXT," +
+                              "description TEXT," +
+                              "status INTEGER," +
+                              "priority INTEGER," +
+                              "task_type INTEGER)", connection)
                 .ExecuteNonQuery();
 
             new SQLiteCommand("CREATE TABLE IF NOT EXISTS worker (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "name string," +
-                "logi_team_id REFERENCES logi_team(id))", connection)
+                              "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                              "name string," +
+                              "logi_team_id REFERENCES logi_team(id))", connection)
                 .ExecuteNonQuery();
         }
 
-        public JobTask AddJobTask(string title, int boardId,int visual_id, string desc, JobTask.JobTaskStatus status, JobTask.JobTaskPriority prio, JobTask.JobTaskType taskType)
-        {
+        public JobTask AddJobTask(string title, int boardId, int visual_id, string desc, JobTask.JobTaskStatus status,
+            JobTask.JobTaskPriority prio, JobTask.JobTaskType taskType) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
-            using var command = new SQLiteCommand("INSERT INTO task (visual_id, title, description, status, priority, task_type, board_id, target_id) VALUES (@visual_id, @title, @desc, @status, @prio, @taskType, @board_id, @target_id)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@visual_id", visual_id),
-                    new SQLiteParameter("@title", title),
-                    new SQLiteParameter("@desc", desc),
-                    new SQLiteParameter("@status", (int)status),
-                    new SQLiteParameter("@prio", (int)prio),
-                    new SQLiteParameter("@taskType", (int)taskType),
-                    new SQLiteParameter("@board_id", boardId),
-                    new SQLiteParameter("@target_id", null)
+            using var command =
+                new SQLiteCommand(
+                    "INSERT INTO task (visual_id, title, description, status, priority, task_type, board_id, target_id) VALUES (@visual_id, @title, @desc, @status, @prio, @taskType, @board_id, @target_id)",
+                    connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@visual_id", visual_id),
+                new SQLiteParameter("@title", title),
+                new SQLiteParameter("@desc", desc),
+                new SQLiteParameter("@status", (int)status),
+                new SQLiteParameter("@prio", (int)prio),
+                new SQLiteParameter("@taskType", (int)taskType),
+                new SQLiteParameter("@board_id", boardId),
+                new SQLiteParameter("@target_id", null)
             });
             command.ExecuteNonQuery();
             return GetJobTaskById((int)connection.LastInsertRowId);
         }
 
-        public int AddTeam(string name, int freqSr, int freqLr)
-        {
+        public int AddTeam(string name, int freqSr, int freqLr) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
-            using var command = new SQLiteCommand("INSERT INTO team (name, freq_sr, freq_lr) VALUES (@name, @freqSr, @freqLr)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@name", name),
-                    new SQLiteParameter("@freqSr", freqSr),
-                    new SQLiteParameter("@freqLr", freqLr)
+            using var command =
+                new SQLiteCommand("INSERT INTO team (name, freq_sr, freq_lr) VALUES (@name, @freqSr, @freqLr)",
+                    connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@name", name),
+                new SQLiteParameter("@freqSr", freqSr),
+                new SQLiteParameter("@freqLr", freqLr)
             });
             command.ExecuteNonQuery();
 
             return (int)connection.LastInsertRowId;
         }
 
-        public int AddLogiTeam(string name, string color, int freqSr, int freqLr)
-        {
+        public int AddLogiTeam(string name, string color, int freqSr, int freqLr) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
-            using var command = new SQLiteCommand("INSERT INTO logi_team (name, color, freq_sr, freq_lr) VALUES (@name, @color, @freqSr, @freqLr)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@name", name),
-                    new SQLiteParameter("@color", color),
-                    new SQLiteParameter("@freqSr", freqSr),
-                    new SQLiteParameter("@freqLr", freqLr)
+            using var command =
+                new SQLiteCommand(
+                    "INSERT INTO logi_team (name, color, freq_sr, freq_lr) VALUES (@name, @color, @freqSr, @freqLr)",
+                    connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@name", name),
+                new SQLiteParameter("@color", color),
+                new SQLiteParameter("@freqSr", freqSr),
+                new SQLiteParameter("@freqLr", freqLr)
             });
             command.ExecuteNonQuery();
 
             return (int)connection.LastInsertRowId;
         }
 
-        public JobTask? GetJobTaskById(int id)
-        {
+        public JobTask? GetJobTaskById(int id) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
@@ -132,23 +130,23 @@ namespace log_nine_backend.Repositories
             {
                 connection.Close();
                 return null;
+            }
+            
+            var jobTask = new JobTask{
+                Id = Convert.ToInt32(reader["id"]),
+                VisualId = Convert.ToInt32(reader["visual_id"]),
+                BoardId = Convert.ToInt32(reader["board_id"]),
+                TargetId = reader["target_id"] == DBNull.Value ? null : Convert.ToInt32(reader["target_id"]),
+                Title = reader["title"].ToString()!,
+                Description = reader["description"].ToString()!,
+                Status = (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
+                Priority = (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
+                TaskType = (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"])
             };
-            var jobTask = new JobTask(
-                Convert.ToInt32(reader["id"]),
-                Convert.ToInt32(reader["visual_id"]),
-                reader["board_id"] == DBNull.Value ? null : Convert.ToInt32(reader["board_id"]),
-                reader["target_id"] == DBNull.Value ? null : Convert.ToInt32(reader["target_id"]),
-                reader["title"].ToString()!,
-                reader["description"].ToString()!,
-                (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
-                (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
-                (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"])
-            );
             return jobTask;
         }
 
-        public LogiTeam? GetLogiTeamById(int logiTeamId)
-        {
+        public LogiTeam? GetLogiTeamById(int logiTeamId) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
@@ -160,7 +158,8 @@ namespace log_nine_backend.Repositories
             {
                 connection.Close();
                 return null;
-            };
+            }
+            ;
             var logiTeam = new LogiTeam(
                 Convert.ToInt32(reader["id"]),
                 reader["name"].ToString()!,
@@ -171,62 +170,56 @@ namespace log_nine_backend.Repositories
             return logiTeam;
         }
 
-        public void AssignTeamToJobTask(int jobTaskId, int teamId)
-        {
+        public void AssignTeamToJobTask(int jobTaskId, int teamId) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
-            using var command = new SQLiteCommand("INSERT or IGNORE INTO task_logi_team (task_id, logi_team_id) VALUES (@task_id, @logi_team_id)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@task_id", jobTaskId),
-                    new SQLiteParameter("@logi_team_id", teamId)
+            using var command =
+                new SQLiteCommand(
+                    "INSERT or IGNORE INTO task_logi_team (task_id, logi_team_id) VALUES (@task_id, @logi_team_id)",
+                    connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@task_id", jobTaskId),
+                new SQLiteParameter("@logi_team_id", teamId)
             });
             command.ExecuteNonQuery();
         }
 
 
-
-        public void AssignWorkerToLogiTeam(int workerId, int logiTeamId)
-        {
+        public void AssignWorkerToLogiTeam(int workerId, int logiTeamId) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
-            using var command = new SQLiteCommand("UPDATE worker SET logi_team_id = @logi_team_id WHERE id = @id", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@id", workerId),
-                    new SQLiteParameter("@logi_team_id", logiTeamId)
+            using var command = new SQLiteCommand("UPDATE worker SET logi_team_id = @logi_team_id WHERE id = @id",
+                connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@id", workerId),
+                new SQLiteParameter("@logi_team_id", logiTeamId)
             });
             command.ExecuteNonQuery();
         }
 
-        public void UnassignWorker(int workerId)
-        {
+        public void UnassignWorker(int workerId) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
             using var command = new SQLiteCommand("UPDATE worker SET logi_team_id = null WHERE id = @id", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@id", workerId)
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@id", workerId)
             });
             command.ExecuteNonQuery();
         }
 
-        public int CreateBoard(string name)
-        {
+        public int CreateBoard(string name) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
             using var command = new SQLiteCommand("INSERT INTO board (name) VALUES (@name)", connection);
-            command.Parameters.AddRange(new SQLiteParameter[]
-            {
-                    new SQLiteParameter("@name", name)
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@name", name)
             });
             command.ExecuteNonQuery();
 
             return (int)connection.LastInsertRowId;
         }
 
-        public Board? GetBoardById(int boardId)
-        {
+        public Board? GetBoardById(int boardId) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
@@ -238,17 +231,17 @@ namespace log_nine_backend.Repositories
             {
                 connection.Close();
                 return null;
-            };
+            }
+            
             var board = new Board(
-                               Convert.ToInt32(reader["id"]),
-                                              reader["name"].ToString()!
-                                                         );
+                Convert.ToInt32(reader["id"]),
+                reader["name"].ToString()!
+            );
             return board;
 
         }
 
-        public Team GetTeamById(int id)
-        {
+        public Team GetTeamById(int id) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
@@ -256,18 +249,17 @@ namespace log_nine_backend.Repositories
             command.Parameters.Add(new SQLiteParameter("@id", id));
             using var reader = command.ExecuteReader();
             reader.Read();
-            var team = new Team(
-                Convert.ToInt32(reader["id"]),
-                Convert.ToInt32(reader["board_id"]),
-                reader["name"].ToString()!,
-                Convert.ToInt32(reader["freq_sr"]),
-                Convert.ToInt32(reader["freq_lr"])
-            );
+            var team = new Team{
+                Id = Convert.ToInt32(reader["id"]),
+                BoardId = Convert.ToInt32(reader["board_id"]),
+                Name = reader["name"].ToString()!,
+                FreqSr = Convert.ToInt32(reader["freq_sr"]),
+                FreqLr = Convert.ToInt32(reader["freq_lr"])
+            };
             return team;
         }
 
-        public IEnumerable<JobTask> GetJobTasksByBoardId(int boardId)
-        {
+        public IEnumerable<JobTask> GetJobTasksByBoardId(int boardId) {
 
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
@@ -278,21 +270,21 @@ namespace log_nine_backend.Repositories
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                yield return new JobTask(
-                Convert.ToInt32(reader["id"]),
-                Convert.ToInt32(reader["visual_id"]),
-                reader["board_id"] == DBNull.Value ? null : Convert.ToInt32(reader["board_id"]),
-                reader["target_id"] == DBNull.Value ? null : Convert.ToInt32(reader["target_id"]),
-                reader["title"].ToString()!,
-                reader["description"].ToString()!,
-                (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
-                (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
-                (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"]));
+                yield return new JobTask{
+                    Id = Convert.ToInt32(reader["id"]),
+                    VisualId = Convert.ToInt32(reader["visual_id"]),
+                    BoardId = Convert.ToInt32(reader["board_id"]),
+                    TargetId = reader["target_id"] == DBNull.Value ? null : Convert.ToInt32(reader["target_id"]),
+                    Title = reader["title"].ToString()!,
+                    Description = reader["description"].ToString()!,
+                    Status = (JobTask.JobTaskStatus)Convert.ToInt32(reader["status"]),
+                    Priority = (JobTask.JobTaskPriority)Convert.ToInt32(reader["priority"]),
+                    TaskType = (JobTask.JobTaskType)Convert.ToInt32(reader["task_type"])
+                };
             }
         }
 
-        internal IEnumerable<Team> GetTeamsByBoardId(int board_id)
-        {
+        internal IEnumerable<Team> GetTeamsByBoardId(int board_id) {
             using var connection = new SQLiteConnection(connectionString);
             connection.Open();
 
@@ -302,31 +294,68 @@ namespace log_nine_backend.Repositories
             using var reader = command.ExecuteReader();
             while (reader.Read())
             {
-                yield return new Team(
-                Convert.ToInt32(reader["id"]),
-                Convert.ToInt32(reader["board_id"]),
-                reader["name"].ToString()!,
-                Convert.ToInt32(reader["freq_sr"]),
-                Convert.ToInt32(reader["freq_lr"]));
+                yield return new Team{
+                    Id = Convert.ToInt32(reader["id"]),
+                    BoardId = Convert.ToInt32(reader["board_id"]),
+                    Name = reader["name"].ToString()!,
+                    FreqSr = Convert.ToInt32(reader["freq_sr"]),
+                    FreqLr = Convert.ToInt32(reader["freq_lr"])
+                };
             }
+        }
+
+        public JobTask UpdateJobTask(JobTask taskToUpdate) {
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            using var command = new SQLiteCommand(
+                "UPDATE task SET visual_id = @visual_id, title = @title, description = @description, status = @status, priority = @priority, task_type = @task_type, board_id = @board_id, target_id = @target_id WHERE id = @id",
+                connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@id", taskToUpdate.Id),
+                new SQLiteParameter("@visual_id", taskToUpdate.VisualId),
+                new SQLiteParameter("@title", taskToUpdate.Title),
+                new SQLiteParameter("@description", taskToUpdate.Description),
+                new SQLiteParameter("@status", (int)taskToUpdate.Status),
+                new SQLiteParameter("@priority", (int)taskToUpdate.Priority),
+                new SQLiteParameter("@task_type", (int)taskToUpdate.TaskType),
+                new SQLiteParameter("@board_id", taskToUpdate.BoardId),
+                new SQLiteParameter("@target_id", taskToUpdate.TargetId)
+            });
+            command.ExecuteNonQuery();
+            return GetJobTaskById(taskToUpdate.Id)!;
+        }
+
+        public void DeleteJobTask(int id) {
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            using var command = new SQLiteCommand("DELETE FROM task WHERE id = @id", connection);
+            command.Parameters.Add(new SQLiteParameter("@id", id));
+            command.ExecuteNonQuery();
+        }
+
+        public Team UpdateTeam(Team teamToUpdate) {
+            using var connection = new SQLiteConnection(connectionString);
+            connection.Open();
+            using var command = new SQLiteCommand(
+                "UPDATE team SET board_id = @board_id, name = @name, freq_sr = @freq_sr, freq_lr = @freq_lr WHERE id = @id",
+                connection);
+            command.Parameters.AddRange(new SQLiteParameter[]{
+                new SQLiteParameter("@id", teamToUpdate.Id),
+                new SQLiteParameter("@board_id", teamToUpdate.BoardId),
+                new SQLiteParameter("@name", teamToUpdate.Name),
+                new SQLiteParameter("@freq_sr", teamToUpdate.FreqSr),
+                new SQLiteParameter("@freq_lr", teamToUpdate.FreqLr)
+            });
+            command.ExecuteNonQuery();
+            return GetTeamById(teamToUpdate.Id);
         }
     }
 }
 
-public class Team
-{
-    public int Id { get; }
-    public int BoardId { get; }
-    public string Name { get; }
-    public int FreqSr { get; }
-    public int FreqLr { get; }
-
-    public Team(int id, int boardId ,string name, int freqSr, int freqLr)
-    {
-        Id = id;
-        BoardId = boardId;
-        Name = name;
-        FreqSr = freqSr;
-        FreqLr = freqLr;
-    }
+public class Team {
+    public int Id { get; set; }
+    public int BoardId { get; set; }
+    public string Name { get; set; }
+    public int FreqSr { get; set; }
+    public int FreqLr { get; set; }
 }

@@ -15,10 +15,10 @@ const initialState: TaskState = {
   error: undefined,
 };
 
-export const fetchTasks = createAsyncThunk(
-  "tasks/fetchTasks",
-  async (thunkApi) => {
-    const response = await axios.get("https://localhost:7060/Board/1/tasks");
+export const fetchTasksByBoardId = createAsyncThunk(
+  "tasks/fetchTasksByBoardId",
+  async (boardId: number, thunkApi) => {
+    const response = await axios.get(`https://localhost:7060/Board/${boardId}/tasks`);
     return response.data;
   }
 );
@@ -55,16 +55,16 @@ const taskSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTasks.pending, (state, action) => {
+    builder.addCase(fetchTasksByBoardId.pending, (state, action) => {
       state.status = "loading";
     });
-    builder.addCase(fetchTasks.fulfilled, (state, action) => {
+    builder.addCase(fetchTasksByBoardId.fulfilled, (state, action) => {
       state.status = "succeded";
       action.payload.forEach((t: Task) => {
         state.tasks[t.id] = t;
       });
     });
-    builder.addCase(fetchTasks.rejected, (state, action) => {
+    builder.addCase(fetchTasksByBoardId.rejected, (state, action) => {
       state.status = "failed";
       state.error = action.error.message;
     });
