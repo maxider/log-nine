@@ -46,7 +46,7 @@ const taskSlice = createSlice({
     incrementStatus(state, action: PayloadAction<number>) {
       const curStatus = state.tasks[action.payload]?.status;
       if (curStatus === undefined) return;
-      state.tasks[action.payload].status = Math.min(3, curStatus + 1);
+      state.tasks[action.payload].status = Math.min(5, curStatus + 1);
     },
     decrementStatus(state, action: PayloadAction<number>) {
       const curStatus = state.tasks[action.payload]?.status;
