@@ -3,11 +3,11 @@
 namespace LogNineBackend;
 
 public static class DbSeeder {
-    public static void Seed(AppContext context) {
+    public static bool Seed(AppContext context) {
         context.Database.EnsureCreated();
         if (context.Boards.Any())
         {
-            return;
+            return false;
         }
         var boards = new Board[]{
             new Board{ Title = "Board 1" },
@@ -89,5 +89,7 @@ public static class DbSeeder {
         };
         context.JobTasks.AddRange(jobTasks);
         context.SaveChanges();
+
+        return true;
     }
 }

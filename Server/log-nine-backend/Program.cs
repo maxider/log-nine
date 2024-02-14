@@ -1,11 +1,16 @@
 using CommandLine;
 using FunWithEF;
 using LogNineBackend;
+using Microsoft.AspNetCore.HttpLogging;
 using AppContext = LogNineBackend.AppContext;
 
 var options = Parser.Default.ParseArguments<Options>(args).Value;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddHttpLogging(o => {
+    o.LoggingFields = HttpLoggingFields.All;
+});
 
 builder.Services.AddCors(options => {
     options.AddPolicy("cors",
@@ -37,6 +42,7 @@ if (app.Environment.IsDevelopment() || options.UseSwagger)
     app.UseSwaggerUI();
 }
 
+app.UseHttpLogging();
 app.UseCors("cors");
 app.UseWebSockets();
 app.MapControllers();
@@ -47,9 +53,11 @@ void SeedDatabase(IServiceProvider appServices) {
     using var scope = appServices.CreateScope();
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<AppContext>();
-    DbSeeder.Seed(context);
+    var didSeed = DbSeeder.Seed(context);
+    if (!didSeed) return;
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("Database seeded");
+
 }
 
 app.Run();
