@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LogNineBackend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunWithEF.Controllers;
+namespace LogNineBackend.Controllers;
 
 [ApiController]
 [Route("[controller]")]

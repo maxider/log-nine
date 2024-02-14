@@ -1,4 +1,4 @@
-﻿namespace FunWithEF;
+﻿namespace LogNineBackend.Models;
 
 public class JobTask {
     public enum JobTaskStatus {

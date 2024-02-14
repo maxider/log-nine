@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LogNineBackend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using AppContext = LogNineBackend.AppContext;
 
 namespace FunWithEF.Controllers;
 

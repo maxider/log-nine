@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using LogNineBackend.Models;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FunWithEF.Controllers;
+namespace LogNineBackend.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -51,7 +52,7 @@ public class TasksController : ControllerBase {
 
     [HttpPost]
     public async Task<IActionResult> Create(JobTaskCreationParams jobTask) {
-        var newTask = new JobTask{
+        var newTask = new LogNineBackend.Models.JobTask{
             VisualId = jobTask.VisualId,
             BoardId = jobTask.BoardId,
             Title = jobTask.Title,
@@ -105,8 +106,8 @@ public class TasksController : ControllerBase {
         });
     }
 
-    private static JobTask.JobTaskStatus ClampStatus(JobTask task) {
-        return (JobTask.JobTaskStatus)Math.Clamp((int)task.Status, 0, (int)JobTask.JobTaskStatus.Cancelled);
+    private static LogNineBackend.Models.JobTask.JobTaskStatus ClampStatus(LogNineBackend.Models.JobTask task) {
+        return (LogNineBackend.Models.JobTask.JobTaskStatus)Math.Clamp((int)task.Status, 0, (int)LogNineBackend.Models.JobTask.JobTaskStatus.Cancelled);
     }
 
     [HttpPatch("{id}/decrement")]
@@ -145,4 +146,4 @@ public class TasksController : ControllerBase {
 }
 
 public record struct JobTaskCreationParams(int VisualId, int BoardId, string Title, string Description,
-    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType);
+    LogNineBackend.Models.JobTask.JobTaskStatus Status, LogNineBackend.Models.JobTask.JobTaskPriority Priority, LogNineBackend.Models.JobTask.JobTaskType TaskType);

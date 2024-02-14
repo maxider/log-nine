@@ -1,4 +1,4 @@
-﻿namespace FunWithEF;
+﻿namespace LogNineBackend.Models;
 
 public class Team {
     public int Id { get; set; }

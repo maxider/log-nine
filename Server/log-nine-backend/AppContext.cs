@@ -1,16 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FunWithEF;
+using LogNineBackend.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace FunWithEF;
+namespace LogNineBackend;
 
 public class AppContext : DbContext {
+    private readonly ILogger<AppContext> logger;
+
     public DbSet<JobTask> JobTasks { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Board> Boards { get; set; }
 
     public string DbPath { get; private set; }
 
-    public AppContext() {
-        DbPath = "./data.db";
+    public AppContext(ILogger<AppContext> logger) {
+        this.logger = logger;
+        DbPath = "./data/data.db";
+
+        logger.LogInformation("DbPath: {DbPath}", DbPath);
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

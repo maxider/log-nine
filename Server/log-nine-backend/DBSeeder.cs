@@ -1,4 +1,6 @@
-﻿namespace FunWithEF;
+﻿using LogNineBackend.Models;
+
+namespace LogNineBackend;
 
 public static class DbSeeder {
     public static void Seed(AppContext context) {
@@ -22,7 +24,7 @@ public static class DbSeeder {
         };
         context.Teams.AddRange(teams);
         context.SaveChanges();
-        
+
         var jobTasks = new JobTask[]{
             new JobTask{
                 VisualId = 1, BoardId = 1, TargetId = 1, Title = "Task 1", Description = "Task 1 Description",

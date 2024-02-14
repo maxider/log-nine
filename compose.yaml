@@ -1,0 +1,19 @@
+version: "3"
+services:
+  server:
+    build:
+      context: ./Server
+      dockerfile: ./log-nine-backend/Dockerfile
+    ports:
+      - "8082:8080"
+    volumes:
+      - ./db-data:/app/data
+
+  frontend:
+    build:
+      context: ./Webpage
+    ports:
+      - "8081:3000"
+
+volumes:
+  db-data:

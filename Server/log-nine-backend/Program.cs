@@ -1,6 +1,7 @@
 using CommandLine;
 using FunWithEF;
-using AppContext = FunWithEF.AppContext;
+using LogNineBackend;
+using AppContext = LogNineBackend.AppContext;
 
 var options = Parser.Default.ParseArguments<Options>(args).Value;
 
