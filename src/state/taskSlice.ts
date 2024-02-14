@@ -18,7 +18,7 @@ const initialState: TaskState = {
 export const fetchTasksByBoardId = createAsyncThunk(
   "tasks/fetchTasksByBoardId",
   async (boardId: number, thunkApi) => {
-    const response = await axios.get(`https://localhost:7060/Board/${boardId}/tasks`);
+    const response = await axios.get(`http://78.46.158.233:8082/Boards/${boardId}/tasks`);
     return response.data;
   }
 );
@@ -27,12 +27,33 @@ export const addNewTask = createAsyncThunk(
   "tasks/addNewTask",
   async (task: Task) => {
     const response = await axios.post(
-      "https://localhost:7060/Task/CreateTask",
+      "http://78.46.158.233:8082/Tasks/CreateTask",
       task
     );
     return response.data;
   }
 );
+
+export const incrementStatus = createAsyncThunk(
+  "tasks/increment",
+  async (taskId: number) => {
+    const response = await axios.patch(
+      `http://78.46.158.233:8082/Tasks/${taskId}/increment`
+    );
+    return response.data;
+  }
+);
+
+export const decrementStatus = createAsyncThunk(
+  "tasks/decrement",
+  async (taskId: number) => {
+    const response = await axios.patch(
+      `http://78.46.158.233:8082/Tasks/${taskId}/decrement`
+    );
+    return response.data;
+  }
+);
+
 
 const taskSlice = createSlice({
   initialState: initialState,
@@ -43,11 +64,11 @@ const taskSlice = createSlice({
         state.tasks[t.id] = t;
       });
     },
-    incrementStatus(state, action: PayloadAction<number>) {
-      const curStatus = state.tasks[action.payload]?.status;
-      if (curStatus === undefined) return;
-      state.tasks[action.payload].status = Math.min(5, curStatus + 1);
-    },
+    // incrementStatus(state, action: PayloadAction<number>) {
+    //   const curStatus = state.tasks[action.payload]?.status;
+    //   if (curStatus === undefined) return;
+    //   state.tasks[action.payload].status = Math.min(5, curStatus + 1);
+    // },
     decrementStatus(state, action: PayloadAction<number>) {
       const curStatus = state.tasks[action.payload]?.status;
       if (!curStatus) return;
@@ -68,6 +89,22 @@ const taskSlice = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     });
+    
+    builder.addCase(incrementStatus.pending, (state, action) => {
+      state.status = "loading";
+    });
+    builder.addCase(incrementStatus.fulfilled, (state, action) => {
+      console.log(action.payload);
+      state.tasks[action.payload.id].status = action.payload.status;
+    });
+
+    builder.addCase(decrementStatus.pending, (state, action) => {
+      state.status = "loading";
+    });
+    builder.addCase(decrementStatus.fulfilled, (state, action) => {
+      state.tasks[action.payload.id].status = action.payload.status;
+    });
+
     builder.addCase(addNewTask.pending, (state, action) => {
         state.status = "loading";
     });
@@ -77,6 +114,6 @@ const taskSlice = createSlice({
   },
 });
 
-export const { addTasks, incrementStatus, decrementStatus } = taskSlice.actions;
+export const { addTasks } = taskSlice.actions;
 
 export default taskSlice.reducer;

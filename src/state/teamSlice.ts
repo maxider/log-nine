@@ -18,7 +18,7 @@ export const fetchTeamsByBoardId = createAsyncThunk(
   "tasks/fetchTeamsByBoardId",
   async (boardId: number, thunkApi) => {
     const response = await axios.get(
-      `https://localhost:7060/Board/${boardId}/teams`
+      `http://78.46.158.233:8082/Boards/${boardId}/teams`
     );
     return response.data;
   }
@@ -28,7 +28,7 @@ export const addNewTeam = createAsyncThunk(
   "teams/addNewTeam",
   async (team: Team) => {
     const response = await axios.post(
-      "https://localhost:7060/Team/CreateTeam",
+      "http://78.46.158.233:8082/Teams/CreateTeam",
       team
     );
     return response.data;

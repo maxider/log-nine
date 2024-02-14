@@ -31,6 +31,6 @@ export type Team = {
   id: number;
   boardId: number;
   name: string;
-  freqSr: number;
-  freqLr: number;
+  srFrequency: number;
+  lrFrequency: number;
 }

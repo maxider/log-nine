@@ -53,4 +53,4 @@ COPY --from=build /app .
 # and https://github.com/dotnet/dotnet-docker/discussions/4764
 USER $APP_UID
 
-ENTRYPOINT ["dotnet", "log-nine-backend.dll"]
+ENTRYPOINT ["dotnet", "log-nine-backend.dll", "--launch-profile Development"]

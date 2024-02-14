@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import { decrementStatus, incrementStatus } from "../state/taskSlice";
 import React, { useEffect } from "react";
 import { EditableText } from "./EditableText";
+import { AppDispatch } from "../state/store";
 
 interface TaskDetailsBodyProps {
   task: Task;
@@ -22,7 +23,7 @@ const TaskDetailsBody: React.FC<TaskDetailsBodyProps> = ({
   onChange,
   onSaved,
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [description, setDescription] = React.useState(task.description);
 

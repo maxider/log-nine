@@ -23,7 +23,7 @@ const Board = () => {
   );
 
   const [isViewingTask, setIsViewingTask] = React.useState(false);
-  const [lastViedTaskId, setLastViewedTaskId] = React.useState(-1);
+  const [lastViewedTaskId, setLastViewedTaskId] = React.useState(-1);
 
   const [isEditingTeam, setIsEditingTeam] = React.useState(false);
   const [lastEditedTeamId, setLastEditedTeamId] = React.useState(-1);
@@ -77,7 +77,7 @@ const Board = () => {
           <TaskDetails
             onClose={() => setIsViewingTask(false)}
             open={isViewingTask}
-            taskId={lastViedTaskId}
+            taskId={lastViewedTaskId}
           />
           {Object.keys(TaskStatus)
             .filter((k) => isNaN(Number(k)))
@@ -85,7 +85,9 @@ const Board = () => {
               return (
                 <>
                   <Swimlane
-                    tasks={tasks.filter((t) => t.status === TaskStatus[s])}
+                    tasks={tasks
+                      .filter((t) => t.status === TaskStatus[s])
+                      .sort((a, b) => -1 * (a.priority - b.priority))}
                     key={s}
                     header={s}
                     onClickCard={(id) => {

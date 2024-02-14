@@ -43,10 +43,9 @@ const TeamFotter: React.FC<{ teamId?: number }> = ({ teamId }) => {
   );
 
   if (!team) return <p className="flex justify-center m-2">No Target</p>;
-
   return (
-    <p className="flex justify-center m-0">
-      {team?.name}: {team?.freqSr} - {team?.freqLr}
+    <p className="flex justify-center m-0">    
+      {team?.name}: {team?.srFrequency} - {team?.lrFrequency}
     </p>
   );
 };
