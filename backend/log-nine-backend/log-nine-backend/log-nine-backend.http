@@ -1,6 +1,0 @@
-@log_nine_backend_HostAddress = http://localhost:5182
-
-GET {{log_nine_backend_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
