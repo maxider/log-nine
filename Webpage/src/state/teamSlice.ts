@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Team } from "../types/Task";
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { BACKEND_URL } from "../config";
 
 interface TeamState {
   teams: Record<number, Team>;
@@ -18,7 +19,7 @@ export const fetchTeamsByBoardId = createAsyncThunk(
   "tasks/fetchTeamsByBoardId",
   async (boardId: number, thunkApi) => {
     const response = await axios.get(
-      `http://78.46.158.233:8082/Boards/${boardId}/teams`
+      `${BACKEND_URL}/Boards/${boardId}/teams`
     );
     return response.data;
   }
@@ -28,7 +29,7 @@ export const addNewTeam = createAsyncThunk(
   "teams/addNewTeam",
   async (team: Team) => {
     const response = await axios.post(
-      "http://78.46.158.233:8082/Teams/CreateTeam",
+      `${BACKEND_URL}/Teams/CreateTeam`,
       team
     );
     return response.data;

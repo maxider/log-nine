@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
 import { Task, TaskStatus } from "../types/Task";
 import axios from "axios";
-import { RootState } from "./store";
+import { BACKEND_URL } from "../config";
 
 interface TaskState {
   tasks: Record<number, Task>;
@@ -18,7 +18,7 @@ const initialState: TaskState = {
 export const fetchTasksByBoardId = createAsyncThunk(
   "tasks/fetchTasksByBoardId",
   async (boardId: number, thunkApi) => {
-    const response = await axios.get(`http://78.46.158.233:8082/Boards/${boardId}/tasks`);
+    const response = await axios.get(`${BACKEND_URL}/Boards/${boardId}/tasks`);
     return response.data;
   }
 );
@@ -27,7 +27,7 @@ export const addNewTask = createAsyncThunk(
   "tasks/addNewTask",
   async (task: Task) => {
     const response = await axios.post(
-      "http://78.46.158.233:8082/Tasks/CreateTask",
+      `${BACKEND_URL}/Tasks/CreateTask`,
       task
     );
     return response.data;
@@ -38,7 +38,7 @@ export const incrementStatus = createAsyncThunk(
   "tasks/increment",
   async (taskId: number) => {
     const response = await axios.patch(
-      `http://78.46.158.233:8082/Tasks/${taskId}/increment`
+      `${BACKEND_URL}/Tasks/${taskId}/increment`
     );
     return response.data;
   }
@@ -48,7 +48,7 @@ export const decrementStatus = createAsyncThunk(
   "tasks/decrement",
   async (taskId: number) => {
     const response = await axios.patch(
-      `http://78.46.158.233:8082/Tasks/${taskId}/decrement`
+      `${BACKEND_URL}/Tasks/${taskId}/decrement`
     );
     return response.data;
   }

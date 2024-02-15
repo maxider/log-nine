@@ -15,7 +15,7 @@ services:
     ports:
       - "8081:3000"
     environment:
-      - BACKEND_URL=${BACKEND_URL}
+      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 volumes:
   db-data:
