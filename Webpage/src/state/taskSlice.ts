@@ -94,7 +94,6 @@ const taskSlice = createSlice({
       state.status = "loading";
     });
     builder.addCase(incrementStatus.fulfilled, (state, action) => {
-      console.log(action.payload);
       state.tasks[action.payload.id].status = action.payload.status;
     });
 
