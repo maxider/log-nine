@@ -14,8 +14,8 @@ export const Swimlane: React.FC<SwimlaneProps> = ({
   onClickCard,
 }) => {
   return (
-    <div className="flex flex-col items-center gap-4 m-2 place-content-start w-72">
-      <h1>{header}</h1>
+    <div className="flex flex-col items-center gap-2 m-2 place-content-start">
+      <h1 className="m-0">{header}</h1>
       {tasks.map((task) => (
         <TaskCard
           key={task.id}
