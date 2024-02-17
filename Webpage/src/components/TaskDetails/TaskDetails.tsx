@@ -30,7 +30,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
       <Paper className="flex flex-col w-3/4 overflow-hidden bg-neutral-800">
         <TaskDetailsHeader task={task} target={target} editMode={editMode} />
         <Divider orientation="horizontal" flexItem />
-        <p className="px-3">{task?.description}</p>
+        <p className="px-3 whitespace-pre-wrap">{task?.description}</p>
         <Divider orientation="horizontal" flexItem />
         <TaskDetailsFotter
           editMode={editMode}

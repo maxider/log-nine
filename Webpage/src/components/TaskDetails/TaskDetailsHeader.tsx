@@ -18,7 +18,7 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
 
   return (
     <div className="flex flex-row">
-      <div className={`w-3 px-2 ${color}`}>
+      <div className={`px-2 ${color} flex justify-center items-center`}>
         <p className="font-bold text-center">{task?.visualId}</p>
       </div>
       <Divider orientation="vertical" flexItem />

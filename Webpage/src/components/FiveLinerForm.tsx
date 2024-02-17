@@ -2,7 +2,6 @@ import {
   Autocomplete,
   Backdrop,
   Button,
-  FormControl,
   FormControlLabel,
   Paper,
   Radio,
@@ -13,6 +12,9 @@ import {
 import BackdropProps from "../props/BackdropProps";
 import TeamComboBox from "./TeamComboBox";
 import { useState } from "react";
+import useAppDispatch from "../hooks/useAppDispatch";
+import { addTasks } from "../state/taskSlice";
+import { Task } from "../types/Task";
 
 interface FiveLinerFormProps extends BackdropProps {}
 
@@ -27,79 +29,91 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
 ) => {
   const { open, onClose } = props;
 
+  const dispatch = useAppDispatch();
+
   const [ortsangabe, setOrtsangabe] = useState<string>("");
   const [incomingDirection, setIncomingDirection] = useState<string>("N");
   const [outgoingDirection, setOutgoingDirection] = useState<string>("N");
 
-  const [redPatients, setRedPatients] = useState<string>("");
-  const [yellowPatients, setYellowPatients] = useState<string>("");
-  const [greenPatients, setGreenPatients] = useState<string>("");
+  const [targetId, setTargetId] = useState<number>(-1);
+
+  const [job, setJob] = useState<string>("");
 
   const [dangerLevel, setDangerLevel] = useState<string>("");
 
-  const handleSubmit = () => {
+  const [furtherInformation, setFurtherInformation] = useState<string>("");
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
     console.log({
       ortsangabe,
       incomingDirection,
       outgoingDirection,
-      redPatients,
-      yellowPatients,
-      greenPatients,
-      DangerLevel,
+      job,
+      dangerLevel,
     });
+
+    const task: Task = {
+      title: `5L-${job}`,
+      description: `Ortsangabe: ${ortsangabe}
+      \nEinflug: ${incomingDirection}
+      \nAusflug: ${outgoingDirection}
+      \nGefahrenstufe: ${dangerLevel}
+      \nZusatzinformationen: ${furtherInformation}`,
+      priority: 0,
+      targetId: targetId,
+      visualId: 232,
+      id: 232,
+      boardId: 1,
+      workers: [],
+      status: 0,
+    };
+
+    dispatch(addTasks([task]));
   };
 
   return (
     <Backdrop open={open}>
-      <Paper className="flex flex-col gap-4 p-4 bg-neutral-800">
-        <h1 className="text-center">5-Liner</h1>
-        <div className="flex flex-row items-center justify-between gap-4">
+      <Paper className="p-4 bg-neutral-800">
+        <h1 className="m-1 text-center">5-Liner</h1>
+        <form className="flex flex-col gap-2" onSubmit={handleSubmit}>
+          <div className="flex flex-row items-center justify-between gap-4">
+            <InputField
+              label={"Ortsangabe"}
+              required
+              value={ortsangabe}
+              onChange={(e) => setOrtsangabe(e.target.value)}
+            />
+            <CardinalSelection
+              label="An"
+              value={incomingDirection}
+              onChange={(e) => setIncomingDirection(e.target.value)}
+            />
+            <CardinalSelection
+              label="Ab"
+              value={outgoingDirection}
+              onChange={(e) => setOutgoingDirection(e.target.value)}
+            />
+          </div>
+          <TeamComboBox onChange={setTargetId} />
           <InputField
-            label={"Ortsangabe"}
             required
-            value={ortsangabe}
-            onChange={(e) => setOrtsangabe(e.target.value)}
+            label={"Auftrag"}
+            onChange={(e) => setJob(e.target.value)}
           />
-          <CardinalSelection
-            label="An"
-            value={incomingDirection}
-            onChange={(e) => setIncomingDirection(e.target.value)}
-          />
-          <CardinalSelection
-            label="Ab"
-            value={outgoingDirection}
-            onChange={(e) => setOutgoingDirection(e.target.value)}
-          />
-        </div>
-        <TeamComboBox />
-        <div className="flex flex-row gap-4">
+          <Feindlage onChange={(e) => setDangerLevel(e.target.value)} />
+          <InputField required label={"Übergabepunkt"} />
           <InputField
-            label={"Rot"}
-            value={redPatients}
-            onChange={(e) => setRedPatients(e.target.value)}
+            label={"Zusatzinformationen"}
+            value={furtherInformation}
+            onChange={(e) => setFurtherInformation(e.target.value)}
           />
-          <InputField
-            label={"Gelb"}
-            value={yellowPatients}
-            onChange={(e) => setYellowPatients(e.target.value)}
-          />
-          <InputField
-            label={"Grün"}
-            value={greenPatients}
-            onChange={(e) => setGreenPatients(e.target.value)}
-          />
-        </div>
 
-        <Feindlage onChange={(e) => setDangerLevel(e.target.value)} />
-
-        <InputField required label={"Übergabepunkt"} />
-
-        <InputField label={"Zusatzinformationen"} />
-
-        <div className="flex flex-row justify-around">
-          <Button onClick={handleSubmit}>Submit</Button>
-          <Button onClick={onClose}>Close</Button>
-        </div>
+          <div className="flex flex-row justify-around">
+            <Button type="submit">Submit</Button>
+            <Button onClick={onClose}>Close</Button>
+          </div>
+        </form>
       </Paper>
     </Backdrop>
   );

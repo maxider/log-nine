@@ -5,9 +5,11 @@ import { RootState } from "../state/store";
 import { Autocomplete } from "@mui/material";
 import { InputField } from "./FiveLinerForm";
 
-interface TeamComboBoxProps {}
+interface TeamComboBoxProps {
+  onChange: (teamId: number) => void;
+}
 
-const TeamComboBox: React.FC<TeamComboBoxProps> = () => {
+const TeamComboBox: React.FC<TeamComboBoxProps> = ({ onChange }) => {
   const boardId = useParamsNumber();
   const teams = useSelector((state: RootState) =>
     selectTeamsByBoardId(state, boardId)
@@ -21,6 +23,9 @@ const TeamComboBox: React.FC<TeamComboBoxProps> = () => {
           id: t.id,
         };
       })}
+      onChange={(e, value) => {
+        onChange(value?.id ?? -1);
+      }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
         <InputField {...params} required label={"Team"} />
