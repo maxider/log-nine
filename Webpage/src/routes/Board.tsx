@@ -5,14 +5,15 @@ import { AppDispatch, RootState } from "../state/store";
 import { selectTasksByBoardId } from "../state/Selectors/TaskSelectors";
 import { TaskStatus } from "../types/Task";
 import { Swimlane } from "../components/Swimlane";
-import { Divider } from "@mui/material";
+import { Button, Divider } from "@mui/material";
 import useParamsNumber from "../hooks/useParamsNumber";
 import { fetchTeamsByBoardId } from "../state/teamSlice";
-import TaskDetails from "../components/TaskDetails";
+import TaskDetails from "../components/TaskDetails/TaskDetails";
 import Header from "./Header";
 import TeamsListBackdrop from "../components/TeamsListBackdrop";
 import TeamEditBackdrop from "../components/TeamEditBackdrop";
 import CreateTeamBackdrop from "../components/CreateTeamBackdrop";
+import FiveLinerForm from "../components/FiveLinerForm";
 
 const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -32,6 +33,8 @@ const Board = () => {
 
   const [shouldShowTeams, setShouldShowTeams] = React.useState(false);
 
+  const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(true);
+
   useEffect(() => {
     dispatch(fetchTasksByBoardId(id));
     dispatch(fetchTeamsByBoardId(id));
@@ -43,6 +46,7 @@ const Board = () => {
 
   return (
     <>
+      <Button onClick={() => setShowFiveLinerForm(true)}>5-Liner</Button>
       <TeamsListBackdrop
         onClose={() => {
           setShouldShowTeams(false);
@@ -66,6 +70,10 @@ const Board = () => {
       <CreateTeamBackdrop
         open={isCreatingTeam}
         onClose={() => setIsCreatingTeam(false)}
+      />
+      <FiveLinerForm
+        open={showFiveLinerForm}
+        onClose={() => setShowFiveLinerForm(false)}
       />
       <div className="flex flex-col h-screen">
         <div className="sticky top-0">

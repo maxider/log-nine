@@ -5,7 +5,7 @@ import TaskCard from "./components/TaskCard";
 import { Button } from "@mui/material";
 import { selectTasksByBoardId } from "./state/Selectors/TaskSelectors";
 import React from "react";
-import TaskDetails from "./components/TaskDetails";
+import TaskDetails from "./components/TaskDetails/TaskDetails";
 import "./App.css";
 import { selectTeams } from "./state/Selectors/TeamSelectors";
 import { Routes, Route } from "react-router-dom";

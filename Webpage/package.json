@@ -19,6 +19,9 @@
     "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "axios": "^1.6.7",
+    "class-variance-authority": "^0.7.0",
+    "clsx": "^2.1.0",
+    "lucide-react": "^0.331.0",
     "primereact": "^10.3.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -26,6 +29,8 @@
     "react-redux": "^9.0.4",
     "react-router-dom": "^6.22.0",
     "react-scripts": "5.0.1",
+    "tailwind-merge": "^2.2.1",
+    "tailwindcss-animate": "^1.0.7",
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
