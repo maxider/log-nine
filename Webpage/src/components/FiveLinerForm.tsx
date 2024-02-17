@@ -2,6 +2,7 @@ import {
   Autocomplete,
   Backdrop,
   Button,
+  Divider,
   FormControlLabel,
   Paper,
   Radio,
@@ -15,6 +16,7 @@ import { useState } from "react";
 import useAppDispatch from "../hooks/useAppDispatch";
 import { addTasks } from "../state/taskSlice";
 import { Task } from "../types/Task";
+import { Divide } from "lucide-react";
 
 interface FiveLinerFormProps extends BackdropProps {}
 
@@ -41,6 +43,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
 
   const [dangerLevel, setDangerLevel] = useState<string>("");
 
+  const [exchangePoint, setExchangePoint] = useState<string>("");
   const [furtherInformation, setFurtherInformation] = useState<string>("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -55,11 +58,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
 
     const task: Task = {
       title: `5L-${job}`,
-      description: `Ortsangabe: ${ortsangabe}
-      \nEinflug: ${incomingDirection}
-      \nAusflug: ${outgoingDirection}
-      \nGefahrenstufe: ${dangerLevel}
-      \nZusatzinformationen: ${furtherInformation}`,
+      description: `Ortsangabe: ${ortsangabe}\nEinflug: ${incomingDirection}\nAusflug: ${outgoingDirection}\nGefahrenstufe: ${dangerLevel}\nÜbergabepunkt: ${exchangePoint}\nZusatzinformationen: ${furtherInformation}`,
       priority: 0,
       targetId: targetId,
       visualId: 232,
@@ -70,6 +69,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
     };
 
     dispatch(addTasks([task]));
+    onClose();
   };
 
   return (
@@ -102,7 +102,12 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
             onChange={(e) => setJob(e.target.value)}
           />
           <Feindlage onChange={(e) => setDangerLevel(e.target.value)} />
-          <InputField required label={"Übergabepunkt"} />
+          <InputField
+            required
+            label={"Übergabepunkt"}
+            value={exchangePoint}
+            onChange={(e) => setExchangePoint(e.target.value)}
+          />
           <InputField
             label={"Zusatzinformationen"}
             value={furtherInformation}
