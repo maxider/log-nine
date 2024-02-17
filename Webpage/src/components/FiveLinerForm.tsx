@@ -17,6 +17,7 @@ import useAppDispatch from "../hooks/useAppDispatch";
 import { addTasks } from "../state/taskSlice";
 import { Task } from "../types/Task";
 import { Divide } from "lucide-react";
+import InputField from "./InputField";
 
 interface FiveLinerFormProps extends BackdropProps {}
 
@@ -185,33 +186,3 @@ const Feindlage: React.FC<FeindlageProps> = ({ onChange }) => {
     </div>
   );
 };
-
-export const InputField = styled(TextField)({
-  "& .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-    borderColor: "#717172",
-  },
-  "&:hover .MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-    borderColor: "white",
-  },
-  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline": {
-    borderColor: "white",
-  },
-  "& .MuiOutlinedInput-input": {
-    color: "white",
-  },
-  "&:hover .MuiOutlinedInput-input": {
-    color: "white",
-  },
-  "& .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-input": {
-    color: "white",
-  },
-  "& .MuiInputLabel-outlined": {
-    color: "white",
-  },
-  "&:hover .MuiInputLabel-outlined": {
-    color: "white",
-  },
-  "& .MuiInputLabel-outlined.Mui-focused": {
-    color: "white",
-  },
-});
