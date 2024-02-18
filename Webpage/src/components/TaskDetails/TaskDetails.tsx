@@ -9,6 +9,8 @@ import { selectTeamById } from "../../state/Selectors/TeamSelectors";
 import TaskDetailsHeader, { EditableInputProps } from "./TaskDetailsHeader";
 import TaskDetailsFotter from "./TaskDetailsFotter";
 import InputField from "../InputField";
+import useAppDispatch from "../../hooks/useAppDispatch";
+import { EditTask } from "../../state/taskSlice";
 
 interface TaskDetailsProps extends BackdropProps {
   taskId: number;
@@ -31,6 +33,25 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
     task?.description
   );
   const [editTargetId, setEditTargetId] = React.useState(task?.targetId ?? -1);
+
+  const dispatch = useAppDispatch();
+
+  const handleSave = () => {
+    dispatch(
+      EditTask({
+        id: task?.id,
+        creationParams: {
+          boardId: task?.boardId,
+          title: editTitle,
+          description: editDescription,
+          targetId: editTargetId,
+          status: task?.status,
+          priority: task?.priority,
+          taskType: 0,
+        },
+      })
+    );
+  };
 
   const seedState = () => {
     setEditTitle(task?.title);
@@ -70,6 +91,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
           hasChanges={hasChanges}
           onClose={onClose}
           onCancel={() => seedState()}
+          onSave={() => handleSave()}
           taskId={task?.id ?? -1}
         />
       </Paper>
