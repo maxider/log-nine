@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useCallback, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchTasksByBoardId } from "../state/taskSlice";
 import { AppDispatch, RootState } from "../state/store";
@@ -35,10 +35,19 @@ const Board = () => {
 
   const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(false);
 
-  useEffect(() => {
+  const fetchState = useCallback(() => {
     dispatch(fetchTasksByBoardId(id));
     dispatch(fetchTeamsByBoardId(id));
   }, [dispatch, id]);
+
+  useEffect(() => {
+    fetchState();
+    const intervalId = setInterval(() => {
+      dispatch(fetchTasksByBoardId(id));
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch, fetchState, id]);
 
   const handleShowTeams = () => {
     setShouldShowTeams(true);
@@ -76,7 +85,10 @@ const Board = () => {
       />
       <div className="flex flex-col h-screen">
         <div className="sticky top-0">
-          <Header onClickShowTeams={handleShowTeams} onFiveLiner={() => setShowFiveLinerForm(true)}/>
+          <Header
+            onClickShowTeams={handleShowTeams}
+            onFiveLiner={() => setShowFiveLinerForm(true)}
+          />
         </div>
         <div className="flex flex-row justify-center flex-grow bg-neutral-800">
           {/* <TeamsLane />
