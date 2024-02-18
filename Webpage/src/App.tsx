@@ -38,19 +38,7 @@ const App = () => {
   });
 
   function addTasks(): void {
-    dispatch(
-      addNewTask({
-        title: "New Task",
-        description: "New Description",
-        priority: 0,
-        id: 0,
-        visualId: 42,
-        boardId: 1,
-        workers: [],
-        targetId: undefined,
-        status: 0,
-      })
-    );
+    
   }
 
   return (

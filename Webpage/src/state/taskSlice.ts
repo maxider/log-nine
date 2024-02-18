@@ -1,5 +1,10 @@
-import { PayloadAction, createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import { Task, TaskStatus } from "../types/Task";
+import {
+  PayloadAction,
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+} from "@reduxjs/toolkit";
+import { Priority, Task, TaskStatus } from "../types/Task";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 
@@ -23,12 +28,22 @@ export const fetchTasksByBoardId = createAsyncThunk(
   }
 );
 
+export type TaskCreationParams = {
+  boardId: number;
+  title: string;
+  description: string;
+  targetId?: number;
+  status: TaskStatus;
+  priority: Priority;
+  taskType: 0;
+};
+
 export const addNewTask = createAsyncThunk(
   "tasks/addNewTask",
-  async (task: Task) => {
+  async (creationParams: TaskCreationParams) => {
     const response = await axios.post(
-      `${BACKEND_URL}/Tasks/CreateTask`,
-      task
+      `${BACKEND_URL}/Tasks`,
+      creationParams
     );
     return response.data;
   }
@@ -54,27 +69,10 @@ export const decrementStatus = createAsyncThunk(
   }
 );
 
-
 const taskSlice = createSlice({
   initialState: initialState,
   name: "task",
-  reducers: {
-    addTasks(state, action: PayloadAction<Task[]>) {
-      action.payload.forEach((t) => {
-        state.tasks[t.id] = t;
-      });
-    },
-    // incrementStatus(state, action: PayloadAction<number>) {
-    //   const curStatus = state.tasks[action.payload]?.status;
-    //   if (curStatus === undefined) return;
-    //   state.tasks[action.payload].status = Math.min(5, curStatus + 1);
-    // },
-    decrementStatus(state, action: PayloadAction<number>) {
-      const curStatus = state.tasks[action.payload]?.status;
-      if (!curStatus) return;
-      state.tasks[action.payload].status = Math.max(0, curStatus - 1);
-    },
-  },
+  reducers: {},
   extraReducers: (builder) => {
     builder.addCase(fetchTasksByBoardId.pending, (state, action) => {
       state.status = "loading";
@@ -89,7 +87,7 @@ const taskSlice = createSlice({
       state.status = "failed";
       state.error = action.error.message;
     });
-    
+
     builder.addCase(incrementStatus.pending, (state, action) => {
       state.status = "loading";
     });
@@ -105,14 +103,12 @@ const taskSlice = createSlice({
     });
 
     builder.addCase(addNewTask.pending, (state, action) => {
-        state.status = "loading";
+      state.status = "loading";
     });
     builder.addCase(addNewTask.fulfilled, (state, action) => {
       state.tasks[action.payload.id] = action.payload;
     });
   },
 });
-
-export const { addTasks } = taskSlice.actions;
 
 export default taskSlice.reducer;

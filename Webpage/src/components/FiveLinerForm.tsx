@@ -11,9 +11,9 @@ import BackdropProps from "../props/BackdropProps";
 import TeamComboBox from "./TeamComboBox";
 import { useState } from "react";
 import useAppDispatch from "../hooks/useAppDispatch";
-import { addTasks } from "../state/taskSlice";
 import { Task } from "../types/Task";
 import InputField from "./InputField";
+import { TaskCreationParams, addNewTask } from "../state/taskSlice";
 
 interface FiveLinerFormProps extends BackdropProps {}
 
@@ -45,13 +45,6 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log({
-      ortsangabe,
-      incomingDirection,
-      outgoingDirection,
-      job,
-      dangerLevel,
-    });
 
     const task: Task = {
       title: `5L-${job}`,
@@ -65,7 +58,17 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
       status: 0,
     };
 
-    dispatch(addTasks([task]));
+    const creationParams: TaskCreationParams = {
+      boardId: 1,
+      title: task.title,
+      description: task.description,
+      priority: task.priority,
+      targetId: task.targetId,
+      status: 0,
+      taskType: 0,
+    };
+
+    dispatch(addNewTask(creationParams));
     onClose();
   };
 

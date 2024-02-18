@@ -58,6 +58,8 @@ public class TasksController : ControllerBase {
         {
             return NotFound();
         }
+        
+        //TODO: check if target exists.
 
         var visualId = board.VisualIdCounter;
         var newTask = new JobTask{
@@ -68,7 +70,7 @@ public class TasksController : ControllerBase {
             Status = jobTask.Status,
             Priority = jobTask.Priority,
             TaskType = jobTask.TaskType,
-            TargetId = null
+            TargetId = jobTask.TargetId
         };
         context.JobTasks.Add(newTask);
         board.VisualIdCounter++;
@@ -154,5 +156,5 @@ public class TasksController : ControllerBase {
     }
 }
 
-public record struct JobTaskCreationParams(int BoardId, string Title, string Description,
+public record struct JobTaskCreationParams(int BoardId, string Title, string Description, int? TargetId,
     JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType);
