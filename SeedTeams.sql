@@ -19,4 +19,4 @@ VALUES
     ("Jaguar 5", 1, 156, 52),
     ("Condor 1", 1, 311, 52),
     ("Condor 2", 1, 312, 52),
-    ("Nighthawk", 1, 321, 52),
+    ("Nighthawk", 1, 321, 52);
