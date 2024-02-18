@@ -33,7 +33,7 @@ const Board = () => {
 
   const [shouldShowTeams, setShouldShowTeams] = React.useState(false);
 
-  const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(true);
+  const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(false);
 
   useEffect(() => {
     dispatch(fetchTasksByBoardId(id));
@@ -46,7 +46,6 @@ const Board = () => {
 
   return (
     <>
-      <Button onClick={() => setShowFiveLinerForm(true)}>5-Liner</Button>
       <TeamsListBackdrop
         onClose={() => {
           setShouldShowTeams(false);
@@ -77,7 +76,7 @@ const Board = () => {
       />
       <div className="flex flex-col h-screen">
         <div className="sticky top-0">
-          <Header onClickShowTeams={handleShowTeams} />
+          <Header onClickShowTeams={handleShowTeams} onFiveLiner={() => setShowFiveLinerForm(true)}/>
         </div>
         <div className="flex flex-row justify-center flex-grow bg-neutral-800">
           {/* <TeamsLane />
