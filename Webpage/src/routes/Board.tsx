@@ -5,7 +5,7 @@ import { AppDispatch, RootState } from "../state/store";
 import { selectTasksByBoardId } from "../state/Selectors/TaskSelectors";
 import { TaskStatus } from "../types/Task";
 import { Swimlane } from "../components/Swimlane";
-import { Button, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import useParamsNumber from "../hooks/useParamsNumber";
 import { fetchTeamsByBoardId } from "../state/teamSlice";
 import TaskDetails from "../components/TaskDetails/TaskDetails";
@@ -23,6 +23,8 @@ const Board = () => {
     selectTasksByBoardId(state, id)
   );
 
+  const [isEditing, setIsEditing] = React.useState(false);
+
   const [isViewingTask, setIsViewingTask] = React.useState(false);
   const [lastViewedTaskId, setLastViewedTaskId] = React.useState(-1);
 
@@ -35,19 +37,21 @@ const Board = () => {
 
   const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(false);
 
-  const fetchState = useCallback(() => {
-    dispatch(fetchTasksByBoardId(id));
-    dispatch(fetchTeamsByBoardId(id));
-  }, [dispatch, id]);
-
   useEffect(() => {
+    const fetchState = () => {
+      console.log(isEditing);
+      if (isEditing) return;
+      dispatch(fetchTasksByBoardId(id));
+      dispatch(fetchTeamsByBoardId(id));
+    };
+
     fetchState();
     const intervalId = setInterval(() => {
-      dispatch(fetchTasksByBoardId(id));
+      fetchState();
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [dispatch, fetchState, id]);
+  }, [dispatch, id, isEditing]);
 
   const handleShowTeams = () => {
     setShouldShowTeams(true);
@@ -94,8 +98,14 @@ const Board = () => {
           {/* <TeamsLane />
         <Divider orientation="vertical" flexItem /> */}
           <TaskDetails
-            onClose={() => setIsViewingTask(false)}
+            onClose={() => {
+              setIsViewingTask(false);
+              setIsEditing(false);
+            }}
             open={isViewingTask}
+            onEditing={() => {
+              setIsEditing(true);
+            }}
             taskId={lastViewedTaskId}
           />
           {Object.keys(TaskStatus)

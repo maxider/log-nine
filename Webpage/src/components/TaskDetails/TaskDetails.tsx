@@ -14,9 +14,15 @@ import { EditTask } from "../../state/taskSlice";
 
 interface TaskDetailsProps extends BackdropProps {
   taskId: number;
+  onEditing: () => void;
 }
 
-const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
+const TaskDetails: React.FC<TaskDetailsProps> = ({
+  onClose,
+  open,
+  taskId,
+  onEditing,
+}) => {
   const task: Task = useSelector((state: RootState) =>
     selectTaskById(state, taskId)
   );
@@ -88,6 +94,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({ onClose, open, taskId }) => {
         <TaskDetailsFotter
           editMode={editMode}
           setEditMode={setEditMode}
+          onEditing={onEditing}
           hasChanges={hasChanges}
           onClose={onClose}
           onCancel={() => seedState()}

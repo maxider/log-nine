@@ -37,37 +37,12 @@ const App = () => {
     return { label: t.name, id: t.id };
   });
 
-  function addTasks(): void {
-    
-  }
+  function addTasks(): void {}
 
   return (
     <Routes>
       <Route path="/Board/:id" element={<Board />} />
     </Routes>
-  );
-
-  return (
-    <div className="flex flex-col items-center w-screen h-screen gap-4 m-0 bg-slate-900">
-      <Button variant="contained" onClick={addTasks}>
-        Add Task
-      </Button>
-      <TaskDetails
-        onClose={() => setIsViewingTask(false)}
-        open={isViewingTask}
-        taskId={lastViedTaskId}
-      />
-      {tasks.map((t) => (
-        <TaskCard
-          key={t.id}
-          task={t}
-          onClick={() => {
-            setIsViewingTask(true);
-            setLastViewedTaskId(t.id);
-          }}
-        />
-      ))}
-    </div>
   );
 };
 

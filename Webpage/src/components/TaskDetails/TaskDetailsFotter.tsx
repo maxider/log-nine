@@ -11,6 +11,7 @@ interface TaskDetailsFotterProps {
   onClose: () => void;
   onCancel: () => void;
   setEditMode: (editMode: boolean) => void;
+  onEditing: () => void;
   onSave: () => void;
 }
 
@@ -25,6 +26,7 @@ const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
     taskId,
     onCancel,
     onSave,
+    onEditing,
   } = props;
 
   const dispatch = useAppDispatch();
@@ -50,7 +52,10 @@ const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
         ) : (
           <DefaultButtonGroup
             onClose={onClose}
-            onEdit={() => setEditMode(true)}
+            onEdit={() => {
+              setEditMode(true);
+              onEditing();
+            }}
           />
         )}
       </div>
