@@ -92,7 +92,7 @@ public class TasksController : ControllerBase {
         task.Priority = jobTask.Priority;
         task.TaskType = jobTask.TaskType;
         await context.SaveChangesAsync();
-        return NoContent();
+        return Ok(new JobTaskDTO(task));
     }
 
     [HttpPatch("{id}/increment")]
