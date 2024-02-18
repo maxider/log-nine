@@ -30,12 +30,16 @@ const TeamsListBackdrop: React.FC<TeamsListBackdropProps> = ({
             <h2 className="m-0 mr-20" key={t.id}>
               {t.name}
             </h2>
-            <Button onClick={() => onEdit(t.id)}>Edit</Button>
+            <Button disabled onClick={() => onEdit(t.id)}>
+              Edit
+            </Button>
           </div>
         ))}
         <Divider orientation="horizontal" flexItem />
         <div className="flex flex-row justify-around mt-2">
-          <Button onClick={onCreate}>Create</Button>
+          <Button disabled onClick={onCreate}>
+            Create
+          </Button>
           <Button onClick={onClose}>Close</Button>
         </div>
       </Paper>
