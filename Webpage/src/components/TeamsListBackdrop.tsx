@@ -24,19 +24,26 @@ const TeamsListBackdrop: React.FC<TeamsListBackdropProps> = ({
 
   return (
     <Backdrop open={open}>
-      <Paper className="flex flex-col p-2 min-h-2/4 bg-neutral-800">
-        {teams.map((t) => (
-          <div className="flex flex-row justify-between p-2">
-            <h2 className="m-0 mr-20" key={t.id}>
-              {t.name}
-            </h2>
-            <Button disabled onClick={() => onEdit(t.id)}>
-              Edit
-            </Button>
-          </div>
-        ))}
+      <Paper className="flex flex-col p-2 max-h-4/5 min-h-2/4 bg-neutral-800">
+        <div className="overflow-y-scroll">
+          {teams.map((t) => (
+            <div className="flex flex-row items-center justify-between p-2">
+              <div className="flex flex-row items-center justify-between grow ">
+                <h2 className="m-0 mr-20" key={t.id}>
+                  {t.name}
+                </h2>
+                <h2 className="px-8">
+                  Sr:{t.srFrequency} Lr:{t.lrFrequency}
+                </h2>
+              </div>
+              <Button disabled onClick={() => onEdit(t.id)}>
+                Edit
+              </Button>
+            </div>
+          ))}
+        </div>
         <Divider orientation="horizontal" flexItem />
-        <div className="flex flex-row justify-around mt-2">
+        <div className="relative flex flex-row justify-around mt-2">
           <Button disabled onClick={onCreate}>
             Create
           </Button>
