@@ -3,7 +3,7 @@ import useParamsNumber from "../hooks/useParamsNumber";
 import { selectTeamsByBoardId } from "../state/Selectors/TeamSelectors";
 import { RootState } from "../state/store";
 import { Autocomplete } from "@mui/material";
-import { InputField } from "./FiveLinerForm";
+import InputField from "./InputField";
 
 interface TeamComboBoxProps {
   onChange: (teamId: number) => void;

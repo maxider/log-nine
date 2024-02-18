@@ -2,13 +2,10 @@ import {
   Autocomplete,
   Backdrop,
   Button,
-  Divider,
   FormControlLabel,
   Paper,
   Radio,
   RadioGroup,
-  TextField,
-  styled,
 } from "@mui/material";
 import BackdropProps from "../props/BackdropProps";
 import TeamComboBox from "./TeamComboBox";
@@ -16,7 +13,6 @@ import { useState } from "react";
 import useAppDispatch from "../hooks/useAppDispatch";
 import { addTasks } from "../state/taskSlice";
 import { Task } from "../types/Task";
-import { Divide } from "lucide-react";
 import InputField from "./InputField";
 
 interface FiveLinerFormProps extends BackdropProps {}

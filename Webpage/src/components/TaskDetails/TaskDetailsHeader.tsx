@@ -2,6 +2,7 @@ import { Divider, TextField } from "@mui/material";
 import { Task, Team } from "../../types/Task";
 import { prioToColor } from "../../Helpers";
 import React from "react";
+import InputField from "../InputField";
 
 interface TaskDetailsHeaderProps {
   task: Task;
@@ -18,14 +19,14 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
 
   return (
     <div className="flex flex-row">
-      <div className={`px-2 ${color} flex justify-center items-center`}>
+      <div className={`px-2 ${color} flex justify-center items-center w-10`}>
         <p className="font-bold text-center">{task?.visualId}</p>
       </div>
       <Divider orientation="vertical" flexItem />
       <EditableTitle
         editMode={editMode}
         value={task?.title ?? ""}
-        label={"lable"}
+        label={"Title"}
         onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
           throw new Error("Function not implemented.");
         }}
@@ -54,16 +55,11 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
   label,
 }) => {
   return (
-    <div className="my-2 grow">
+    <div className="px-2 my-2 grow">
       {editMode ? (
-        <TextField
-          label={label}
-          className="border-white"
-          InputLabelProps={{ className: "text-white" }}
-          InputProps={{ className: "before:border-white" }}
-        />
+        <InputField label={label} value={value} />
       ) : (
-        <p className="px-2 font-bold">{value}</p>
+        <p className="font-bold">{value}</p>
       )}
     </div>
   );
