@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace FunWithEF.Migrations
+namespace LogNineBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,8 @@ namespace FunWithEF.Migrations
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Title = table.Column<string>(type: "TEXT", nullable: false)
+                    Title = table.Column<string>(type: "TEXT", nullable: false),
+                    VisualIdCounter = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,7 +31,9 @@ namespace FunWithEF.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Name = table.Column<string>(type: "TEXT", nullable: false),
-                    BoardId = table.Column<int>(type: "INTEGER", nullable: false)
+                    BoardId = table.Column<int>(type: "INTEGER", nullable: false),
+                    SrFrequency = table.Column<float>(type: "REAL", nullable: false),
+                    LrFrequency = table.Column<float>(type: "REAL", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -51,7 +54,7 @@ namespace FunWithEF.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     VisualId = table.Column<int>(type: "INTEGER", nullable: false),
                     BoardId = table.Column<int>(type: "INTEGER", nullable: false),
-                    TargetId = table.Column<int>(type: "INTEGER", nullable: false),
+                    TargetId = table.Column<int>(type: "INTEGER", nullable: true),
                     Title = table.Column<string>(type: "TEXT", nullable: false),
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
@@ -71,8 +74,7 @@ namespace FunWithEF.Migrations
                         name: "FK_JobTasks_Teams_TargetId",
                         column: x => x.TargetId,
                         principalTable: "Teams",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateIndex(

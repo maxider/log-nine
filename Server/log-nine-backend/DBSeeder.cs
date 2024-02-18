@@ -88,6 +88,7 @@ public static class DbSeeder {
             }
         };
         context.JobTasks.AddRange(jobTasks);
+        context.Boards.Single(b => b.Id == 1).VisualIdCounter = 13;
         context.SaveChanges();
 
         return true;

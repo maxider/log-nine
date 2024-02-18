@@ -3,6 +3,7 @@
 public class Board {
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
+    public int VisualIdCounter { get; set; } = 1;
     public List<JobTask> Tasks { get; set; } = new();
     public List<Team> Teams { get; set; } = new();
 }

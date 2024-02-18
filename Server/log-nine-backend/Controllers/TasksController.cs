@@ -52,18 +52,28 @@ public class TasksController : ControllerBase {
 
     [HttpPost]
     public async Task<IActionResult> Create(JobTaskCreationParams jobTask) {
-        var newTask = new LogNineBackend.Models.JobTask{
-            VisualId = jobTask.VisualId,
+        var board = await context.Boards.FindAsync(jobTask.BoardId);
+
+        if (board == null)
+        {
+            return NotFound();
+        }
+
+        var visualId = board.VisualIdCounter;
+        var newTask = new JobTask{
+            VisualId = visualId,
             BoardId = jobTask.BoardId,
             Title = jobTask.Title,
             Description = jobTask.Description,
             Status = jobTask.Status,
             Priority = jobTask.Priority,
-            TaskType = jobTask.TaskType
+            TaskType = jobTask.TaskType,
+            TargetId = null
         };
         context.JobTasks.Add(newTask);
+        board.VisualIdCounter++;
         await context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetById), new{ id = newTask.Id }, newTask);
+        return CreatedAtAction(nameof(GetById), new{ id = newTask.Id }, new JobTaskDTO(newTask));
     }
 
     [HttpPut("{id}")]
@@ -73,7 +83,6 @@ public class TasksController : ControllerBase {
         {
             return NotFound();
         }
-        task.VisualId = jobTask.VisualId;
         task.BoardId = jobTask.BoardId;
         task.Title = jobTask.Title;
         task.Description = jobTask.Description;
@@ -106,8 +115,8 @@ public class TasksController : ControllerBase {
         });
     }
 
-    private static LogNineBackend.Models.JobTask.JobTaskStatus ClampStatus(LogNineBackend.Models.JobTask task) {
-        return (LogNineBackend.Models.JobTask.JobTaskStatus)Math.Clamp((int)task.Status, 0, (int)LogNineBackend.Models.JobTask.JobTaskStatus.Cancelled);
+    private static JobTask.JobTaskStatus ClampStatus(JobTask task) {
+        return (JobTask.JobTaskStatus)Math.Clamp((int)task.Status, 0, (int)JobTask.JobTaskStatus.Cancelled);
     }
 
     [HttpPatch("{id}/decrement")]
@@ -145,5 +154,5 @@ public class TasksController : ControllerBase {
     }
 }
 
-public record struct JobTaskCreationParams(int VisualId, int BoardId, string Title, string Description,
-    LogNineBackend.Models.JobTask.JobTaskStatus Status, LogNineBackend.Models.JobTask.JobTaskPriority Priority, LogNineBackend.Models.JobTask.JobTaskType TaskType);
+public record struct JobTaskCreationParams(int BoardId, string Title, string Description,
+    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType);

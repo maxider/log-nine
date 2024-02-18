@@ -64,7 +64,7 @@ public class BoardsController : ControllerBase {
         {
             return NotFound();
         }
-        var tasks = await context.JobTasks.Where(t => t.BoardId == id).Select(t => new JobTaskDTO{
+        var tasks = await (context.JobTasks.Where(t => t.BoardId == id)).Select(t => new JobTaskDTO{
             Id = t.Id,
             VisualId = t.VisualId,
             BoardId = t.BoardId,

@@ -26,8 +26,8 @@ public class JobTask {
     public int VisualId { get; set; }
     public int BoardId { get; set; }
     public Board Board { get; set; }
-    public int TargetId { get; set; }
-    public Team Target { get; set; }
+    public int? TargetId { get; set; } = null!;
+    public Team? Target { get; set; } = null!;
     public string Title { get; set; }
     public string Description { get; set; }
     public JobTaskStatus Status { get; set; }
@@ -35,5 +35,10 @@ public class JobTask {
     public JobTaskType TaskType { get; set; }
 }
 
-public record struct JobTaskDTO(int Id, int VisualId, int BoardId, int TargetId, string Title, string Description,
-    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType);
+public record struct JobTaskDTO(int Id, int VisualId, int BoardId, int? TargetId, string Title, string Description,
+    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType) {
+    public JobTaskDTO(JobTask task) : this(task.Id, task.VisualId, task.BoardId, task.TargetId, task.Title,
+        task.Description,
+        task.Status, task.Priority, task.TaskType) {
+    }
+}
