@@ -38,12 +38,22 @@ export type TaskCreationParams = {
   taskType: 0;
 };
 
+export type TaskEditParams = { id: number; creationParams: TaskCreationParams };
+
 export const addNewTask = createAsyncThunk(
   "tasks/addNewTask",
   async (creationParams: TaskCreationParams) => {
-    const response = await axios.post(
-      `${BACKEND_URL}/Tasks`,
-      creationParams
+    const response = await axios.post(`${BACKEND_URL}/Tasks`, creationParams);
+    return response.data;
+  }
+);
+
+export const EditTask = createAsyncThunk(
+  "tasks/editTask",
+  async (params: TaskEditParams) => {
+    const response = await axios.put(
+      `${BACKEND_URL}/Tasks/${params.id}`,
+      params.creationParams
     );
     return response.data;
   }
@@ -106,6 +116,13 @@ const taskSlice = createSlice({
       state.status = "loading";
     });
     builder.addCase(addNewTask.fulfilled, (state, action) => {
+      state.tasks[action.payload.id] = action.payload;
+    });
+
+    builder.addCase(EditTask.pending, (state, action) => {
+      state.status = "loading";
+    });
+    builder.addCase(EditTask.fulfilled, (state, action) => {
       state.tasks[action.payload.id] = action.payload;
     });
   },

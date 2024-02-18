@@ -5,31 +5,44 @@ import React from "react";
 import InputField from "../InputField";
 
 interface TaskDetailsHeaderProps {
-  task: Task;
+  visualId: number;
+  title: string;
   target: Team;
+  priority: number;
   editMode: boolean;
+  setEditTitle: React.Dispatch<React.SetStateAction<string>>;
+  setEditTargetId: React.Dispatch<React.SetStateAction<number>>;
+  onChange: () => void;
 }
 
 const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
   props: TaskDetailsHeaderProps
 ) => {
-  const { task, target, editMode } = props;
+  const {
+    visualId,
+    title,
+    target,
+    priority,
+    editMode,
+    setEditTitle,
+    setEditTargetId,
+    onChange,
+  } = props;
 
-  const color = prioToColor(task?.priority);
+  const color = prioToColor(priority);
 
   return (
     <div className="flex flex-row">
       <div className={`px-2 ${color} flex justify-center items-center w-10`}>
-        <p className="font-bold text-center">{task?.visualId}</p>
+        <p className="font-bold text-center">{visualId}</p>
       </div>
       <Divider orientation="vertical" flexItem />
       <EditableTitle
         editMode={editMode}
-        value={task?.title ?? ""}
+        value={title}
         label={"Title"}
-        onChange={function (e: React.ChangeEvent<HTMLInputElement>): void {
-          throw new Error("Function not implemented.");
-        }}
+        setEditTitle={setEditTitle}
+        onChange={onChange}
       />
       <Divider orientation="vertical" flexItem />
       <div className="flex flex-col items-center p-2 font-bold">
@@ -42,22 +55,36 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
   );
 };
 
-interface EditableTitleProps {
+export interface EditableInputProps {
   editMode: boolean;
   value: string;
   label: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: () => void;
+}
+
+interface EditableTitleProps extends EditableInputProps {
+  setEditTitle: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const EditableTitle: React.FC<EditableTitleProps> = ({
   editMode,
   value,
   label,
+  setEditTitle,
+  onChange,
 }) => {
   return (
     <div className="px-2 my-2 grow">
       {editMode ? (
-        <InputField label={label} value={value} />
+        <InputField
+          label={label}
+          value={value}
+          fullWidth
+          onChange={(e) => {
+            setEditTitle(e.target.value);
+            onChange();
+          }}
+        />
       ) : (
         <p className="font-bold">{value}</p>
       )}

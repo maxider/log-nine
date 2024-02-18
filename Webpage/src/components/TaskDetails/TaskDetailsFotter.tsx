@@ -9,14 +9,15 @@ interface TaskDetailsFotterProps {
   hasChanges?: boolean;
   taskId: number;
   onClose: () => void;
+  onCancel: () => void;
   setEditMode: (editMode: boolean) => void;
-  setHasChanges: (hasChanges: boolean) => void;
 }
 
 const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
   props: TaskDetailsFotterProps
 ) => {
-  const { editMode, hasChanges, onClose, setEditMode, taskId } = props;
+  const { editMode, hasChanges, onClose, setEditMode, taskId, onCancel } =
+    props;
 
   const dispatch = useAppDispatch();
 
@@ -29,7 +30,11 @@ const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
         {editMode ? (
           <EditButtonGroup
             hasChanges={hasChanges ?? false}
-            onCancel={() => setEditMode(false)}
+            onCancel={() => {
+              setEditMode(false);
+              onCancel();
+            }}
+            onSave={() => setEditMode(false)}
           />
         ) : (
           <DefaultButtonGroup
@@ -65,15 +70,19 @@ const DefaultButtonGroup: React.FC<DefaultButtonGroupProps> = ({
 interface EditButtonGroupProps {
   hasChanges: boolean;
   onCancel: () => void;
+  onSave: () => void;
 }
 
 const EditButtonGroup: React.FC<EditButtonGroupProps> = ({
   hasChanges,
   onCancel,
+  onSave,
 }) => {
   return (
     <>
-      <Button disabled={!hasChanges}>Save</Button>
+      <Button disabled={!hasChanges} onClick={onSave}>
+        Save
+      </Button>
       <Button onClick={onCancel}>Cancel</Button>
     </>
   );
