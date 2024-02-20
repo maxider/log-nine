@@ -95,7 +95,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
               onChange={(e) => setOutgoingDirection(e.target.value)}
             />
           </div>
-          <TeamComboBox onChange={setTargetId} label="Target"/>
+          <TeamComboBox onChange={setTargetId} label="Target" />
           <InputField
             required
             label={"Auftrag"}
@@ -151,10 +151,10 @@ const CardinalSelection: React.FC<CardinalDirectionsProps> = ({
   return (
     <Autocomplete
       options={CardinalDirections}
+      onChange={(e, value) => onChange(value?.label ?? "")}
       renderInput={(params) => (
         <InputField
           {...params}
-          onChange={onChange}
           label={label}
           value={value}
         />
