@@ -1,16 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "./state/store";
-import { addNewTask } from "./state/taskSlice";
-import TaskCard from "./components/TaskCard";
-import { Button } from "@mui/material";
 import { selectTasksByBoardId } from "./state/Selectors/TaskSelectors";
 import React from "react";
-import TaskDetails from "./components/TaskDetails/TaskDetails";
 import "./App.css";
 import { selectTeams } from "./state/Selectors/TeamSelectors";
 import { Routes, Route } from "react-router-dom";
 import Board from "./routes/Board";
-import Header from "./routes/Header";
+import Home from "./routes/Home";
 
 const Nav = () => {
   return (
@@ -41,6 +37,7 @@ const App = () => {
 
   return (
     <Routes>
+      <Route path="/" element={<Home />} />
       <Route path="/Board/:id" element={<Board />} />
     </Routes>
   );

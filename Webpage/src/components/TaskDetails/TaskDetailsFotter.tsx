@@ -4,6 +4,9 @@ import { decrementStatus, incrementStatus } from "../../state/taskSlice";
 import { useDispatch } from "react-redux";
 import useAppDispatch from "../../hooks/useAppDispatch";
 
+import AddIcon from "@mui/icons-material/Add";
+import RemoveIcon from "@mui/icons-material/Remove";
+
 interface TaskDetailsFotterProps {
   editMode?: boolean;
   hasChanges?: boolean;
@@ -34,7 +37,7 @@ const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
   return (
     <div className="flex flex-row justify-between p-2">
       <Button onClick={() => dispatch(decrementStatus(taskId))}>
-        Decrement
+        <RemoveIcon />
       </Button>
       <div className="flex flex-row justify-between gap-10">
         {editMode ? (
@@ -60,7 +63,7 @@ const TaskDetailsFotter: React.FC<TaskDetailsFotterProps> = (
         )}
       </div>
       <Button onClick={() => dispatch(incrementStatus(taskId))}>
-        Increment
+        <AddIcon />
       </Button>
     </div>
   );

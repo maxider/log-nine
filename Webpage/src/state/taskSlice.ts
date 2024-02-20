@@ -1,7 +1,5 @@
 import {
-  PayloadAction,
   createAsyncThunk,
-  createSelector,
   createSlice,
 } from "@reduxjs/toolkit";
 import { Priority, Task, TaskStatus } from "../types/Task";

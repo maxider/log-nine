@@ -7,9 +7,10 @@ import InputField from "./InputField";
 
 interface TeamComboBoxProps {
   onChange: (teamId: number) => void;
+  label: string;
 }
 
-const TeamComboBox: React.FC<TeamComboBoxProps> = ({ onChange }) => {
+const TeamComboBox: React.FC<TeamComboBoxProps> = ({ onChange, label }) => {
   const boardId = useParamsNumber();
   const teams = useSelector((state: RootState) =>
     selectTeamsByBoardId(state, boardId)
@@ -17,6 +18,7 @@ const TeamComboBox: React.FC<TeamComboBoxProps> = ({ onChange }) => {
 
   return (
     <Autocomplete
+    className="w-64"
       options={teams.map((t) => {
         return {
           label: t.name,
@@ -28,7 +30,7 @@ const TeamComboBox: React.FC<TeamComboBoxProps> = ({ onChange }) => {
       }}
       isOptionEqualToValue={(option, value) => option.id === value.id}
       renderInput={(params) => (
-        <InputField {...params} required label={"Team"} />
+        <InputField {...params} required label={label} />
       )}
     />
   );

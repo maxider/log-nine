@@ -14,6 +14,7 @@ import TeamsListBackdrop from "../components/TeamsListBackdrop";
 import TeamEditBackdrop from "../components/TeamEditBackdrop";
 import CreateTeamBackdrop from "../components/CreateTeamBackdrop";
 import FiveLinerForm from "../components/FiveLinerForm";
+import CreateTaskForm from "../components/CreateTaskForm";
 
 const Board = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,9 +38,10 @@ const Board = () => {
 
   const [showFiveLinerForm, setShowFiveLinerForm] = React.useState(false);
 
+  const [isCreatingTask, setIsCreatingTask] = React.useState(false);
+
   useEffect(() => {
     const fetchState = () => {
-      console.log(isEditing);
       if (isEditing) return;
       dispatch(fetchTasksByBoardId(id));
       dispatch(fetchTeamsByBoardId(id));
@@ -59,6 +61,10 @@ const Board = () => {
 
   return (
     <>
+      <CreateTaskForm
+        open={isCreatingTask}
+        onClose={() => setIsCreatingTask(false)}
+      />
       <TeamsListBackdrop
         onClose={() => {
           setShouldShowTeams(false);
@@ -91,6 +97,7 @@ const Board = () => {
         <div className="sticky top-0">
           <Header
             onClickShowTeams={handleShowTeams}
+            onClickAddTask={() => setIsCreatingTask(true)}
             onFiveLiner={() => setShowFiveLinerForm(true)}
           />
         </div>

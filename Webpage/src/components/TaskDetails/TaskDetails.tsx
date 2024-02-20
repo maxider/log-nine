@@ -73,10 +73,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
     <Backdrop open={open}>
       <Paper className="flex flex-col w-3/4 overflow-hidden bg-neutral-800">
         <TaskDetailsHeader
-          visualId={task?.visualId ?? -1}
-          title={editTitle}
-          target={target}
-          priority={task?.priority ?? 1}
+          task={task}
           editMode={editMode}
           setEditTitle={setEditTitle}
           setEditTargetId={setEditTargetId}

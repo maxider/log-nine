@@ -95,7 +95,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
               onChange={(e) => setOutgoingDirection(e.target.value)}
             />
           </div>
-          <TeamComboBox onChange={setTargetId} />
+          <TeamComboBox onChange={setTargetId} label="Target"/>
           <InputField
             required
             label={"Auftrag"}
