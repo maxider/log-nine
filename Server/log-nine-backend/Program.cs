@@ -32,13 +32,10 @@ var logger = app.Services.GetService<ILogger<Program>>();
 app.Use((context, next) => {
     if (context.Request.ContentLength > 10 * 1024)
     {
-        //return 413 Payload Too Large
         context.Response.StatusCode = 413;
         return Task.CompletedTask;
     }
-        
-    
-    
+
     return next(context);
 });
 
