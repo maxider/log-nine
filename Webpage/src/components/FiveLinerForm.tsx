@@ -49,7 +49,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
     const task: Task = {
       title: `5L-${job}`,
       description: `Ortsangabe: ${ortsangabe}\nEinflug: ${incomingDirection}\nAusflug: ${outgoingDirection}\nGefahrenstufe: ${dangerLevel}\nÜbergabepunkt: ${exchangePoint}\nZusatzinformationen: ${furtherInformation}`,
-      priority: 0,
+      priority: 1,
       targetId: targetId,
       visualId: 232,
       id: 232,
