@@ -87,12 +87,12 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
             <CardinalSelection
               label="An"
               value={incomingDirection}
-              onChange={(e) => setIncomingDirection(e.target.value)}
+              onChange={(v) => setIncomingDirection(v)}
             />
             <CardinalSelection
               label="Ab"
               value={outgoingDirection}
-              onChange={(e) => setOutgoingDirection(e.target.value)}
+              onChange={(v) => setOutgoingDirection(v)}
             />
           </div>
           <TeamComboBox onChange={setTargetId} label="Target" />
@@ -140,7 +140,7 @@ const CardinalDirections = [
 interface CardinalDirectionsProps {
   label: string;
   value: string;
-  onChange: (e: any) => void;
+  onChange: (v: string) => void;
 }
 
 const CardinalSelection: React.FC<CardinalDirectionsProps> = ({
@@ -153,11 +153,7 @@ const CardinalSelection: React.FC<CardinalDirectionsProps> = ({
       options={CardinalDirections}
       onChange={(e, value) => onChange(value?.label ?? "")}
       renderInput={(params) => (
-        <InputField
-          {...params}
-          label={label}
-          value={value}
-        />
+        <InputField {...params} label={label} value={value} />
       )}
     />
   );
