@@ -52,6 +52,7 @@ public class TasksController : ControllerBase {
 
     [HttpPost]
     public async Task<IActionResult> Create(JobTaskCreationParams jobTask) {
+        await using var transaction = await context.Database.BeginTransactionAsync();
         var board = await context.Boards.FindAsync(jobTask.BoardId);
 
         if (board == null)
@@ -75,6 +76,7 @@ public class TasksController : ControllerBase {
         context.JobTasks.Add(newTask);
         board.VisualIdCounter++;
         await context.SaveChangesAsync();
+        await transaction.CommitAsync();
         return CreatedAtAction(nameof(GetById), new{ id = newTask.Id }, new JobTaskDTO(newTask));
     }
 
