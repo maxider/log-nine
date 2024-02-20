@@ -18,6 +18,7 @@ import { decrementStatus } from "../../state/taskSlice";
 interface TaskDetailsHeaderProps {
   task: Task;
   editMode: boolean;
+  titleValue: string;
   setEditTitle: React.Dispatch<React.SetStateAction<string>>;
   setEditTargetId: React.Dispatch<React.SetStateAction<number>>;
   onChange: () => void;
@@ -26,7 +27,7 @@ interface TaskDetailsHeaderProps {
 const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
   props: TaskDetailsHeaderProps
 ) => {
-  const { task, editMode, setEditTitle, setEditTargetId, onChange } = props;
+  const { task, editMode, setEditTitle, titleValue,setEditTargetId, onChange } = props;
 
   const color = prioToColor(task?.priority);
 
@@ -47,7 +48,7 @@ const TaskDetailsHeader: React.FC<TaskDetailsHeaderProps> = (
       <Divider orientation="vertical" flexItem />
       <EditableTitle
         editMode={editMode}
-        value={task?.title}
+        value={titleValue}
         label={"Title"}
         setEditTitle={setEditTitle}
         onChange={onChange}

@@ -11,6 +11,7 @@ import TaskDetailsFotter from "./TaskDetailsFotter";
 import InputField from "../InputField";
 import useAppDispatch from "../../hooks/useAppDispatch";
 import { EditTask } from "../../state/taskSlice";
+import { title } from "process";
 
 interface TaskDetailsProps extends BackdropProps {
   taskId: number;
@@ -75,6 +76,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
         <TaskDetailsHeader
           task={task}
           editMode={editMode}
+          titleValue={editTitle}
           setEditTitle={setEditTitle}
           setEditTargetId={setEditTargetId}
           onChange={() => setHasChanges(true)}
