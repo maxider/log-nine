@@ -31,7 +31,7 @@ const CreateTaskForm: React.FC<BackdropProps> = (props) => {
       description: formData.get("Description") as string,
       targetId: targetId,
       status: 0,
-      priority: 0,
+      priority: 1,
       taskType: 0,
     };
 
