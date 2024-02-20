@@ -72,7 +72,7 @@ const TaskDetails: React.FC<TaskDetailsProps> = ({
 
   return (
     <Backdrop open={open}>
-      <Paper className="flex flex-col w-3/4 overflow-hidden bg-neutral-800">
+      <Paper className="flex flex-col w-3/4 overflow-hidden bg-neutral-800 max-h-4/5">
         <TaskDetailsHeader
           task={task}
           editMode={editMode}
@@ -119,7 +119,7 @@ const EditableDescription: React.FC<EditableDescriptionProps> = ({
   onChange,
 }) => {
   return (
-    <div className="px-2 my-2 grow">
+    <div className="px-2 my-2 overflow-y-scroll grow">
       {editMode ? (
         <InputField
           label={label}
