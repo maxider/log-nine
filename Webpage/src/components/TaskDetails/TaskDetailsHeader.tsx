@@ -83,7 +83,7 @@ const EditableTitle: React.FC<EditableTitleProps> = ({
   onChange,
 }) => {
   return (
-    <div className="px-2 my-2 grow">
+    <div className="px-2 my-2 overflow-y-auto grow max-h-32">
       {editMode ? (
         <InputField
           label={label}

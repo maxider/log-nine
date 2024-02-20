@@ -25,7 +25,7 @@ const TeamsListBackdrop: React.FC<TeamsListBackdropProps> = ({
   return (
     <Backdrop open={open}>
       <Paper className="flex flex-col p-2 max-h-4/5 min-h-2/4 bg-neutral-800">
-        <div className="overflow-y-scroll">
+        <div className="overflow-y-auto">
           {teams.map((t) => (
             <div className="flex flex-row items-center justify-between p-2">
               <div className="flex flex-row items-center justify-between grow ">

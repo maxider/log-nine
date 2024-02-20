@@ -29,7 +29,7 @@ const TaskCard: React.FC<TaskCardProps> = ({ task, onClick }) => {
           <p className="px-2 my-0 text-base font-semibold">{task.visualId}</p>
         </div>
         <Divider orientation="vertical" flexItem />
-        <p className="px-3 my-0 font-semibold">{task.title}</p>
+        <p className="px-3 my-0 overflow-y-auto font-semibold max-h-32">{task.title}</p>
       </div>
       <Divider />
       <TeamFotter teamId={task.targetId} />

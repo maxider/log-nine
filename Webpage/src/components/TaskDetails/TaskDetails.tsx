@@ -119,7 +119,7 @@ const EditableDescription: React.FC<EditableDescriptionProps> = ({
   onChange,
 }) => {
   return (
-    <div className="px-2 my-2 overflow-y-scroll grow">
+    <div className="px-2 my-2 overflow-y-auto grow">
       {editMode ? (
         <InputField
           label={label}
