@@ -48,7 +48,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
 
     const task: Task = {
       title: `5L-${job}`,
-      description: `Ortsangabe: ${ortsangabe}\nEinflug: ${incomingDirection}\nAusflug: ${outgoingDirection}\nAuftrag:${job}\nGefahrenstufe: ${dangerLevel}\nÜbergabepunkt: ${exchangePoint}\nZusatzinformationen: ${furtherInformation}`,
+      description: `Ortsangabe: ${ortsangabe}\nEinflug: ${incomingDirection}\nAusflug: ${outgoingDirection}\nAuftrag:${job}\nGefahrenstufe: ${dangerLevel}\Kenzeinung Übergabepunkt: ${exchangePoint}\nZusatzinformationen: ${furtherInformation}`,
       priority: 1,
       targetId: targetId,
       visualId: 232,
@@ -104,7 +104,7 @@ const FiveLinerForm: React.FC<FiveLinerFormProps> = (
           <Feindlage onChange={(e) => setDangerLevel(e.target.value)} />
           <InputField
             required
-            label={"Übergabepunkt"}
+            label={"Kenzeinung Übergabepunkt"}
             value={exchangePoint}
             onChange={(e) => setExchangePoint(e.target.value)}
           />
