@@ -77,7 +77,6 @@ const BoardPage = () => {
         <Button variant="contained">5-Liner</Button>
       </Box>
       <Board tasks={data ?? []} teams={teams ?? []} />
-      <FiveLinerForm isOpen={true}/>
     </Container>
   );
 };
