@@ -1,4 +1,3 @@
-using System.Text.Json.Serialization;
 using CommandLine;
 using LogNineBackend;
 using AppContext = LogNineBackend.AppContext;
@@ -24,6 +23,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppContext>();
+builder.Services.AddSignalR();
+builder.Services.AddSingleton<LogNineHub>();
 
 var app = builder.Build();
 
@@ -47,9 +48,14 @@ if (app.Environment.IsDevelopment() || options.UseSwagger)
     app.UseSwaggerUI();
 }
 
-app.UseCors("cors");
-app.UseWebSockets();
+app.UseCors(x => x
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .SetIsOriginAllowed(origin => true)
+    .AllowCredentials());
 app.MapControllers();
+
+app.MapHub<LogNineHub>("lognine-hub");
 
 SeedDatabase(app.Services);
 
@@ -61,7 +67,6 @@ void SeedDatabase(IServiceProvider appServices) {
     if (!didSeed) return;
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("Database seeded");
-
 }
 
 app.Run();

@@ -1,46 +1,50 @@
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "./state/store";
-import { selectTasksByBoardId } from "./state/Selectors/TaskSelectors";
-import React from "react";
 import "./App.css";
-import { selectTeams } from "./state/Selectors/TeamSelectors";
-import { Routes, Route } from "react-router-dom";
-import Board from "./routes/Board";
-import Home from "./routes/Home";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home";
+import BoardPage from "./pages/BoardPage";
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline, createTheme } from "@mui/material";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { createSignalRContext } from "react-signalr";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-const Nav = () => {
-  return (
-    <div className="sticky top-0 h-4">
-      <h1>Home</h1>
-    </div>
-  );
-};
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      retry: 1,
+      staleTime: Infinity,
+    },
+  },
+});
 
-const App = () => {
-  const dispatch = useDispatch<AppDispatch>();
+export const SignalRContext = createSignalRContext();
 
-  const [isViewingTask, setIsViewingTask] = React.useState(false);
-  const [lastViedTaskId, setLastViewedTaskId] = React.useState(0);
-
-  const tasks = useSelector((state: RootState) =>
-    selectTasksByBoardId(state, 1)
-  );
-  const taskStatus = useSelector((state: RootState) => state.tasks.status);
-
-  const teams = useSelector(selectTeams);
-
-  const options = teams.map((t) => {
-    return { label: t.name, id: t.id };
+function App() {
+  const theme = createTheme({
+    palette: {
+      mode: "dark",
+    },
   });
 
-  function addTasks(): void {}
-
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/Board/:id" element={<Board />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <SignalRContext.Provider url="http://localhost:5174/lognine-hub">
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="board/:id" element={<BoardPage />} />
+            </Routes>
+          </BrowserRouter>
+        </ThemeProvider>
+      </SignalRContext.Provider>
+      <ReactQueryDevtools initialIsOpen={true} />
+    </QueryClientProvider>
   );
-};
+}
 
 export default App;

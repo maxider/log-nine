@@ -9,10 +9,12 @@ namespace LogNineBackend.Controllers;
 public class TasksController : ControllerBase {
     private readonly ILogger<TasksController> logger;
     private readonly AppContext context;
-
-    public TasksController(ILogger<TasksController> logger, AppContext context) {
+    private readonly LogNineHub hub;
+    
+    public TasksController(ILogger<TasksController> logger, AppContext context, LogNineHub hub) {
         this.logger = logger;
         this.context = context;
+        this.hub = hub;
     }
 
     [HttpGet]
@@ -77,6 +79,7 @@ public class TasksController : ControllerBase {
         board.VisualIdCounter++;
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
+        await hub.SendCreatedTaskMessage(jobTask.BoardId);
         return CreatedAtAction(nameof(GetById), new{ id = newTask.Id }, new JobTaskDTO(newTask));
     }
 
@@ -94,55 +97,12 @@ public class TasksController : ControllerBase {
         task.Priority = jobTask.Priority;
         task.TaskType = jobTask.TaskType;
         await context.SaveChangesAsync();
+        await hub.SendUpdatedTaskMessage(jobTask.BoardId);
         return Ok(new JobTaskDTO(task));
-    }
-
-    [HttpPatch("{id}/increment")]
-    public async Task<IActionResult> IncrementStatus(int id) {
-        var task = await context.JobTasks.FindAsync(id);
-        if (task == null)
-        {
-            return NotFound();
-        }
-        task.Status++;
-        task.Status = ClampStatus(task);
-        await context.SaveChangesAsync();
-        return Ok(new JobTaskDTO{
-            Id = task.Id,
-            VisualId = task.VisualId,
-            BoardId = task.BoardId,
-            Title = task.Title,
-            Description = task.Description,
-            Status = task.Status,
-            Priority = task.Priority,
-            TaskType = task.TaskType
-        });
     }
 
     private static JobTask.JobTaskStatus ClampStatus(JobTask task) {
         return (JobTask.JobTaskStatus)Math.Clamp((int)task.Status, 0, (int)JobTask.JobTaskStatus.Cancelled);
-    }
-
-    [HttpPatch("{id}/decrement")]
-    public async Task<IActionResult> DecrementStatus(int id) {
-        var task = await context.JobTasks.FindAsync(id);
-        if (task == null)
-        {
-            return NotFound();
-        }
-        task.Status--;
-        task.Status = ClampStatus(task);
-        await context.SaveChangesAsync();
-        return Ok(new JobTaskDTO{
-            Id = task.Id,
-            VisualId = task.VisualId,
-            BoardId = task.BoardId,
-            Title = task.Title,
-            Description = task.Description,
-            Status = task.Status,
-            Priority = task.Priority,
-            TaskType = task.TaskType
-        });
     }
 
     [HttpDelete("{id}")]

@@ -1,4 +1,5 @@
-﻿using LogNineBackend.Models;
+﻿using LogNineBackend;
+using LogNineBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AppContext = LogNineBackend.AppContext;
@@ -11,10 +12,11 @@ namespace FunWithEF.Controllers;
 public class TeamsController : ControllerBase {
     private readonly ILogger<TeamsController> logger;
     private readonly AppContext context;
-
-    public TeamsController(ILogger<TeamsController> logger, AppContext context) {
+    private readonly LogNineHub hub;
+    public TeamsController(ILogger<TeamsController> logger, AppContext context, LogNineHub hub) {
         this.logger = logger;
         this.context = context;
+        this.hub = hub;
     }
 
     [HttpGet]
@@ -41,6 +43,7 @@ public class TeamsController : ControllerBase {
         };
         context.Teams.Add(newTeam);
         await context.SaveChangesAsync();
+        await hub.SendCreatedTeamMessage(newTeam.BoardId);
         return CreatedAtAction(nameof(GetById), new{ id = newTeam.Id }, newTeam);
     }
 
@@ -53,6 +56,7 @@ public class TeamsController : ControllerBase {
         }
         teamToUpdate.Name = team.Name;
         await context.SaveChangesAsync();
+        await hub.SendUpdatedTeamMessage(teamToUpdate.BoardId);
         return Ok(new TeamDTO(teamToUpdate.Id, teamToUpdate.Name, teamToUpdate.BoardId, teamToUpdate.SrFrequency,
             teamToUpdate.LrFrequency));
     }
