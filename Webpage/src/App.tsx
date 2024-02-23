@@ -6,6 +6,7 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createSignalRContext } from "react-signalr";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import backendUrl from "./api/BackendUrl";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +31,7 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <SignalRContext.Provider url="http://localhost:5174/lognine-hub">
+      <SignalRContext.Provider url={`${backendUrl}/lognine-hub`}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <BrowserRouter>

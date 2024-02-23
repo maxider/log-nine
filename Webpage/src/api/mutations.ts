@@ -1,5 +1,6 @@
 import axios from "axios";
 import Task from "../entities/Task";
+import backendUrl from "./BackendUrl";
 
 export const incrementPriority = (task: Task) => {
   const params = {
@@ -16,7 +17,7 @@ export const incrementPriority = (task: Task) => {
   if (params.priority === task.priority) return Promise.resolve();
 
   return axios
-    .put(`http://localhost:5174/Tasks/${task.id}`, params)
+    .put(`${backendUrl}/Tasks/${task.id}`, params)
     .then(() => Promise.resolve());
 };
 
@@ -35,7 +36,7 @@ export const decrementPriority = (task: Task) => {
   if (params.priority === task.priority) return Promise.resolve();
 
   return axios
-    .put(`http://localhost:5174/Tasks/${task.id}`, params)
+    .put(`${backendUrl}/Tasks/${task.id}`, params)
     .then(() => Promise.resolve());
 };
 
@@ -54,7 +55,7 @@ export const incrementStatus = (task: Task) => {
   if (params.status === task.status) return Promise.resolve();
 
   return axios
-    .put(`http://localhost:5174/Tasks/${task.id}`, params)
+    .put(`${backendUrl}/${task.id}`, params)
     .then(() => Promise.resolve());
 };
 
@@ -73,7 +74,7 @@ export const decrementStatus = (task: Task) => {
   if (params.status === task.status) return Promise.resolve();
 
   return axios
-    .put(`http://localhost:5174/Tasks/${task.id}`, params)
+    .put(`${backendUrl}/Tasks/${task.id}`, params)
     .then(() => Promise.resolve());
 };
 
@@ -93,6 +94,38 @@ export interface UpdateTaskParams {
 
 export const updateTaskFn = (params: UpdateTaskParams) => {
   return axios
-    .put(`http://localhost:5174/Tasks/${params.id}`, params.params)
+    .put(`${backendUrl}/Tasks/${params.id}`, params.params)
+    .then(() => {
+      console.log("Task updated:", params.params);
+      Promise.resolve();
+    });
+};
+
+export interface UpdateTeamParams {
+  id: number;
+  params: {
+    name: string;
+    boardId: number;
+    srFrequency: number;
+    lrFrequency: number;
+  };
+}
+
+export const updateTeamFn = (params: UpdateTeamParams) => {
+  return axios
+    .put(`${backendUrl}/Teams/${params.id}`, params.params)
+    .then(() => Promise.resolve());
+};
+
+export interface CreateTeamParams {
+  name: string;
+  boardId: number;
+  srFrequency: number;
+  lrFrequency: number;
+}
+
+export const createTeamFn = (params: CreateTeamParams) => {
+  return axios
+    .post(`${backendUrl}/Teams`, params)
     .then(() => Promise.resolve());
 };

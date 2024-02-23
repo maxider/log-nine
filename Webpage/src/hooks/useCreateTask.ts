@@ -1,5 +1,6 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { TaskStatus, TaskPriority } from "../entities/Task";
+import backendUrl from "../api/BackendUrl";
 
 export type TaskCreationParams = {
   boardId: number;
@@ -16,7 +17,7 @@ const useCreateTask = () => {
 
   const { mutateAsync: createTask } = useMutation({
     mutationFn: (params: TaskCreationParams) =>
-      fetch("http://localhost:5174/Tasks", {
+      fetch(`${backendUrl}/Tasks`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

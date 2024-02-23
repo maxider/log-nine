@@ -1,5 +1,3 @@
-import { UndefinedTeam } from "./Team";
-
 type Task = {
   id: number;
   visualId: number;

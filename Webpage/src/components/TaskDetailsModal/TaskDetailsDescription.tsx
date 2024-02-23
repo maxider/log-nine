@@ -8,7 +8,15 @@ interface Props {
 
 const TaskDetailsDescription = ({ description, onChange, isEdit }: Props) => {
   return (
-    <Box sx={{ height: "100%", padding: "20px", flexGrow: 1 }}>
+    <Box
+      sx={{
+        height: "100%",
+        padding: "20px",
+        flexGrow: 1,
+        maxHeight: "100%",
+        overflowY: "auto",
+      }}
+    >
       {isEdit ? (
         <TextField
           label={"Description"}

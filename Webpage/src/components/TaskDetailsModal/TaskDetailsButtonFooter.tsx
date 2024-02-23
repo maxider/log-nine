@@ -9,6 +9,7 @@ interface Props {
   onCancelEdit: () => void;
   onSave: () => void;
   isEditMode: boolean;
+  hasChanges: boolean;
 }
 
 const TaskDetailButtonFooter = ({
@@ -19,6 +20,7 @@ const TaskDetailButtonFooter = ({
   onCancelEdit,
   onSave,
   isEditMode,
+  hasChanges,
 }: Props) => {
   return (
     <Box
@@ -35,7 +37,11 @@ const TaskDetailButtonFooter = ({
         text={prevStatus(task.status).replace("_", " ")}
       />
       {isEditMode ? (
-        <EditButtonGroup onClickCancle={onCancelEdit} onClickSave={onSave} />
+        <EditButtonGroup
+          onClickCancle={onCancelEdit}
+          onClickSave={onSave}
+          hasChanges={hasChanges}
+        />
       ) : (
         <NormalButtonGroup onClickEdit={onEditButton} />
       )}
@@ -83,9 +89,11 @@ const NormalButtonGroup = ({ onClickEdit }: { onClickEdit: () => void }) => {
 const EditButtonGroup = ({
   onClickCancle: onClickCancle,
   onClickSave,
+  hasChanges,
 }: {
   onClickCancle: () => void;
   onClickSave: () => void;
+  hasChanges: boolean;
 }) => {
   return (
     <Box
@@ -97,7 +105,12 @@ const EditButtonGroup = ({
         width: "13%",
       }}
     >
-      <Button sx={{ width: "64px" }} variant="contained" onClick={onClickSave}>
+      <Button
+        sx={{ width: "64px" }}
+        variant="contained"
+        onClick={onClickSave}
+        disabled={!hasChanges}
+      >
         Save
       </Button>
       <Button

@@ -6,7 +6,7 @@ import { priorityColor } from "../../helpers/prioToColor";
 interface Props {
   task: Task;
   team: Team;
-  onClickCard: (taskId: number) => void
+  onClickCard: (taskId: number) => void;
 }
 
 const TaskCard = ({ task, team, onClickCard }: Props) => {
@@ -33,7 +33,10 @@ const TaskCard = ({ task, team, onClickCard }: Props) => {
             flexWrap: "nowrap",
           }}
         >
-          <Typography sx={{ overflowY: "auto" }}>{task.title}</Typography>
+          <Box sx={{ overflowY: "auto", maxHeight: "200px" }}>
+            <Typography>{task.title}</Typography>
+          </Box>
+
           <Divider flexItem orientation="horizontal" />
           <Box
             sx={{

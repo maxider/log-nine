@@ -7,8 +7,10 @@ import Task, { UndefinedTask } from "../entities/Task";
 import FiveLinerForm from "../components/FiveLinerForm";
 import { useState } from "react";
 import CreateTaskForm from "../components/CreateTaskForm";
-import { fetchTeams } from "../helpers/api";
+import { fetchTeams } from "../api/api";
 import TaskDetailsModal from "../components/TaskDetailsModal/TaskDetailsModal";
+import TeamListModal from "../components/TeamList/TeamListModal";
+import backendUrl from "../api/BackendUrl";
 
 const BoardPage = () => {
   useSocket();
@@ -22,7 +24,7 @@ const BoardPage = () => {
   } = useQuery({
     queryKey: ["tasks", boardId],
     queryFn: () =>
-      fetch(`http://localhost:5174/Boards/${boardId}/tasks`)
+      fetch(`${backendUrl}/Boards/${boardId}/tasks`)
         .then((res) => res.json())
         .then((data) => {
           const tasks: Task[] = data.map((task: Task) => ({
@@ -49,6 +51,8 @@ const BoardPage = () => {
   const [isCreateTaskFormOpen, setIsCreateTaskFormOpen] = useState(false);
   const [isViewingTask, setIsViewingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<number>(-1);
+
+  const [isViewingTeams, setIsViewingTeams] = useState(false);
 
   if (isLoading) return <Typography variant="h1">Loading...</Typography>;
   if (isError) return <Typography variant="h1">Error</Typography>;
@@ -84,6 +88,9 @@ const BoardPage = () => {
         >
           Create Task
         </Button>
+        <Button variant="contained" onClick={() => setIsViewingTeams(true)}>
+          View Teams
+        </Button>
       </Box>
       <Divider orientation="horizontal" flexItem />
       <Board
@@ -108,6 +115,13 @@ const BoardPage = () => {
         isOpen={isViewingTask}
         setIsModalOpen={setIsViewingTask}
         task={tasks?.find((t) => t.id === selectedTask) ?? UndefinedTask}
+        teams={teams ?? []}
+      />
+      <TeamListModal
+        teams={teams ?? []}
+        isOpen={isViewingTeams}
+        onClose={() => setIsViewingTeams(false)}
+        boardId={boardId ?? "-1"}
       />
     </Box>
   );

@@ -12,13 +12,15 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import TaskDetailButtonFooter from "./TaskDetailsButtonFooter";
 import TaskDetailsDescription from "./TaskDetailsDescription";
+import Team, { UndefinedTeam } from "../../entities/Team";
 
 interface Props {
   isOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   task: Task;
+  teams: Team[];
 }
-const TaskDetailsModal = ({ isOpen, setIsModalOpen, task }: Props) => {
+const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: incrementStat } = useMutation({
@@ -41,10 +43,15 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task }: Props) => {
   const [editTitle, setEditTitle] = useState(task.title);
   const [editDescription, setEditDescription] = useState(task.description);
 
+  const [editTargetId, setEditTargetId] = useState(task.targetId);
+
+  const [hasChanges, setHasChanges] = useState(false);
+
   useEffect(() => {
     if (!isEditing) {
       setEditTitle(task.title);
       setEditDescription(task.description);
+      setEditTargetId(task.targetId);
     }
   }, [task, isEditing]);
 
@@ -56,7 +63,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task }: Props) => {
         boardId: task.boardId,
         title: editTitle,
         description: editDescription,
-        targetId: task.targetId,
+        targetId: editTargetId,
         priority: task.priority,
         status: task.status,
         taskType: 0,
@@ -77,14 +84,25 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task }: Props) => {
       <Paper sx={TaskDetailsModalStyle}>
         <TaskDetailsHeader
           task={task}
+          target={teams.find((t) => t.id === editTargetId) ?? UndefinedTeam}
           title={editTitle}
           isEditMode={isEditing}
-          onChange={(t) => setEditTitle(t)}
+          onChange={(t) => {
+            setEditTitle(t);
+            setHasChanges(true);
+          }}
+          onChangeTargetId={(id) => {
+            setEditTargetId(id);
+            setHasChanges(true);
+          }}
         />
         <Divider orientation="horizontal" flexItem />
         <TaskDetailsDescription
           description={editDescription}
-          onChange={(d) => setEditDescription(d)}
+          onChange={(d) => {
+            setEditDescription(d);
+            setHasChanges(true);
+          }}
           isEdit={isEditing}
         />
         <Divider orientation="horizontal" flexItem />
@@ -93,9 +111,13 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task }: Props) => {
           incrementStat={incrementStat}
           decrementStat={decrementStat}
           onEditButton={() => setIsEditing(true)}
-          onCancelEdit={() => setIsEditing(false)}
+          onCancelEdit={() => {
+            setIsEditing(false);
+            setHasChanges(false);
+          }}
           onSave={handleSave}
           isEditMode={isEditing}
+          hasChanges={hasChanges}
         />
       </Paper>
     </Modal>

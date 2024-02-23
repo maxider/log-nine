@@ -127,6 +127,7 @@ const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
               setTargetId={setTargetId}
               boardId={boardId}
               required
+              value={targetId}
             />
             <TextField
               label={"Auftrag"}

@@ -55,6 +55,9 @@ public class TeamsController : ControllerBase {
             return NotFound();
         }
         teamToUpdate.Name = team.Name;
+        teamToUpdate.BoardId = team.BoardId;
+        teamToUpdate.SrFrequency = team.SrFrequency;
+        teamToUpdate.LrFrequency = team.LrFrequency;
         await context.SaveChangesAsync();
         await hub.SendUpdatedTeamMessage(teamToUpdate.BoardId);
         return Ok(new TeamDTO(teamToUpdate.Id, teamToUpdate.Name, teamToUpdate.BoardId, teamToUpdate.SrFrequency,

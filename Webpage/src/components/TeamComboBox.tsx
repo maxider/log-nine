@@ -1,17 +1,18 @@
 import { Autocomplete, TextField } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
-import { fetchTeams } from "../helpers/api";
+import { fetchTeams } from "../api/api";
 
 interface Props {
   boardId: string;
   setTargetId: (id: number) => void;
   required: boolean;
+  value: number;
 }
 
-const TeamComboBox = ({ boardId, setTargetId, required }: Props) => {
+const TeamComboBox = ({ boardId, setTargetId, required, value }: Props) => {
   const { data: teams } = useQuery({
-    queryKey: ["teams", 1],
+    queryKey: ["teams", boardId],
     queryFn: fetchTeams(boardId),
   });
 
@@ -24,7 +25,8 @@ const TeamComboBox = ({ boardId, setTargetId, required }: Props) => {
 
   return (
     <Autocomplete
-      onChange={(e, v) => setTargetId(v?.id ?? -1)}
+      onChange={(_, v) => setTargetId(v?.id ?? -1)}
+      value={teamOptions.find((team) => team.id === value)}
       renderInput={(params) => (
         <TextField {...params} label={"Target"} required={required} />
       )}

@@ -5,17 +5,27 @@ import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { decrementPriority, incrementPriority } from "../../api/mutations";
+import Team from "../../entities/Team";
+import TeamComboBox from "../TeamComboBox";
 
 interface Props {
   task: Task;
+  target: Team;
   title: string;
   onChange: (newTitle: string) => void;
+  onChangeTargetId: (newTargetId: number) => void;
   isEditMode: boolean;
 }
 
-const TaskDetailsHeader = ({ task, title, isEditMode, onChange }: Props) => {
+const TaskDetailsHeader = ({
+  task,
+  target,
+  title,
+  isEditMode,
+  onChange,
+  onChangeTargetId,
+}: Props) => {
   const color = priorityColor(task.priority);
-
   const queryClient = useQueryClient();
 
   const { mutateAsync: incrementPrio } = useMutation({
@@ -35,6 +45,7 @@ const TaskDetailsHeader = ({ task, title, isEditMode, onChange }: Props) => {
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
+        maxHeight: "100px",
       }}
     >
       <Box
@@ -62,7 +73,11 @@ const TaskDetailsHeader = ({ task, title, isEditMode, onChange }: Props) => {
         }}
       />
       <Divider orientation="vertical" flexItem />
-      <Typography sx={{ padding: "20px" }}>{task.priority}</Typography>
+      <EditableTargetInfo
+        team={target}
+        isEditMode={isEditMode}
+        setTargetId={onChangeTargetId}
+      />
     </Box>
   );
 };
@@ -89,10 +104,54 @@ const EditableTitle = ({ title, isEditMode, onChange }: EditableTitleProps) => {
         flexGrow: 1,
         textAlign: "center",
         padding: "20px",
+        overflowY: "auto",
+        maxHeight: "100%",
       }}
     >
       {title}
     </Typography>
+  );
+};
+
+interface EditableTargetInfoProps {
+  team: Team;
+  isEditMode: boolean;
+  setTargetId: (id: number) => void;
+}
+
+const EditableTargetInfo = ({
+  team,
+  isEditMode,
+  setTargetId,
+}: EditableTargetInfoProps) => {
+  return isEditMode ? (
+    <Box
+      sx={{
+        width: "300px",
+        paddingX: "20px",
+      }}
+    >
+      <TeamComboBox
+        boardId={team.boardId.toString()}
+        setTargetId={setTargetId}
+        required={false}
+        value={team.id}
+      />
+    </Box>
+  ) : (
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        paddingX: "20px",
+      }}
+    >
+      <Typography>{team.name}</Typography>
+      <Typography>
+        Sr: {team.srFrequency} Lr: {team.lrFrequency}
+      </Typography>
+    </Box>
   );
 };
 

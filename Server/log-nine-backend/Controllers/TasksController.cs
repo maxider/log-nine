@@ -91,6 +91,7 @@ public class TasksController : ControllerBase {
             return NotFound();
         }
         task.BoardId = jobTask.BoardId;
+        task.TargetId = jobTask.TargetId;
         task.Title = jobTask.Title;
         task.Description = jobTask.Description;
         task.Status = jobTask.Status;

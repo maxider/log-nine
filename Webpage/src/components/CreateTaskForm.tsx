@@ -50,8 +50,7 @@ const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
             <TeamComboBox
               boardId={boardId}
               setTargetId={setTargetId}
-              required={true}
-            />
+              required={true} value={targetId}            />
             <TextField
               label="Description"
               variant="outlined"

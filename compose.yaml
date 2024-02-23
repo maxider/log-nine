@@ -13,7 +13,7 @@ services:
     build:
       context: ./Webpage
     ports:
-      - "8081:3000"
+      - "8081:4173"
     environment:
       - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 

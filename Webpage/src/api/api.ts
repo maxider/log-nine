@@ -1,8 +1,9 @@
 import Team from "../entities/Team";
+import backendUrl from "./BackendUrl";
 
 export function fetchTeams(boardId: string) {
   return () =>
-    fetch(`http://localhost:5174/Boards/${boardId}/teams`)
+    fetch(`${backendUrl}/Boards/${boardId}/teams`)
       .then((res) => res.json())
       .then((data) => {
         const teams: Team[] = data.map((team: Team) => ({
