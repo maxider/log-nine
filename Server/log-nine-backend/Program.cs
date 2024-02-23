@@ -57,7 +57,8 @@ app.MapControllers();
 
 app.MapHub<LogNineHub>("lognine-hub");
 
-SeedDatabase(app.Services);
+if (options.ShouldSeedDatabase)
+    SeedDatabase(app.Services);
 
 void SeedDatabase(IServiceProvider appServices) {
     using var scope = appServices.CreateScope();
@@ -72,7 +73,9 @@ void SeedDatabase(IServiceProvider appServices) {
 app.Run();
 
 public class Options {
-    //bool option to use swagger or not
     [Option('s', "swagger", Required = false, HelpText = "Use Swagger")]
     public bool UseSwagger { get; set; }
+
+    [Option("seed", Required = false, HelpText = "Seed the database")]
+    public bool ShouldSeedDatabase { get; set; }
 }
