@@ -30,7 +30,7 @@ const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
 
     const task: Task = {
       title: `5L-${order}`,
-      description: `Ortsangabe: ${location}\nEinflug: ${from}\nAusflug: ${to}\nAuftrag:${order}\nGefahrenstufe: ${dangerLevel}\nKenzeinung Übergabepunkt: ${handoverInfo}\nZusatzinformationen: ${details}`,
+      description: `Ortsangabe: ${location}\nEinflug: ${from}\nAusflug: ${to}\nAuftrag:${order}\nGefahrenstufe: ${dangerLevel}\nKennzeichnung Übergabepunkt: ${handoverInfo}\nZusatzinformationen: ${details}`,
       priority: 1,
       targetId: targetId,
       visualId: 232,
@@ -140,7 +140,7 @@ const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
               onChange={(v) => setDangerLevel(v as DangerLevel)}
             />
             <TextField
-              label={"Kenzeichnung Übergabepunkt"}
+              label={"Kennzeichnung Übergabepunkt"}
               value={handoverInfo}
               onChange={(e) => setHandoverInfo(e.target.value)}
               required
