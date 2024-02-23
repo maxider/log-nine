@@ -16,7 +16,6 @@ public class AppContext : DbContext {
     public AppContext(ILogger<AppContext> logger) {
         this.logger = logger;
         DbPath = "./data/data.db";
-        Database.EnsureCreated();
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {

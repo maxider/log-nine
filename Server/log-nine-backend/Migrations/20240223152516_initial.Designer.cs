@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogNineBackend.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20240218005057_Initial")]
-    partial class Initial
+    [Migration("20240223152516_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
