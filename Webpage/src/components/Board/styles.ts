@@ -8,7 +8,6 @@ const StyledBoard = styled(Box)({
   flexDirection: "row",
   justifyContent: "flex-start",
   alignItems: "flex-start",
-  overflow: "auto",
 });
 
 export default StyledBoard;

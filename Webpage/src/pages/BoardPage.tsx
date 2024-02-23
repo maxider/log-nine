@@ -2,11 +2,13 @@ import { useQuery } from "@tanstack/react-query";
 import Board from "../components/Board/Board";
 import { useSocket } from "../hooks/useSocket";
 import { useParams } from "react-router-dom";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Box, Button, Container, Divider, Typography } from "@mui/material";
 import Task from "../entities/Task";
 import Team from "../entities/Team";
 import FiveLinerForm from "../components/FiveLinerForm";
 import { useState } from "react";
+import CreateTaskForm from "../components/CreateTaskForm";
+import { fetchTeams } from "../helpers/api";
 
 const BoardPage = () => {
   useSocket();
@@ -36,33 +38,22 @@ const BoardPage = () => {
 
   const { data: teams } = useQuery({
     queryKey: ["teams", boardId],
-    queryFn: () =>
-      fetch(`http://localhost:5174/Boards/${boardId}/teams`)
-        .then((res) => res.json())
-        .then((data) => {
-          const teams: Team[] = data.map((team: Team) => ({
-            id: team.id,
-            boardId: team.boardId,
-            name: team.name,
-            srFrequency: team.srFrequency,
-            lrFrequency: team.lrFrequency,
-          }));
-
-          return teams;
-        }),
+    queryFn: fetchTeams(boardId ?? "-1"),
   });
 
   const [isFiveLinerFormOpen, setIsFiveLinerFormOpen] = useState(false);
+  const [isCreateTaskFormOpen, setIsCreateTaskFormOpen] = useState(false);
 
   if (isLoading) return <Typography variant="h1">Loading...</Typography>;
   if (isError) return <Typography variant="h1">Error</Typography>;
 
   return (
-    <Container
+    <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         height: "100vh",
+        width: "100%",
       }}
     >
       <Box
@@ -70,14 +61,37 @@ const BoardPage = () => {
           display: "flex",
           flexDirection: "row",
           width: "100%",
-          height: "30px",
+          height: "38px",
           justifyContent: "center",
+          marginBottom: "10px",
         }}
       >
-        <Button variant="contained">5-Liner</Button>
+        <Button
+          variant="contained"
+          onClick={() => setIsFiveLinerFormOpen(true)}
+        >
+          5-Liner
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => setIsCreateTaskFormOpen(true)}
+        >
+          Create Task
+        </Button>
       </Box>
+      <Divider orientation="horizontal" flexItem />
       <Board tasks={data ?? []} teams={teams ?? []} />
-    </Container>
+      <FiveLinerForm
+        isOpen={isFiveLinerFormOpen}
+        boardId={boardId ?? "-1"}
+        onClose={() => setIsFiveLinerFormOpen(false)}
+      />
+      <CreateTaskForm
+        isOpen={isCreateTaskFormOpen}
+        boardId={boardId ?? "-1"}
+        onClose={() => setIsCreateTaskFormOpen(false)}
+      />
+    </Box>
   );
 };
 

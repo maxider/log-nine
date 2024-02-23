@@ -15,7 +15,7 @@ public class LogNineHub: Hub {
         logger.LogInformation("Sending message to all clients");
     }
 
-    public async Task SendCreatedTaskMessage(int boardId) {
+    public async Task SendCreatedTaskMessage(int boardId) {     
         await Clients.All.SendAsync("ReceiveMessage", $"TaskCreated:{boardId}");
     }
     

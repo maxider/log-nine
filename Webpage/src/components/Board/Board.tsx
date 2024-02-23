@@ -1,6 +1,6 @@
 import StyledBoard from "./styles";
 import TaskList from "../TaskList/TaskList";
-import { Container, Divider } from "@mui/material";
+import { Divider } from "@mui/material";
 import Task, { TaskStatus } from "../../entities/Task";
 import { useMemo } from "react";
 import Team from "../../entities/Team";
@@ -34,20 +34,19 @@ const Board = ({ tasks, teams }: Props) => {
   const tasksStatus: Task["status"][] = [...tasksByStatus.keys()];
 
   return (
-    <Container>
-      <StyledBoard>
-        {tasksStatus.map((status) => (
-          <>
-            <TaskList
-              header={statusToString(status)}
-              tasks={tasksByStatus.get(status) ?? []}
-              teams={teams}
-            />
-            <Divider orientation="vertical" flexItem />
-          </>
-        ))}
-      </StyledBoard>
-    </Container>
+    <StyledBoard>
+      <Divider orientation="vertical" flexItem />
+      {tasksStatus.map((status) => (
+        <>
+          <TaskList
+            header={statusToString(status)}
+            tasks={tasksByStatus.get(status) ?? []}
+            teams={teams}
+          />
+          <Divider orientation="vertical" flexItem />
+        </>
+      ))}
+    </StyledBoard>
   );
 };
 

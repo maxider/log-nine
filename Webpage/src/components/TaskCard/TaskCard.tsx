@@ -44,18 +44,10 @@ const TaskCard = ({ task, team }: Props) => {
               flexDirection: "row",
               justifyContent: "center",
               flexWrap: "wrap",
+              width: "100%",
             }}
           >
-            <Typography
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                width: "100%",
-              }}
-            >
-              {team.name}:{" "}
-            </Typography>
+            <Typography>{team.name}:&nbsp;</Typography>
             <Typography>
               {team.srFrequency} - {team.lrFrequency}
             </Typography>

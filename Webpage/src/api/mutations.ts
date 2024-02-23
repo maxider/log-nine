@@ -17,9 +17,7 @@ export const incrementPriority = (task: Task) => {
 
   return axios
     .put(`http://localhost:5174/Tasks/${task.id}`, params)
-    .then(() => {
-      return Promise.resolve();
-    });
+    .then(() => Promise.resolve());
 };
 
 export const decrementPriority = (task: Task) => {
@@ -38,9 +36,7 @@ export const decrementPriority = (task: Task) => {
 
   return axios
     .put(`http://localhost:5174/Tasks/${task.id}`, params)
-    .then(() => {
-      return Promise.resolve();
-    });
+    .then(() => Promise.resolve());
 };
 
 export const incrementStatus = (task: Task) => {
@@ -78,5 +74,25 @@ export const decrementStatus = (task: Task) => {
 
   return axios
     .put(`http://localhost:5174/Tasks/${task.id}`, params)
+    .then(() => Promise.resolve());
+};
+
+export interface UpdateTaskParams {
+  id: number;
+  params: {
+    boardId: number;
+    title: string;
+    description: string;
+    targetId: number;
+    priority: number;
+    status: number;
+    taskType: number;
+    visualId: number;
+  };
+}
+
+export const updateTaskFn = (params: UpdateTaskParams) => {
+  return axios
+    .put(`http://localhost:5174/Tasks/${params.id}`, params.params)
     .then(() => Promise.resolve());
 };

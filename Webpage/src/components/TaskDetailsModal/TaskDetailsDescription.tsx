@@ -1,23 +1,27 @@
 import { Box, TextField, Typography } from "@mui/material";
-import Task from "../../entities/Task";
 
 interface Props {
-  task: Task;
+  description: string;
+  onChange: (newDescription: string) => void;
   isEdit: boolean;
 }
 
-const TaskDetailsDescription = ({ task, isEdit }: Props) => {
+const TaskDetailsDescription = ({ description, onChange, isEdit }: Props) => {
   return (
     <Box sx={{ height: "100%", padding: "20px", flexGrow: 1 }}>
       {isEdit ? (
         <TextField
           label={"Description"}
-          value={task.description}
+          value={description}
+          onChange={(e) => {
+            onChange(e.target.value);
+          }}
           fullWidth
           multiline
+          maxRows={21}
         />
       ) : (
-        <Typography sx={{}}>{task.description}</Typography>
+        <Typography sx={{ whiteSpace: "pre-wrap" }}>{description}</Typography>
       )}
     </Box>
   );

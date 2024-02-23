@@ -1,4 +1,4 @@
-import { Box, Typography, Divider } from "@mui/material";
+import { Box, Typography, Divider, TextField } from "@mui/material";
 import Task from "../../entities/Task";
 import { priorityColor } from "../../helpers/prioToColor";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
@@ -6,7 +6,14 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { decrementPriority, incrementPriority } from "../../api/mutations";
 
-const TaskDetailsHeader = ({ task }: { task: Task }) => {
+interface Props {
+  task: Task;
+  title: string;
+  onChange: (newTitle: string) => void;
+  isEditMode: boolean;
+}
+
+const TaskDetailsHeader = ({ task, title, isEditMode, onChange }: Props) => {
   const color = priorityColor(task.priority);
 
   const queryClient = useQueryClient();
@@ -47,17 +54,45 @@ const TaskDetailsHeader = ({ task }: { task: Task }) => {
         />
       </Box>
       <Divider orientation="vertical" flexItem />
-      <Typography
-        sx={{
-          flexGrow: 1,
-          textAlign: "center",
+      <EditableTitle
+        title={title}
+        isEditMode={isEditMode}
+        onChange={(newTitle) => {
+          onChange(newTitle);
         }}
-      >
-        {task.title}
-      </Typography>
+      />
       <Divider orientation="vertical" flexItem />
       <Typography sx={{ padding: "20px" }}>{task.priority}</Typography>
     </Box>
+  );
+};
+
+interface EditableTitleProps {
+  title: string;
+  isEditMode: boolean;
+  onChange: (newTitle: string) => void;
+}
+const EditableTitle = ({ title, isEditMode, onChange }: EditableTitleProps) => {
+  return isEditMode ? (
+    <TextField
+      sx={{ paddingX: "20px" }}
+      label={"Title"}
+      value={title}
+      fullWidth
+      onChange={(e) => {
+        onChange(e.target.value);
+      }}
+    />
+  ) : (
+    <Typography
+      sx={{
+        flexGrow: 1,
+        textAlign: "center",
+        padding: "20px",
+      }}
+    >
+      {title}
+    </Typography>
   );
 };
 
