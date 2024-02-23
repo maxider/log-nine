@@ -55,7 +55,7 @@ export const incrementStatus = (task: Task) => {
   if (params.status === task.status) return Promise.resolve();
 
   return axios
-    .put(`${backendUrl}/${task.id}`, params)
+    .put(`${backendUrl}/Tasks/${task.id}`, params)
     .then(() => Promise.resolve());
 };
 
