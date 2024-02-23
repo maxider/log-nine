@@ -98,10 +98,19 @@ const TeamItem = ({ team, onClickEdit }: TeamItemProps) => {
       }}
     >
       <Typography>{team.name}</Typography>
-      <Typography>
-        Sr: {team.srFrequency} Lr: {team.lrFrequency}
-      </Typography>
-      <Button onClick={() => onClickEdit(team)}>Edit</Button>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography>
+          Sr: {team.srFrequency} Lr: {team.lrFrequency}
+        </Typography>
+        <Button onClick={() => onClickEdit(team)}>Edit</Button>
+      </Box>
     </Box>
   );
 };
