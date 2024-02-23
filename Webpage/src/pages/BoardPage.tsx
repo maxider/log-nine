@@ -74,6 +74,7 @@ const BoardPage = () => {
           height: "38px",
           justifyContent: "center",
           marginBottom: "10px",
+          gap: "15px",
         }}
       >
         <Button

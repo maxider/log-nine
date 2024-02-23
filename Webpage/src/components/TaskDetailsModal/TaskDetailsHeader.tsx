@@ -52,6 +52,10 @@ const TaskDetailsHeader = ({
         sx={{
           backgroundColor: color,
           paddingX: "20px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
         }}
       >
         <KeyboardArrowUpIcon
@@ -124,33 +128,36 @@ const EditableTargetInfo = ({
   isEditMode,
   setTargetId,
 }: EditableTargetInfoProps) => {
-  return isEditMode ? (
+  return (
     <Box
       sx={{
         width: "300px",
+        minWidth: "200px",
         paddingX: "20px",
       }}
     >
-      <TeamComboBox
-        boardId={team.boardId.toString()}
-        setTargetId={setTargetId}
-        required={false}
-        value={team.id}
-      />
-    </Box>
-  ) : (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        paddingX: "20px",
-      }}
-    >
-      <Typography>{team.name}</Typography>
-      <Typography>
-        Sr: {team.srFrequency} Lr: {team.lrFrequency}
-      </Typography>
+      {isEditMode ? (
+        <TeamComboBox
+          boardId={team.boardId.toString()}
+          setTargetId={setTargetId}
+          required={false}
+          value={team.id}
+        />
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingX: "20px",
+          }}
+        >
+          <Typography>{team.name}</Typography>
+          <Typography>
+            Sr: {team.srFrequency} Lr: {team.lrFrequency}
+          </Typography>
+        </Box>
+      )}
     </Box>
   );
 };
