@@ -14,40 +14,16 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import Task, { TaskPriority, TaskStatus } from "../entities/Task";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import Task from "../entities/Task";
 
 import TeamComboBox from "./TeamComboBox";
 import FormProps from "../helpers/FormProps";
+import useCreateTask from "../hooks/useCreateTask";
 
 type DangerLevel = "Rot" | "Gelb" | "Grün";
 
-type TaskCreationParams = {
-  boardId: number;
-  title: string;
-  description: string;
-  targetId?: number;
-  status: TaskStatus;
-  priority: TaskPriority;
-  taskType: 0;
-};
-
 const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
-  const queryClient = useQueryClient();
-
-  const { mutateAsync: createTask } = useMutation({
-    mutationFn: (params: TaskCreationParams) =>
-      fetch("http://localhost:5174/Tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["tasks", 1] });
-    },
-  });
+  const createTask = useCreateTask();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -180,7 +156,9 @@ const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
               justifyContent: "center",
             }}
           >
-            <Button type="submit">Meep</Button>
+            <Button type="submit" variant="contained">
+              Create
+            </Button>
           </Box>
         </form>
       </Paper>

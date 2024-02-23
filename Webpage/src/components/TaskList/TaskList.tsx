@@ -8,9 +8,10 @@ interface Props {
   header: string;
   tasks: Task[];
   teams: Team[];
+  onClickCard: (taskId: number) => void;
 }
 
-const TaskList = ({ header, tasks, teams }: Props) => {
+const TaskList = ({ header, tasks, teams, onClickCard }: Props) => {
   const tasksSorted = tasks.sort((a, b) => (a.priority - b.priority) * -1);
 
   return (
@@ -25,6 +26,7 @@ const TaskList = ({ header, tasks, teams }: Props) => {
             teams.find((team) => team.id === task.targetId) ?? UndefinedTeam
           }
           key={task.id}
+          onClickCard={onClickCard}
         />
       ))}
     </StyledTaskList>

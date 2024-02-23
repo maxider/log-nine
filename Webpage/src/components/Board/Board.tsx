@@ -8,9 +8,10 @@ import Team from "../../entities/Team";
 interface Props {
   tasks: Task[];
   teams: Team[];
+  onClickCard: (taskId: number) => void;
 }
 
-const Board = ({ tasks, teams }: Props) => {
+const Board = ({ tasks, teams, onClickCard }: Props) => {
   const tasksByStatus = useMemo(
     () =>
       tasks.reduce(
@@ -42,6 +43,8 @@ const Board = ({ tasks, teams }: Props) => {
             header={statusToString(status)}
             tasks={tasksByStatus.get(status) ?? []}
             teams={teams}
+            key={status}
+            onClickCard={onClickCard}
           />
           <Divider orientation="vertical" flexItem />
         </>

@@ -1,3 +1,5 @@
+import { UndefinedTeam } from "./Team";
+
 type Task = {
   id: number;
   visualId: number;
@@ -23,5 +25,16 @@ export enum TaskPriority {
   MEDIUM = 1,
   HIGH = 2,
 }
+
+export const UndefinedTask = {
+  id: -1,
+  visualId: -1,
+  boardId: -1,
+  targetId: -1,
+  title: "Undefined",
+  description: "Undefined",
+  status: TaskStatus.TODO,
+  priority: TaskPriority.LOW,
+};
 
 export default Task;

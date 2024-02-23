@@ -1,18 +1,15 @@
 import { Box, Card, Divider, Typography } from "@mui/material";
 import Task, { TaskPriority } from "../../entities/Task";
 import Team from "../../entities/Team";
-import { useState } from "react";
-import TaskDetailsModal from "../TaskDetailsModal/TaskDetailsModal";
 import { priorityColor } from "../../helpers/prioToColor";
 
 interface Props {
   task: Task;
   team: Team;
+  onClickCard: (taskId: number) => void
 }
 
-const TaskCard = ({ task, team }: Props) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+const TaskCard = ({ task, team, onClickCard }: Props) => {
   return (
     <>
       <Card
@@ -21,7 +18,7 @@ const TaskCard = ({ task, team }: Props) => {
           flexDirection: "row",
         }}
         onClick={() => {
-          setIsModalOpen(true);
+          onClickCard(task.id);
         }}
       >
         <VisualId visualId={task.visualId} priority={task.priority} />
@@ -54,11 +51,6 @@ const TaskCard = ({ task, team }: Props) => {
           </Box>
         </Box>
       </Card>
-      <TaskDetailsModal
-        isOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-        task={task}
-      />
     </>
   );
 };

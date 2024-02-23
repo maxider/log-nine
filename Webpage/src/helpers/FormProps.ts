@@ -1,6 +1,6 @@
 interface FormProps {
     isOpen: boolean;
-    onClose?: () => void;
+    onClose: () => void;
     boardId: string;
 }
 

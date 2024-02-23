@@ -2,20 +2,24 @@ import { useQuery } from "@tanstack/react-query";
 import Board from "../components/Board/Board";
 import { useSocket } from "../hooks/useSocket";
 import { useParams } from "react-router-dom";
-import { Box, Button, Container, Divider, Typography } from "@mui/material";
-import Task from "../entities/Task";
-import Team from "../entities/Team";
+import { Box, Button, Divider, Typography } from "@mui/material";
+import Task, { UndefinedTask } from "../entities/Task";
 import FiveLinerForm from "../components/FiveLinerForm";
 import { useState } from "react";
 import CreateTaskForm from "../components/CreateTaskForm";
 import { fetchTeams } from "../helpers/api";
+import TaskDetailsModal from "../components/TaskDetailsModal/TaskDetailsModal";
 
 const BoardPage = () => {
   useSocket();
 
   const { id: boardId } = useParams();
 
-  const { data, isLoading, isError } = useQuery({
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+  } = useQuery({
     queryKey: ["tasks", boardId],
     queryFn: () =>
       fetch(`http://localhost:5174/Boards/${boardId}/tasks`)
@@ -43,6 +47,8 @@ const BoardPage = () => {
 
   const [isFiveLinerFormOpen, setIsFiveLinerFormOpen] = useState(false);
   const [isCreateTaskFormOpen, setIsCreateTaskFormOpen] = useState(false);
+  const [isViewingTask, setIsViewingTask] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<number>(-1);
 
   if (isLoading) return <Typography variant="h1">Loading...</Typography>;
   if (isError) return <Typography variant="h1">Error</Typography>;
@@ -80,7 +86,14 @@ const BoardPage = () => {
         </Button>
       </Box>
       <Divider orientation="horizontal" flexItem />
-      <Board tasks={data ?? []} teams={teams ?? []} />
+      <Board
+        tasks={tasks ?? []}
+        teams={teams ?? []}
+        onClickCard={(id) => {
+          setSelectedTask(tasks?.find((t) => t.id == id)?.id ?? -1);
+          setIsViewingTask(true);
+        }}
+      />
       <FiveLinerForm
         isOpen={isFiveLinerFormOpen}
         boardId={boardId ?? "-1"}
@@ -90,6 +103,11 @@ const BoardPage = () => {
         isOpen={isCreateTaskFormOpen}
         boardId={boardId ?? "-1"}
         onClose={() => setIsCreateTaskFormOpen(false)}
+      />
+      <TaskDetailsModal
+        isOpen={isViewingTask}
+        setIsModalOpen={setIsViewingTask}
+        task={tasks?.find((t) => t.id === selectedTask) ?? UndefinedTask}
       />
     </Box>
   );

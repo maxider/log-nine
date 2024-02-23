@@ -32,7 +32,7 @@ const TaskDetailButtonFooter = ({
     >
       <OptionalButton
         onClick={() => decrementStat(task)}
-        text={prevStatus(task.status)}
+        text={prevStatus(task.status).replace("_", " ")}
       />
       {isEditMode ? (
         <EditButtonGroup onClickCancle={onCancelEdit} onClickSave={onSave} />
@@ -41,7 +41,7 @@ const TaskDetailButtonFooter = ({
       )}
       <OptionalButton
         onClick={() => incrementStat(task)}
-        text={nextStatus(task.status)}
+        text={nextStatus(task.status).replace("_", " ")}
       />
     </Box>
   );
