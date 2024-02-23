@@ -9,10 +9,6 @@ public class LogNineHub: Hub {
         this.logger = logger;
     }
 
-    public override async Task OnConnectedAsync() {
-        await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId} joined");
-    }
-
     public async Task SendCreatedTaskMessage(int boardId) {     
         await Clients.All.SendAsync("ReceiveMessage", $"TaskCreated:{boardId}");
     }
