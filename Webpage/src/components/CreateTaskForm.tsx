@@ -10,6 +10,12 @@ const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
   const [description, setDescription] = useState("");
   const [targetId, setTargetId] = useState(-1);
 
+  const resetState = () => {
+    setTitle("");
+    setDescription("");
+    setTargetId(-1);
+  }
+
   const createTask = useCreateTask();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,6 +31,7 @@ const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
       taskType: 0,
     });
 
+    resetState();
     onClose();
   };
 

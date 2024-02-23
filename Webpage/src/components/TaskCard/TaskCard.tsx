@@ -1,7 +1,9 @@
-import { Box, Card, Divider, Typography } from "@mui/material";
+import { Box, Card, Divider, Icon, Typography } from "@mui/material";
 import Task, { TaskPriority } from "../../entities/Task";
 import Team from "../../entities/Team";
 import { priorityColor } from "../../helpers/prioToColor";
+
+import wisch9 from "../../../public/WischNine.png";
 
 interface Props {
   task: Task;
@@ -71,6 +73,8 @@ const VisualId = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+        width: "30px",
+        minWidth: "30px",
         backgroundColor: priorityColor(priority),
       }}
     >
@@ -79,10 +83,25 @@ const VisualId = ({
           paddingX: "5px",
         }}
       >
-        {visualId}
+        {memefyVisualId(visualId)}
       </Typography>
     </Box>
   );
+};
+
+const memefyVisualId = (visualId: number) => {
+  switch (visualId) {
+    case 9:
+      return <Icon>
+        <img src={wisch9} alt="wisch9" height={32} width={32}/>
+      </Icon>;
+    case 69:
+      return "♋";
+    case 100:
+      return "💯";
+    default:
+      return visualId;
+  }
 };
 
 export default TaskCard;
