@@ -1,5 +1,6 @@
 using CommandLine;
 using LogNineBackend;
+using Microsoft.EntityFrameworkCore;
 using AppContext = LogNineBackend.AppContext;
 
 var options = Parser.Default.ParseArguments<Options>(args).Value;
@@ -57,8 +58,24 @@ app.MapControllers();
 
 app.MapHub<LogNineHub>("lognine-hub");
 
-if (options.ShouldSeedDatabase)
-    SeedDatabase(app.Services);
+// if (options.ShouldSeedDatabase)
+//     SeedDatabase(app.Services);
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+
+    var context = services.GetRequiredService<AppContext>();
+    if (context.Database.GetPendingMigrations().Any())
+    {
+        context.Database.Migrate();
+    }
+}
+
+
+app.Run();
+
+
 
 void SeedDatabase(IServiceProvider appServices) {
     using var scope = appServices.CreateScope();
@@ -69,9 +86,6 @@ void SeedDatabase(IServiceProvider appServices) {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("Database seeded");
 }
-
-app.Run();
-
 public class Options {
     [Option('s', "swagger", Required = false, HelpText = "Use Swagger")]
     public bool UseSwagger { get; set; }
