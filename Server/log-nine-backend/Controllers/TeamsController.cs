@@ -73,6 +73,7 @@ public class TeamsController : ControllerBase {
         }
         context.Teams.Remove(team);
         await context.SaveChangesAsync();
+        await hub.SendCreatedTeamMessage(team.BoardId);
         return NoContent();
     }
 }

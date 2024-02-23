@@ -115,6 +115,7 @@ public class TasksController : ControllerBase {
         }
         context.JobTasks.Remove(task);
         await context.SaveChangesAsync();
+        await hub.SendUpdatedTaskMessage(task.BoardId);
         return NoContent();
     }
 }
