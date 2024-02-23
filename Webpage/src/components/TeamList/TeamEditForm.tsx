@@ -70,7 +70,7 @@ const TeamEditForm = ({ team, isOpen, onClose }: TeamEditFormProps) => {
                 label={"SrFreq"}
                 value={srFrequency}
                 onChange={(e) => {
-                  setSrFrequency(parseInt(e.target.value, 10));
+                  setSrFrequency(parseFloat(e.target.value, 10));
                   setHasChanges(true);
                 }}
               />
@@ -78,7 +78,7 @@ const TeamEditForm = ({ team, isOpen, onClose }: TeamEditFormProps) => {
                 label={"LrFreq"}
                 value={lrFrequency}
                 onChange={(e) => {
-                  setLrFrequency(parseInt(e.target.value, 10));
+                  setLrFrequency(parseFloat(e.target.value, 10));
                   setHasChanges(true);
                 }}
               />

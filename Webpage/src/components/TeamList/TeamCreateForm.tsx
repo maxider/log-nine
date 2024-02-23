@@ -61,7 +61,7 @@ const TeamCreateForm = ({ isOpen, onClose, boardId }: FormProps) => {
                 label={"SrFreq"}
                 value={srFrequency}
                 onChange={(e) => {
-                  setSrFrequency(parseInt(e.target.value));
+                  setSrFrequency(parseFloat(e.target.value));
                 }}
               />
               <TextField
@@ -69,7 +69,7 @@ const TeamCreateForm = ({ isOpen, onClose, boardId }: FormProps) => {
                 label={"LrFreq"}
                 value={lrFrequency}
                 onChange={(e) => {
-                  setLrFrequency(parseInt(e.target.value));
+                  setLrFrequency(parseFloat(e.target.value));
                 }}
               />
             </Box>

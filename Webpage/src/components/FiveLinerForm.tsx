@@ -35,7 +35,7 @@ const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
       targetId: targetId,
       visualId: 232,
       id: 232,
-      boardId: 1,
+      boardId: parseInt(boardId),
       status: 0,
     };
 
