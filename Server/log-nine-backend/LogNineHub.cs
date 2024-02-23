@@ -12,7 +12,6 @@ public class LogNineHub: Hub {
     public override async Task OnConnectedAsync() {
         logger.LogInformation("Client connected: {ConnectionId}", Context.ConnectionId);
         await Clients.All.SendAsync("ReceiveMessage", $"{Context.ConnectionId} joined");
-        logger.LogInformation("Sending message to all clients");
     }
 
     public async Task SendCreatedTaskMessage(int boardId) {     
