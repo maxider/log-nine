@@ -4,6 +4,7 @@ import { Divider } from "@mui/material";
 import Task, { TaskStatus } from "../../entities/Task";
 import { useMemo } from "react";
 import Team from "../../entities/Team";
+import React from "react";
 
 interface Props {
   tasks: Task[];
@@ -38,7 +39,7 @@ const Board = ({ tasks, teams, onClickCard }: Props) => {
     <StyledBoard>
       <Divider orientation="vertical" flexItem />
       {tasksStatus.map((status) => (
-        <>
+        <React.Fragment key={status}>
           <TaskList
             header={statusToString(status)}
             tasks={tasksByStatus.get(status) ?? []}
@@ -46,8 +47,8 @@ const Board = ({ tasks, teams, onClickCard }: Props) => {
             key={status}
             onClickCard={onClickCard}
           />
-          <Divider orientation="vertical" flexItem />
-        </>
+          <Divider orientation="vertical" flexItem key={`divider-${status}`}/>
+        </React.Fragment>
       ))}
     </StyledBoard>
   );
