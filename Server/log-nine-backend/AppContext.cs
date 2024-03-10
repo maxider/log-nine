@@ -1,5 +1,4 @@
-﻿using FunWithEF;
-using LogNineBackend.Models;
+﻿using LogNineBackend.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogNineBackend;

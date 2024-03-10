@@ -44,11 +44,11 @@ public class TasksController : ControllerBase {
         }
         catch (BoardNotFoundException)
         {
-            return NotFound($"No Board with id {jobTask.BoardId} found");
+            return BadRequest($"No Board with id {jobTask.BoardId} found");
         }
         catch (TeamNotFoundException)
         {
-            return NotFound($"No Team with id {jobTask.TargetId} found");
+            return BadRequest($"No Team with id {jobTask.TargetId} found");
         }
         await hub.SendCreatedTaskMessage(jobTask.BoardId);
         return CreatedAtAction(nameof(GetById), new{ id = task.Id }, new JobTaskDTO(task));
@@ -56,7 +56,6 @@ public class TasksController : ControllerBase {
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, JobTaskCreationParams jobTask) {
-
         JobTask task;
         try
         {
@@ -68,11 +67,11 @@ public class TasksController : ControllerBase {
         }
         catch (BoardNotFoundException)
         {
-            return NotFound($"No Board with id {jobTask.BoardId} found");
+            return BadRequest($"No Board with id {jobTask.BoardId} found");
         }
         catch (TeamNotFoundException)
         {
-            return NotFound($"No Team with id {jobTask.TargetId} found");
+            return BadRequest($"No Team with id {jobTask.TargetId} found");
         }
 
         await hub.SendUpdatedTaskMessage(jobTask.BoardId);

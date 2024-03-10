@@ -10,4 +10,7 @@ public class Team {
     public float LrFrequency { get; set; }
 }
 
-public record struct TeamDTO(int Id, string Name, int BoardId, float SrFrequency, float LrFrequency); 
+public record struct TeamDTO(int Id, string Name, int BoardId, float SrFrequency, float LrFrequency) {
+    public TeamDTO(Team team) : this(team.Id, team.Name, team.BoardId, team.SrFrequency, team.LrFrequency) {
+    }
+}

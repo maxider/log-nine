@@ -1,3 +1,5 @@
+using Tests.Mocks;
+
 namespace Tests;
 
 public class TasksControllerTests {
@@ -7,7 +9,7 @@ public class TasksControllerTests {
     //ctor
     public TasksControllerTests() {
         repository = new MockJobTaskRepository();
-        controller = new TasksController(null, new VoidLogNineHub(), repository);
+        controller = new TasksController(null!, new VoidLogNineHub(), repository);
     }
 
     [Fact]
@@ -76,7 +78,7 @@ public class TasksControllerTests {
     }
 
     [Fact]
-    public async Task Create_ReturnsNotFoundBoard() {
+    public async Task Create_ReturnsBadRequestBoard() {
         // Arrange
         Seed();
         var newTask = new JobTaskCreationParams{
@@ -92,11 +94,11 @@ public class TasksControllerTests {
         var result = await controller.Create(newTask);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
-    public async Task Create_ReturnsNotFoundTeam() {
+    public async Task Create_ReturnsBadRequestTeam() {
         // Arrange
         Seed();
         var newTask = new JobTaskCreationParams{
@@ -113,7 +115,7 @@ public class TasksControllerTests {
         var result = await controller.Create(newTask);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
@@ -160,7 +162,7 @@ public class TasksControllerTests {
     }
 
     [Fact]
-    public async Task Update_ReturnsNotFoundBoard() {
+    public async Task Update_ReturnsBadRequestBoard() {
         // Arrange
         Seed();
         var updatedTask = new JobTaskCreationParams{
@@ -176,11 +178,11 @@ public class TasksControllerTests {
         var result = await controller.Update(2, updatedTask);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
-    public async Task Update_ReturnsNotFoundTeam() {
+    public async Task Update_ReturnsBadRequestTeam() {
         // Arrange
         Seed();
         var updatedTask = new JobTaskCreationParams{
@@ -197,7 +199,7 @@ public class TasksControllerTests {
         var result = await controller.Update(2, updatedTask);
 
         // Assert
-        Assert.IsType<NotFoundObjectResult>(result);
+        Assert.IsType<BadRequestObjectResult>(result);
     }
 
     [Fact]
