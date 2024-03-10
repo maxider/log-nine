@@ -12,8 +12,8 @@ namespace FunWithEF.Controllers;
 public class TeamsController : ControllerBase {
     private readonly ILogger<TeamsController> logger;
     private readonly AppContext context;
-    private readonly LogNineHub hub;
-    public TeamsController(ILogger<TeamsController> logger, AppContext context, LogNineHub hub) {
+    private readonly ILogNineHub hub;
+    public TeamsController(ILogger<TeamsController> logger, AppContext context, ILogNineHub hub) {
         this.logger = logger;
         this.context = context;
         this.hub = hub;

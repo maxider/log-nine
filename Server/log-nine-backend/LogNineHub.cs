@@ -2,7 +2,7 @@
 
 namespace LogNineBackend; 
 
-public class LogNineHub: Hub {
+public class LogNineHub: Hub, ILogNineHub {
     private readonly ILogger<LogNineHub> logger;
 
     public LogNineHub(ILogger<LogNineHub> logger) {

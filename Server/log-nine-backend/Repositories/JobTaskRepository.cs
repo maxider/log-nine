@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace LogNineBackend.Repositories;
 
-public class JobTaskRepository {
+public class JobTaskRepository : IJobTaskRepository {
     private readonly AppContext context;
 
     public JobTaskRepository(AppContext context) {
@@ -26,21 +26,7 @@ public class JobTaskRepository {
 
     public async Task<JobTask> CreateJobTaskAsync(JobTaskCreationParams jobTask) {
         await using var transaction = await context.Database.BeginTransactionAsync();
-        var board = await context.Boards.FindAsync(jobTask.BoardId);
-
-        if (board == null)
-        {
-            throw new BoardNotFoundException(jobTask.BoardId);
-        }
-
-        if (jobTask.TargetId != null)
-        {
-            var target = await context.Teams.FindAsync(jobTask.TargetId);
-            if (target == null)
-            {
-                throw new TeamNotFoundException(jobTask.TargetId.Value);
-            }
-        }
+        var board = await CheckForeignKeyConstraints(jobTask);
 
         var visualId = board.VisualIdCounter;
         var newTask = new JobTask{
@@ -68,6 +54,8 @@ public class JobTaskRepository {
             throw new TaskNotFoundException(id);
         }
 
+        await CheckForeignKeyConstraints(jobTask);
+
         task.BoardId = jobTask.BoardId;
         task.TargetId = jobTask.TargetId;
         task.Title = jobTask.Title;
@@ -80,14 +68,34 @@ public class JobTaskRepository {
         return task;
     }
 
-    public async Task DeleteJobTaskAsync(int id) {
+    public async Task<JobTask?> DeleteJobTaskAsync(int id) {
         var task = await context.JobTasks.FindAsync(id);
         if (task == null)
         {
-            throw new TaskNotFoundException(id);
+            return null;
         }
 
         context.JobTasks.Remove(task);
         await context.SaveChangesAsync();
+        return task;
+    }
+
+    private async Task<Board> CheckForeignKeyConstraints(JobTaskCreationParams jobTask) {
+        var board = await context.Boards.FindAsync(jobTask.BoardId);
+
+        if (board == null)
+        {
+            throw new BoardNotFoundException(jobTask.BoardId);
+        }
+
+        if (jobTask.TargetId != null)
+        {
+            var target = await context.Teams.FindAsync(jobTask.TargetId);
+            if (target == null)
+            {
+                throw new TeamNotFoundException(jobTask.TargetId.Value);
+            }
+        }
+        return board;
     }
 }

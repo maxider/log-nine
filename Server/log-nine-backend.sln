@@ -5,6 +5,8 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "log-nine-backend", "log-nine-backend\log-nine-backend.csproj", "{D8B9A2D1-44D8-4989-B25E-8208F69E113E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{6462174A-451C-4D4D-B7C0-FCD0B778357E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{D8B9A2D1-44D8-4989-B25E-8208F69E113E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8B9A2D1-44D8-4989-B25E-8208F69E113E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8B9A2D1-44D8-4989-B25E-8208F69E113E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6462174A-451C-4D4D-B7C0-FCD0B778357E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6462174A-451C-4D4D-B7C0-FCD0B778357E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6462174A-451C-4D4D-B7C0-FCD0B778357E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6462174A-451C-4D4D-B7C0-FCD0B778357E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

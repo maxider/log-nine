@@ -1,5 +1,6 @@
 using CommandLine;
 using LogNineBackend;
+using LogNineBackend.Repositories;
 using Microsoft.EntityFrameworkCore;
 using AppContext = LogNineBackend.AppContext;
 
@@ -25,7 +26,8 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppContext>();
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<LogNineHub>();
+builder.Services.AddSingleton<ILogNineHub, LogNineHub>();
+builder.Services.AddScoped<IJobTaskRepository, JobTaskRepository>();
 
 var app = builder.Build();
 
@@ -76,7 +78,6 @@ using (var scope = app.Services.CreateScope())
 app.Run();
 
 
-
 void SeedDatabase(IServiceProvider appServices) {
     using var scope = appServices.CreateScope();
     var services = scope.ServiceProvider;
@@ -86,6 +87,7 @@ void SeedDatabase(IServiceProvider appServices) {
     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     logger.LogInformation("Database seeded");
 }
+
 public class Options {
     [Option('s', "swagger", Required = false, HelpText = "Use Swagger")]
     public bool UseSwagger { get; set; }
