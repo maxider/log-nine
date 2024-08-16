@@ -1,40 +1,41 @@
-﻿use std::env;
-use crate::token::{SignedToken, Token, TokenError};
-use axum::http::HeaderMap;
+﻿use crate::context::AppContext;
+use crate::token::{SignedToken, Token};
+use crate::{LoginBody};
+use crate::error::{Result, Error};
 use axum::routing::get;
 use axum::{Extension, Json, Router};
-use crate::context::AppContext;
-use crate::LoginBody;
+use log::debug;
 
-pub fn route() -> Router {
+pub fn router() -> Router {
     Router::new()
-        .route("/auth/verify", get(verify_token))
-        .route("/auth/login", get(login))
+        .route("/verify", get(verify_token))
+        .route("/login", get(login))
 }
 
-async fn verify_token(headers: HeaderMap) -> String {
-    let token_maybe = headers.get("Authorization");
-    let token = if let Some(token) = token_maybe {
-        SignedToken::from(token)
-    } else {
-        return "No token provided".to_string();
-    };
-    match token.verify() {
-        Ok(_) => "Token is valid".to_string(),
-        Err(TokenError::InvalidToken(_)) => "Token is invalid".to_string(),
-        Err(TokenError::ExpiredToken) => "Token is expired".to_string()
-    }
+async fn verify_token(signed_token: SignedToken) -> Result<String> {
+    let token = signed_token.verify()?;
+    debug!("Token verification result: {:?}", token);
+    Ok(true.to_string())
 }
 
-async fn login(_context: Extension<AppContext>, body: Json<LoginBody>) -> String {
-    if body.password != env::var("OWNER_PW").unwrap() {
-        return "Invalid password".to_string();
+async fn login(context: Extension<AppContext>, body: Json<LoginBody>) -> Result<SignedToken> {
+    let user_maybe = context.user_repository.get_user_by_name(body.name.clone()).await?;
+
+    let user = user_maybe.ok_or(Error::NotFound)?;
+
+    debug!("User '{}' is attempting to login", user.name);
+
+    if user.password != body.password {
+        debug!("User '{}' failed to login. Wrong Password", user.name);
+        return Err(Error::Unauthorized { message: "Wrong password" });
     }
+
     let token = Token {
-        sub: 0,
-        exp: chrono::Utc::now().timestamp() + 10,
-        is_admin: true,
+        sub: user.id,
+        exp: chrono::Utc::now().timestamp() + 60 * 60,
+        is_admin: user.is_admin,
     };
-
-    token.sign().unwrap().value()
+    let signed_token = SignedToken::try_from(token).map_err(|_| Error::new_internal(anyhow::anyhow!("Error signing token")))?;
+    debug!("User '{}' logged in successfully", user.name);
+    Ok(signed_token)
 }

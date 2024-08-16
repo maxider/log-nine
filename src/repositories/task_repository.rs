@@ -1,25 +1,8 @@
-﻿use super::*;
-use crate::repositories::board_repository::{Board, GET_BOARD_SQL};
+﻿#![allow(dead_code)]
 
-#[derive(Debug, sqlx::Type)]
-#[sqlx(type_name = "task_priority", rename_all = "snake_case")]
-pub enum TaskPriority {
-    Low,
-    Medium,
-    High,
-}
-
-#[derive(Debug, sqlx::FromRow)]
-pub struct Task {
-    pub id: i32,
-    pub visual_id: i32,
-    pub board_id: i32,
-    pub target_id: Option<i32>,
-    pub title: String,
-    pub description: Option<String>,
-    pub status: i32,
-    pub priority: TaskPriority,
-}
+use crate::model::{Board, Task};
+use super::*;
+use crate::repositories::board_repository::GET_BOARD_SQL;
 
 #[derive(Clone)]
 pub struct TaskRepository {
@@ -87,8 +70,8 @@ mod tests {
         let mut task_repository = TaskRepository::new(pool, 1);
         let task = task_repository.create_task("test".to_string()).await?;
         let task2 = task_repository.create_task("test2".to_string()).await?;
-        assert_eq!(task.visual_id, 0);
-        assert_eq!(task2.visual_id, 1);
+        assert_eq!(task.visual_id, 1);
+        assert_eq!(task2.visual_id, 2);
         Ok(())
     }
 }

@@ -8,14 +8,16 @@ tokio = { version = "1.39.2", features = ["full"] }
 log = "0.4.22"
 env_logger = "0.11.5"   
 axum = { version = "0.7.5", features = ["macros"] }
-sqlx = { version = "0.8.0", features = ["runtime-tokio", "chrono", "postgres"] }
+sqlx = { version = "0.8.0", features = ["runtime-tokio", "chrono", "postgres", "rust_decimal"] }
 dotenv = "0.15.0"
 chrono = { version = "0.4.38", features = ["serde"] }
 serde = { version = "1.0.205", features = ["derive"] }
 jwt = { version = "0.16.0" }
 hmac = "0.12.1"
 sha2 = "0.10.8"
-
+serde_json = "1.0.122"
+rust_decimal = "1.35.0"
+anyhow = "1.0.86"
 
 [dev-dependencies]
 sqlx-cli = "0.8.0"

@@ -1,14 +1,17 @@
 CREATE TABLE users
 (
     id       SERIAL PRIMARY KEY,
-    name     VARCHAR(255) NOT NULL,
+    name     VARCHAR(255) NOT NULL UNIQUE CHECK (name <> ''),
+    password VARCHAR(255) NOT NULL,
     is_admin BOOLEAN      NOT NULL DEFAULT FALSE
 );
+
+INSERT INTO users (name, password, is_admin) VALUES ('Owner', 'log_nine_owner_penis', TRUE);
 
 CREATE TABLE boards
 (
     id                SERIAL PRIMARY KEY,
-    visual_id_counter INTEGER     NOT NULL DEFAULT 0,
+    visual_id_counter INTEGER     NOT NULL DEFAULT 1,
     name              VARCHAR(64) NOT NULL
 );
 

@@ -1,14 +1,12 @@
-﻿use super::*;
-use crate::repositories::task_repository::Task;
+﻿#![allow(dead_code)]
 
-#[derive(Debug, sqlx::FromRow)]
-pub struct Board {
-    pub id: i32,
-    pub visual_id_counter: i32,
-    pub name: String,
-}
+use log::debug;
+use sqlx::Row;
+use crate::model::{Board, Team};
+use super::*;
+use crate::model::Task;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct BoardRepository {
     pool: Pool<Postgres>,
 }
@@ -29,10 +27,12 @@ impl BoardRepository {
             .fetch_one(&mut *tx)
             .await?;
         tx.commit().await?;
+
+        debug!("Created board with id: {}", board.id);
         Ok(board)
     }
 
-    pub async fn get_board_by_id(&mut self, id: i32) -> Result<Board, sqlx::Error> {
+    pub async fn get_board_by_id(&self, id: i32) -> Result<Board, sqlx::Error> {
         let mut tx = self.pool.begin().await?;
         let board = sqlx::query_as::<_, Board>(GET_BOARD_SQL)
             .bind(id)
@@ -41,17 +41,41 @@ impl BoardRepository {
         tx.commit().await?;
         Ok(board)
     }
-    
-    pub async fn _get_all_tasks(&mut self, board_id: i32) -> Result<Vec<Task>, sqlx::Error> {
+
+    pub async fn get_all_tasks(&self, board_id: i32) -> Result<Vec<Task>, sqlx::Error> {
         let mut tx = self.pool.begin().await?;
-        
+
         let tasks = sqlx::query_as::<_, Task>("SELECT * FROM tasks WHERE board_id = $1")
             .bind(board_id)
             .fetch_all(&mut *tx)
             .await?;
-        
+
         tx.commit().await?;
         Ok(tasks)
+    }
+
+    pub async fn get_all_teams(&self, board_id: i32) -> Result<Vec<Team>, sqlx::Error> {
+        let mut tx = self.pool.begin().await?;
+
+        let teams = sqlx::query_as::<_, Team>("SELECT * FROM teams WHERE board_id = $1")
+            .bind(board_id)
+            .fetch_all(&mut *tx)
+            .await?;
+
+        tx.commit().await?;
+        Ok(teams)
+    }
+
+    pub async fn exists_board(&self, board_id: i32) -> Result<bool, sqlx::Error> {
+        let mut tx = self.pool.begin().await?;
+        let exists = sqlx::query("SELECT EXISTS(SELECT 1 FROM boards WHERE id = $1)")
+            .bind(board_id)
+            .fetch_one(&mut *tx)
+            .await
+            .unwrap()
+            .get::<bool, _>(0);
+        tx.commit().await?;
+        Ok(exists)
     }
 }
 
@@ -64,7 +88,7 @@ mod tests {
         let mut board_repository = BoardRepository::new(pool);
         let board = board_repository.create_board("test".to_string()).await?;
         assert_eq!(board.name, "test");
-        assert_eq!(board.visual_id_counter, 0);
+        assert_eq!(board.visual_id_counter, 1);
         dbg!(board);
         Ok(())
     }
@@ -75,6 +99,14 @@ mod tests {
         let board = board_repository.create_board("test".to_string()).await?;
         let board = board_repository.get_board_by_id(board.id).await?;
         assert_eq!(board.name, "test");
+        Ok(())
+    }
+    
+    #[sqlx::test]
+    async fn test_exists_board(pool: Pool<Postgres>) -> sqlx::Result<()> {
+        let mut board_repository = BoardRepository::new(pool);
+        let board = board_repository.create_board("test".to_string()).await?;
+        assert!(board_repository.exists_board(board.id).await?);
         Ok(())
     }
 }
