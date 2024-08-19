@@ -31,6 +31,7 @@ async fn main() -> core::result::Result<(), anyhow::Error > {
         pool: pool.clone(),
         user_repository: repositories::user_repository::UserRepository::new(pool.clone()),
         board_repository: repositories::board_repository::BoardRepository::new(pool.clone()),
+        task_repository: repositories::task_repository::TaskRepository::new(pool.clone()),
     };
 
     let app = Router::new()
