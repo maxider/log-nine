@@ -1,7 +1,7 @@
 ﻿#![allow(dead_code)]
 
-use crate::model::{Board, Task, TaskPriority};
 use super::*;
+use crate::model::{Board, Task, TaskPriority};
 use crate::repositories::board_repository::GET_BOARD_SQL;
 
 #[derive(Clone)]
@@ -57,11 +57,23 @@ impl TaskRepository {
 
         Ok(updated_task)
     }
+
+    pub async fn delete_task(&mut self, task_id: i32) -> Result<(), sqlx::Error> {
+        let mut tx = self.pool.begin().await?;
+
+        sqlx::query("DELETE FROM tasks WHERE id = $1")
+            .bind(task_id)
+            .execute(&mut *tx)
+            .await?;
+
+        tx.commit().await?;
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
 mod tests {
-    use crate::routes::board;
     use super::*;
 
     async fn create_board(pool: Pool<Postgres>) -> Board {
@@ -101,6 +113,21 @@ mod tests {
         assert!(matches!(updated_task.description, Some(_) if updated_task.description.unwrap() == "new description"));
         assert!(matches!(updated_task.target_id, None));
         assert_eq!(updated_task.priority, TaskPriority::High);
+        Ok(())
+    }
+
+    #[sqlx::test]
+    async fn test_delete_task(pool: Pool<Postgres>) -> sqlx::Result<()> {
+        let board = create_board(pool.clone()).await;
+        let mut task_repository = TaskRepository::new(pool.clone());
+        let task = task_repository.create_task("test".to_string(), board.id).await?;
+        task_repository.delete_task(task.id).await?;
+
+        let result = sqlx::query("SELECT * FROM tasks WHERE id = $1")
+            .bind(task.id)
+            .fetch_optional(&pool)
+            .await;
+
         Ok(())
     }
 }
