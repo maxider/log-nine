@@ -39,6 +39,18 @@ impl PartialEq for Token {
     }
 }
 
+#[async_trait]
+impl<S> FromRequestParts<S> for Token {
+    type Rejection = Error;
+
+    async fn from_request_parts(parts: &mut Parts, state: &S) -> std::result::Result<Self, Self::Rejection> {
+        let header = parts.headers.get("Authorization").ok_or(SignedTokenError::EmptyToken)?;
+        let signed = SignedToken::try_from(header)?;
+
+        signed.verify()
+    }
+}
+
 #[derive(Debug)]
 pub struct SignedToken(pub String);
 
@@ -78,18 +90,6 @@ impl SignedToken {
             return Err(Error::Unauthorized { message: "Token expired".into() });
         }
         Ok(verified)
-    }
-}
-
-#[async_trait]
-impl<S> FromRequestParts<S> for SignedToken
-{
-    type Rejection = Error;
-
-    async fn from_request_parts(parts: &mut Parts, _state: &S) -> Result<Self, Self::Rejection> {
-        let header = parts.headers.get("Authorization").ok_or(SignedTokenError::EmptyToken)?;
-        let signed = SignedToken::try_from(header)?;
-        Ok(signed)
     }
 }
 

@@ -1,11 +1,11 @@
-﻿use axum::extract::Path;
-use axum::routing::get;
-use axum::{debug_handler, Router};
-use axum::response::IntoResponse;
-use serde::Serialize;
-use crate::context::Context;
+﻿use crate::context::Context;
 use crate::error;
 use crate::model::{Task, Team};
+use axum::extract::Path;
+use axum::response::IntoResponse;
+use axum::routing::get;
+use axum::Router;
+use serde::Serialize;
 
 pub fn router() -> Router {
     Router::new().route("/:board_id/content", get(get_board))

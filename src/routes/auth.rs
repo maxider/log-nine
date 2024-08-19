@@ -12,8 +12,7 @@ pub fn router() -> Router {
         .route("/login", get(login))
 }
 
-async fn verify_token(signed_token: SignedToken) -> Result<String> {
-    let token = signed_token.verify()?;
+async fn verify_token(token: Token) -> Result<String> {
     debug!("Token verification result: {:?}", token);
     Ok(true.to_string())
 }

@@ -6,7 +6,7 @@ use serde::Deserialize;
 
 pub fn router() -> Router {
     Router::new()
-        .route("/create_task", post(create_task))
+        // .route("/create_task", post(create_task))
 }
 
 #[derive(Debug, Deserialize)]
@@ -18,9 +18,8 @@ struct CreateTaskBody {
     status: i32,
 }
 
-// #[debug_handler]
-async fn create_task(signed_token: SignedToken, body: Json<CreateTaskBody>) -> error::Result<String> {
-    let token = signed_token.verify()?;
-    
-    Ok(format!("Task created by user {}", token.sub))
-}
+// async fn create_task(signed_token: SignedToken, body: Json<CreateTaskBody>) -> error::Result<String> {
+//     let token = signed_token.verify()?;
+// 
+//     Ok(format!("Task created by user {}", token.sub))
+// }

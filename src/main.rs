@@ -20,7 +20,7 @@ use tokio::net::TcpListener;
 const ADDR: &'static str = "localhost:8000";
 
 #[tokio::main]
-async fn main() -> Result<()> {
+async fn main() -> core::result::Result<(), anyhow::Error > {
     dotenv().ok();
     env_logger::init();
 
@@ -30,14 +30,14 @@ async fn main() -> Result<()> {
     let context = AppContext {
         pool: pool.clone(),
         user_repository: repositories::user_repository::UserRepository::new(pool.clone()),
-        board_repository: repositories::board_repository::BoardRepository::new(pool.clone())
+        board_repository: repositories::board_repository::BoardRepository::new(pool.clone()),
     };
 
     let app = Router::new()
         .route("/ping", get(pong))
         .nest("/api", routes::router())
         .layer(Extension(context));
-    
+
 
     let listener = TcpListener::bind(ADDR).await.unwrap();
     info!("Server running on {}", ADDR);
