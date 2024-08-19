@@ -1,5 +1,5 @@
 ﻿use crate::error;
-use crate::token::{SignedToken, Token};
+use crate::model::token::{SignedToken, Token};
 use axum::routing::post;
 use axum::{async_trait, Json, Router};
 use axum::extract::{FromRequest, FromRequestParts, Request};

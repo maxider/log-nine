@@ -2,6 +2,8 @@
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
+pub mod token;
+
 #[derive(Debug, sqlx::FromRow)]
 pub struct Board {
     pub id: i32,

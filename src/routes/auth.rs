@@ -1,5 +1,5 @@
 ﻿use crate::context::AppContext;
-use crate::token::{SignedToken, Token};
+use crate::model::token::{SignedToken, Token};
 use crate::{LoginBody};
 use crate::error::{Result, Error};
 use axum::routing::get;
