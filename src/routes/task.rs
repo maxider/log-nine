@@ -1,18 +1,21 @@
 ﻿use crate::error;
 use crate::model::token::{SignedToken, Token};
-use axum::routing::post;
+use axum::routing::{delete, patch, post};
 use axum::{async_trait, Json, Router};
-use axum::extract::{FromRequest, FromRequestParts, Request};
+use axum::extract::{FromRequest, FromRequestParts, Path, Request};
 use axum::http::request::Parts;
+use axum::http::StatusCode;
 use hmac::digest::Update;
 use log::debug;
 use serde::Deserialize;
 use crate::context::Context;
-use crate::model::Task;
+use crate::model::{Task, TaskPriority};
 
 pub fn router() -> Router {
     Router::new()
         .route("/create_task", post(create_task))
+        .route("/update_task", patch(update_task))
+        .route("/delete_task/:task_id", delete(delete_task))
 }
 
 #[derive(Debug, Deserialize)]
@@ -45,6 +48,7 @@ struct UpdateTaskBody {
     status: Option<i32>,
     target_id: Option<i32>,
     board_id: Option<i32>,
+    task_priority: Option<TaskPriority>,
 }
 
 async fn update_task(mut cx: Context, token: Token, body: Json<UpdateTaskBody>) -> error::Result<Json<Task>> {
@@ -55,7 +59,24 @@ async fn update_task(mut cx: Context, token: Token, body: Json<UpdateTaskBody>) 
         return Err(error::Error::Unauthorized { message: "Only admins can update tasks" });
     }
 
-    let updated_task = cx.task_repository.update_task(body.task_id, None, None, None, None).await?;
+    let updated_task = cx.task_repository.update_task(body.task_id, body.title, body.description, body.target_id, body.status, body.task_priority).await?;
+
+    debug!("User with id '{}' updated task with id '{}'", token.sub, body.task_id);
 
     Ok(Json(updated_task))
+}
+
+async fn delete_task(mut cx: Context, token: Token, task_id: Path<i32>) -> error::Result<StatusCode> {
+    let Path(task_id) = task_id;
+
+    if !token.is_admin {
+        debug!("User with id '{}' attempted to remove a task without being an admin", token.sub);
+        return Err(error::Error::Unauthorized { message: "Only admins can remove tasks" });
+    }
+
+    cx.task_repository.delete_task(task_id).await?;
+
+    debug!("User with id '{}' removed task with id '{}'", token.sub, task_id);
+
+    Ok(StatusCode::NO_CONTENT)
 }

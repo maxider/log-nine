@@ -11,7 +11,7 @@ pub struct Board {
     pub name: String,
 }
 
-#[derive(Debug, sqlx::Type, Serialize, PartialEq)]
+#[derive(Debug, sqlx::Type, Serialize, Deserialize, PartialEq)]
 #[sqlx(type_name = "task_priority", rename_all = "snake_case")]
 pub enum TaskPriority {
     Low,

@@ -23,6 +23,7 @@ impl Error {
 
 impl From<sqlx::Error> for Error {
     fn from(e: sqlx::Error) -> Self {
+        error!("SQLx error: {:?}", e);
         match e {
             sqlx::Error::RowNotFound => Self::NotFound,
             _ => Self::InternalServerError,

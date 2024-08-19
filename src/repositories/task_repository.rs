@@ -41,14 +41,50 @@ impl TaskRepository {
         Ok(task)
     }
 
-    pub async fn update_task(&mut self, task_id: i32, title: Option<String>, description: Option<String>, target_id: Option<i32>, task_priority: Option<TaskPriority>) -> Result<Task, sqlx::Error> {
+    pub async fn update_task(&mut self, task_id: i32, title: Option<String>, description: Option<String>, target_id: Option<i32>, status: Option<i32>, task_priority: Option<TaskPriority>) -> Result<Task, sqlx::Error> {
         let mut tx = self.pool.begin().await?;
 
-        let updated_task = sqlx::query_as::<_, Task>("UPDATE tasks SET title = $1, description = $2, target_id = $3, priority = $4 WHERE id = $5 RETURNING *")
-            .bind(title)
-            .bind(description)
-            .bind(target_id)
-            .bind(task_priority)
+        if let Some(new_title) = title {
+            sqlx::query("UPDATE tasks SET title = $1 WHERE id = $2")
+                .bind(new_title)
+                .bind(task_id)
+                .execute(&mut *tx)
+                .await?;
+        }
+
+        if let Some(new_description) = description {
+            sqlx::query("UPDATE tasks SET description = $1 WHERE id = $2")
+                .bind(new_description)
+                .bind(task_id)
+                .execute(&mut *tx)
+                .await?;
+        }
+
+        if let Some(new_target_id) = target_id {
+            sqlx::query("UPDATE tasks SET target_id = $1 WHERE id = $2")
+                .bind(new_target_id)
+                .bind(task_id)
+                .execute(&mut *tx)
+                .await?;
+        }
+
+        if let Some(new_status) = status {
+            sqlx::query("UPDATE tasks SET status = $1 WHERE id = $2")
+                .bind(new_status)
+                .bind(task_id)
+                .execute(&mut *tx)
+                .await?;
+        }
+
+        if let Some(new_priority) = task_priority {
+            sqlx::query("UPDATE tasks SET priority = $1 WHERE id = $2")
+                .bind(new_priority as TaskPriority)
+                .bind(task_id)
+                .execute(&mut *tx)
+                .await?;
+        }
+
+        let updated_task = sqlx::query_as::<_, Task>("SELECT * FROM tasks WHERE id = $1")
             .bind(task_id)
             .fetch_one(&mut *tx)
             .await?;
@@ -108,7 +144,7 @@ mod tests {
         let board = create_board(pool.clone()).await;
         let mut task_repository = TaskRepository::new(pool);
         let task = task_repository.create_task("test".to_string(), board.id).await?;
-        let updated_task = task_repository.update_task(task.id, Some("new title".to_string()), Some("new description".to_string()), None, Some(TaskPriority::High)).await?;
+        let updated_task = task_repository.update_task(task.id, Some("new title".to_string()), Some("new description".to_string()), None, None, Some(TaskPriority::High)).await?;
         assert_eq!(updated_task.title, "new title");
         assert!(matches!(updated_task.description, Some(_) if updated_task.description.unwrap() == "new description"));
         assert!(matches!(updated_task.target_id, None));
