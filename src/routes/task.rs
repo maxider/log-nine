@@ -1,12 +1,10 @@
 ﻿use crate::error;
-use crate::model::token::{SignedToken, Token};
+use crate::model::token::Token;
 use axum::routing::{delete, patch, post};
-use axum::{async_trait, Json, Router};
-use axum::extract::{FromRequest, FromRequestParts, Path, Request};
-use axum::http::request::Parts;
+use axum::{Json, Router};
+use axum::extract::Path;
 use axum::http::StatusCode;
-use hmac::digest::Update;
-use log::debug;
+use log::{debug, info};
 use serde::Deserialize;
 use crate::context::Context;
 use crate::model::{Task, TaskPriority};
@@ -24,7 +22,6 @@ struct CreateTaskBody {
     title: String,
     target_id: Option<i32>,
     description: Option<String>,
-    status: i32,
 }
 
 async fn create_task(mut cx: Context, token: Token, body: Json<CreateTaskBody>) -> error::Result<Json<Task>> {
@@ -35,7 +32,9 @@ async fn create_task(mut cx: Context, token: Token, body: Json<CreateTaskBody>) 
         return Err(error::Error::Unauthorized { message: "Only admins can create tasks" });
     }
 
-    let created_task = cx.task_repository.create_task(body.title, body.board_id).await?;
+    let created_task = cx.task_repository.create_task(body.title, body.board_id, body.target_id, body.description).await?;
+
+    info!("User with id '{}' created task with id '{}'", token.sub, created_task.id);
 
     Ok(Json(created_task))
 }
@@ -47,7 +46,6 @@ struct UpdateTaskBody {
     description: Option<String>,
     status: Option<i32>,
     target_id: Option<i32>,
-    board_id: Option<i32>,
     task_priority: Option<TaskPriority>,
 }
 
@@ -61,7 +59,7 @@ async fn update_task(mut cx: Context, token: Token, body: Json<UpdateTaskBody>) 
 
     let updated_task = cx.task_repository.update_task(body.task_id, body.title, body.description, body.target_id, body.status, body.task_priority).await?;
 
-    debug!("User with id '{}' updated task with id '{}'", token.sub, body.task_id);
+    info!("User with id '{}' updated task with id '{}'", token.sub, body.task_id);
 
     Ok(Json(updated_task))
 }
@@ -76,7 +74,7 @@ async fn delete_task(mut cx: Context, token: Token, task_id: Path<i32>) -> error
 
     cx.task_repository.delete_task(task_id).await?;
 
-    debug!("User with id '{}' removed task with id '{}'", token.sub, task_id);
+    info!("User with id '{}' removed task with id '{}'", token.sub, task_id);
 
     Ok(StatusCode::NO_CONTENT)
 }

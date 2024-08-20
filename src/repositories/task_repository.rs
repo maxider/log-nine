@@ -16,7 +16,7 @@ impl TaskRepository {
         }
     }
 
-    pub async fn create_task(&mut self, title: String, board_id: i32) -> Result<Task, sqlx::Error> {
+     pub async fn create_task(&mut self, title: String, board_id: i32, target_id: Option<i32>, description: Option<String>) -> Result<Task, sqlx::Error> {
         let mut tx = self.pool.begin().await?;
 
         let board = sqlx::query_as::<_, Board>(GET_BOARD_SQL)
@@ -24,10 +24,11 @@ impl TaskRepository {
             .fetch_one(&mut *tx)
             .await?;
 
-        let task = sqlx::query_as::<_, Task>("INSERT INTO tasks (title, visual_id, board_id) VALUES ($1, $2, $3) RETURNING *")
+        let task = sqlx::query_as::<_, Task>("INSERT INTO tasks (title, board_id, target_id, description) VALUES ($1, $2, $3, $4) RETURNING *")
             .bind(title)
-            .bind(board.visual_id_counter)
-            .bind(board_id)
+            .bind(board.id)
+            .bind(target_id)
+            .bind(description)
             .fetch_one(&mut *tx)
             .await?;
 
@@ -123,7 +124,7 @@ mod tests {
     async fn test_create_task(pool: Pool<Postgres>) -> sqlx::Result<()> {
         let board = create_board(pool.clone()).await;
         let mut task_repository = TaskRepository::new(pool);
-        let task = task_repository.create_task("test".to_string(), board.id).await?;
+        let task = task_repository.create_task("test".to_string(), board.id, None, None).await?;
         assert_eq!(task.title, "test");
         Ok(())
     }
@@ -132,8 +133,8 @@ mod tests {
     async fn test_create_task_visual_id(pool: Pool<Postgres>) -> sqlx::Result<()> {
         let board = create_board(pool.clone()).await;
         let mut task_repository = TaskRepository::new(pool);
-        let task = task_repository.create_task("test".to_string(), board.id).await?;
-        let task2 = task_repository.create_task("test2".to_string(), board.id).await?;
+        let task = task_repository.create_task("test".to_string(), board.id, None, None).await?;
+        let task2 = task_repository.create_task("test2".to_string(), board.id, None, None).await?;
         assert_eq!(task.visual_id, 1);
         assert_eq!(task2.visual_id, 2);
         Ok(())
@@ -143,7 +144,7 @@ mod tests {
     async fn test_update_task(pool: Pool<Postgres>) -> sqlx::Result<()> {
         let board = create_board(pool.clone()).await;
         let mut task_repository = TaskRepository::new(pool);
-        let task = task_repository.create_task("test".to_string(), board.id).await?;
+        let task = task_repository.create_task("test".to_string(), board.id, None, None).await?;
         let updated_task = task_repository.update_task(task.id, Some("new title".to_string()), Some("new description".to_string()), None, None, Some(TaskPriority::High)).await?;
         assert_eq!(updated_task.title, "new title");
         assert!(matches!(updated_task.description, Some(_) if updated_task.description.unwrap() == "new description"));
@@ -156,7 +157,7 @@ mod tests {
     async fn test_delete_task(pool: Pool<Postgres>) -> sqlx::Result<()> {
         let board = create_board(pool.clone()).await;
         let mut task_repository = TaskRepository::new(pool.clone());
-        let task = task_repository.create_task("test".to_string(), board.id).await?;
+        let task = task_repository.create_task("test".to_string(), board.id, None, None).await?;
         task_repository.delete_task(task.id).await?;
 
         let result = sqlx::query("SELECT * FROM tasks WHERE id = $1")

@@ -38,9 +38,9 @@ async fn main() -> core::result::Result<(), anyhow::Error > {
         .layer(Extension(context));
 
 
-    let listener = TcpListener::bind(ADDR).await.unwrap();
+    let listener = TcpListener::bind(ADDR).await?;
     info!("Server running on {}", ADDR);
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, app).await?;
 
     Ok(())
 }
