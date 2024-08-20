@@ -1,12 +1,15 @@
 ﻿use crate::error;
 use crate::model::token::Token;
 use axum::routing::{delete, patch, post};
-use axum::{Json, Router};
-use axum::extract::Path;
+use axum::{async_trait, Json, RequestExt, Router};
+use axum::extract::{FromRequest, Path, Request};
+use axum::extract::rejection::JsonRejection;
 use axum::http::StatusCode;
 use log::{debug, info};
 use serde::Deserialize;
 use crate::context::Context;
+use crate::error::Error;
+use crate::error::Error::BadRequest;
 use crate::model::{Task, TaskPriority};
 
 pub fn router() -> Router {
@@ -49,9 +52,35 @@ struct UpdateTaskBody {
     task_priority: Option<TaskPriority>,
 }
 
-async fn update_task(mut cx: Context, token: Token, body: Json<UpdateTaskBody>) -> error::Result<Json<Task>> {
-    let Json(body) = body;
+#[async_trait]
+impl<S> FromRequest<S> for UpdateTaskBody
+where
+    S: Send + Sync + 'static,
+{
+    type Rejection = Error;
 
+    async fn from_request(req: Request, state: &S) -> Result<Self, Self::Rejection> {
+        let body = Json::<UpdateTaskBody>::from_request(req, state)
+            .await
+            .map(|Json(body)| body)
+            .map_err(|e|
+                match e {
+                    JsonRejection::JsonDataError(e) => { BadRequest { message: format!("Failed to deserialize the JSON body into the target type: {:?}", e) } }
+                    _ => Error::new_internal(e.into())
+                }
+            )?;
+
+        if let Some(status) = body.status {
+            if status < 0 || status > 5 {
+                return Err(BadRequest { message: format!("Invalid status: {}. Status must be between 0 and 5 (inclusive)", body.status.unwrap()) });
+            }
+        }
+
+        Ok(body)
+    }
+}
+
+async fn update_task(mut cx: Context, token: Token, body: UpdateTaskBody) -> error::Result<Json<Task>> {
     if !token.is_admin {
         debug!("User with id '{}' attempted to update a task without being an admin", token.sub);
         return Err(error::Error::Unauthorized { message: "Only admins can update tasks" });

@@ -24,11 +24,12 @@ impl TaskRepository {
             .fetch_one(&mut *tx)
             .await?;
 
-        let task = sqlx::query_as::<_, Task>("INSERT INTO tasks (title, board_id, target_id, description) VALUES ($1, $2, $3, $4) RETURNING *")
+        let task = sqlx::query_as::<_, Task>("INSERT INTO tasks (title, board_id, target_id, description, visual_id) VALUES ($1, $2, $3, $4, $5) RETURNING *")
             .bind(title)
             .bind(board.id)
             .bind(target_id)
             .bind(description)
+            .bind(board.visual_id_counter)
             .fetch_one(&mut *tx)
             .await?;
 

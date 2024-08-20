@@ -1,4 +1,5 @@
-﻿use rust_decimal::Decimal;
+﻿use hmac::digest::consts::U18;
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 use sqlx::FromRow;
 
@@ -30,6 +31,8 @@ pub struct Task {
     pub status: i32,
     pub priority: TaskPriority,
 }
+
+pub const MAX_TASK_STATUS: u8 = 5;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {
