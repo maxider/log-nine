@@ -30,5 +30,10 @@ export function useSocket() {
         queryKey: ["teams", message.arg],
       });
     }
+    if (message.type === "PersonCreated" || message.type === "PersonUpdated") {
+      queryClient.invalidateQueries({
+        queryKey: ["people", message.arg],
+      });
+    }
   };
 }

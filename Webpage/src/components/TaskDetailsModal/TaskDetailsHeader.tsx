@@ -85,6 +85,7 @@ const TaskDetailsHeader = ({
       <Divider orientation="vertical" flexItem />
       <EditablePersonInfo
         person={person}
+        boardId={task.boardId}
         isEditMode={isEditMode}
         setAssignedToId={onChangeAssignedToId}
       />
@@ -137,6 +138,7 @@ interface EditableTargetInfoProps {
 
 interface EditablePersonInfoProps {
   person: Person;
+  boardId: number;
   isEditMode: boolean;
   setAssignedToId: (id: number) => void;
 }
@@ -182,6 +184,7 @@ const EditableTargetInfo = ({
 
 const EditablePersonInfo = ({
   person,
+  boardId,
   isEditMode,
   setAssignedToId,
 }: EditablePersonInfoProps) => {
@@ -195,7 +198,7 @@ const EditablePersonInfo = ({
     >
       {isEditMode ? (
         <PersonComboBox
-          boardId={person.boardId.toString()}
+          boardId={boardId.toString()}
           setPersonId={setAssignedToId}
           required={false}
           value={person.id}

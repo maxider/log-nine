@@ -12,6 +12,7 @@ import TaskDetailsModal from "../components/TaskDetailsModal/TaskDetailsModal";
 import TeamListModal from "../components/TeamList/TeamListModal";
 import backendUrl from "../api/BackendUrl";
 import PersonTasks from "../components/PersonTasks/PersonTasks";
+import CreatePersonForm from "../components/CreatePersonForm";
 
 const BoardPage = () => {
   useSocket();
@@ -58,6 +59,7 @@ const BoardPage = () => {
 
   const [isFiveLinerFormOpen, setIsFiveLinerFormOpen] = useState(false);
   const [isCreateTaskFormOpen, setIsCreateTaskFormOpen] = useState(false);
+  const [isCreatePersonFormOpen, setIsCreatePersonFormOpen] = useState(false);
   const [isViewingTask, setIsViewingTask] = useState(false);
   const [selectedTask, setSelectedTask] = useState<number>(-1);
 
@@ -94,6 +96,12 @@ const BoardPage = () => {
           padding: "10px",
         }}
       >
+        <Button
+          variant="contained"
+          onClick={() => setIsCreatePersonFormOpen(true)}
+        >
+          Add Person
+        </Button>
         {people.map((person) => (
           <PersonTasks
             key={person.id}
@@ -157,6 +165,11 @@ const BoardPage = () => {
           isOpen={isCreateTaskFormOpen}
           boardId={boardId ?? "-1"}
           onClose={() => setIsCreateTaskFormOpen(false)}
+        />
+        <CreatePersonForm
+          isOpen={isCreatePersonFormOpen}
+          boardId={boardId ?? "-1"}
+          onClose={() => setIsCreatePersonFormOpen(false)}
         />
         <TaskDetailsModal
           isOpen={isViewingTask}
