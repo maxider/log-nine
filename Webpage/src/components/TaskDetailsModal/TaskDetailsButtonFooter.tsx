@@ -41,7 +41,7 @@ const TaskDetailButtonFooter = ({
       />
       {isEditMode ? (
         <EditButtonGroup
-          onClickCancle={onCancelEdit}
+          onClickCancel={onCancelEdit}
           onClickSave={onSave}
           hasChanges={hasChanges}
         />
@@ -95,11 +95,11 @@ const NormalButtonGroup = ({ onClickEdit }: { onClickEdit: () => void }) => {
 };
 
 const EditButtonGroup = ({
-  onClickCancle: onClickCancle,
+  onClickCancel,
   onClickSave,
   hasChanges,
 }: {
-  onClickCancle: () => void;
+  onClickCancel: () => void;
   onClickSave: () => void;
   hasChanges: boolean;
 }) => {
@@ -124,7 +124,7 @@ const EditButtonGroup = ({
       <Button
         sx={{ width: "64px" }}
         variant="contained"
-        onClick={onClickCancle}
+        onClick={onClickCancel}
       >
         Cancel
       </Button>

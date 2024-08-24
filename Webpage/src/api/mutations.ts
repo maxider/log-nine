@@ -131,7 +131,7 @@ export const createTeamFn = (params: CreateTeamParams) => {
     .then(() => Promise.resolve());
 };
 
-export const cancleTaskFn = (task: Task) => {
+export const cancelTaskFn = (task: Task) => {
   const params: UpdateTaskParams = {
     id: task.id,
     params: {
