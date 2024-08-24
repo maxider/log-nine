@@ -1,4 +1,13 @@
-import { Divider, Modal, Paper, SxProps } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogActions,
+  DialogTitle,
+  Divider,
+  Modal,
+  Paper,
+  SxProps,
+} from "@mui/material";
 import Task from "../../entities/Task";
 
 import TaskDetailsHeader from "./TaskDetailsHeader";
@@ -62,6 +71,8 @@ const TaskDetailsModal = ({
 
   const [hasChanges, setHasChanges] = useState(false);
 
+  const [isCanceling, setIsCanceling] = useState(false);
+
   useEffect(() => {
     if (!isEditing) {
       setEditTitle(task.title);
@@ -98,53 +109,72 @@ const TaskDetailsModal = ({
         setIsEditing(false);
       }}
     >
-      <Paper sx={TaskDetailsModalStyle}>
-        <TaskDetailsHeader
-          task={task}
-          target={teams.find((t) => t.id === editTargetId) ?? UndefinedTeam}
-          person={
-            people.find((p) => p.id === editAssignedToId) ?? UndefinedPerson
-          }
-          title={editTitle}
-          isEditMode={isEditing}
-          onChange={(t) => {
-            setEditTitle(t);
-            setHasChanges(true);
-          }}
-          onChangeTargetId={(id) => {
-            setEditTargetId(id);
-            setHasChanges(true);
-          }}
-          onChangeAssignedToId={(id) => {
-            setEditAssignedToId(id);
-            setHasChanges(true);
-          }}
-        />
-        <Divider orientation="horizontal" flexItem />
-        <TaskDetailsDescription
-          description={editDescription}
-          onChange={(d) => {
-            setEditDescription(d);
-            setHasChanges(true);
-          }}
-          isEdit={isEditing}
-        />
-        <Divider orientation="horizontal" flexItem />
-        <TaskDetailButtonFooter
-          task={task}
-          incrementStat={incrementStat}
-          decrementStat={decrementStat}
-          cancelTask={cancelTask}
-          onEditButton={() => setIsEditing(true)}
-          onCancelEdit={() => {
-            setIsEditing(false);
-            setHasChanges(false);
-          }}
-          onSave={handleSave}
-          isEditMode={isEditing}
-          hasChanges={hasChanges}
-        />
-      </Paper>
+      <>
+        <Dialog open={isCanceling} onClose={() => setIsCanceling(false)}>
+          <DialogTitle>
+            Are you sure you want to cancel this task? This can only be undone
+            by an admin.
+          </DialogTitle>
+          <DialogActions>
+            <Button
+              onClick={() => {
+                setIsCanceling(false);
+                cancelTask(task);
+              }}
+            >
+              Yes
+            </Button>
+            <Button onClick={() => setIsCanceling(false)}>No</Button>
+          </DialogActions>
+        </Dialog>
+        <Paper sx={TaskDetailsModalStyle}>
+          <TaskDetailsHeader
+            task={task}
+            target={teams.find((t) => t.id === editTargetId) ?? UndefinedTeam}
+            person={
+              people.find((p) => p.id === editAssignedToId) ?? UndefinedPerson
+            }
+            title={editTitle}
+            isEditMode={isEditing}
+            onChange={(t) => {
+              setEditTitle(t);
+              setHasChanges(true);
+            }}
+            onChangeTargetId={(id) => {
+              setEditTargetId(id);
+              setHasChanges(true);
+            }}
+            onChangeAssignedToId={(id) => {
+              setEditAssignedToId(id);
+              setHasChanges(true);
+            }}
+          />
+          <Divider orientation="horizontal" flexItem />
+          <TaskDetailsDescription
+            description={editDescription}
+            onChange={(d) => {
+              setEditDescription(d);
+              setHasChanges(true);
+            }}
+            isEdit={isEditing}
+          />
+          <Divider orientation="horizontal" flexItem />
+          <TaskDetailButtonFooter
+            task={task}
+            incrementStat={incrementStat}
+            decrementStat={decrementStat}
+            cancelTask={() => setIsCanceling(true)}
+            onEditButton={() => setIsEditing(true)}
+            onCancelEdit={() => {
+              setIsEditing(false);
+              setHasChanges(false);
+            }}
+            onSave={handleSave}
+            isEditMode={isEditing}
+            hasChanges={hasChanges}
+          />
+        </Paper>
+      </>
     </Modal>
   );
 };
