@@ -5,7 +5,7 @@
 namespace LogNineBackend.Migrations
 {
     /// <inheritdoc />
-    public partial class initial : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,20 @@ namespace LogNineBackend.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Boards", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "People",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    BoardId = table.Column<int>(type: "INTEGER", nullable: false),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_People", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -59,7 +73,8 @@ namespace LogNineBackend.Migrations
                     Description = table.Column<string>(type: "TEXT", nullable: false),
                     Status = table.Column<int>(type: "INTEGER", nullable: false),
                     Priority = table.Column<int>(type: "INTEGER", nullable: false),
-                    TaskType = table.Column<int>(type: "INTEGER", nullable: false)
+                    TaskType = table.Column<int>(type: "INTEGER", nullable: false),
+                    AssignedToId = table.Column<int>(type: "INTEGER", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,11 +86,21 @@ namespace LogNineBackend.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
+                        name: "FK_JobTasks_People_AssignedToId",
+                        column: x => x.AssignedToId,
+                        principalTable: "People",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_JobTasks_Teams_TargetId",
                         column: x => x.TargetId,
                         principalTable: "Teams",
                         principalColumn: "Id");
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_JobTasks_AssignedToId",
+                table: "JobTasks",
+                column: "AssignedToId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_JobTasks_BoardId",
@@ -98,6 +123,9 @@ namespace LogNineBackend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "JobTasks");
+
+            migrationBuilder.DropTable(
+                name: "People");
 
             migrationBuilder.DropTable(
                 name: "Teams");

@@ -7,7 +7,7 @@ import Task, { UndefinedTask } from "../entities/Task";
 import FiveLinerForm from "../components/FiveLinerForm";
 import { useState } from "react";
 import CreateTaskForm from "../components/CreateTaskForm";
-import { fetchTeams } from "../api/api";
+import { fetchPeople, fetchTeams } from "../api/api";
 import TaskDetailsModal from "../components/TaskDetailsModal/TaskDetailsModal";
 import TeamListModal from "../components/TeamList/TeamListModal";
 import backendUrl from "../api/BackendUrl";
@@ -37,6 +37,7 @@ const BoardPage = () => {
             status: task.status,
             priority: task.priority,
             teamId: task.targetId,
+            assignedToId: task.assignedToId,
           }));
           return tasks;
         }),
@@ -46,6 +47,12 @@ const BoardPage = () => {
     queryKey: ["teams", boardId],
     queryFn: fetchTeams(boardId ?? "-1"),
   });
+
+  const {data: people} = useQuery({
+    queryKey: ["people", boardId],
+    queryFn: fetchPeople(boardId ?? "-1")
+  })
+
 
   const [isFiveLinerFormOpen, setIsFiveLinerFormOpen] = useState(false);
   const [isCreateTaskFormOpen, setIsCreateTaskFormOpen] = useState(false);
@@ -97,6 +104,7 @@ const BoardPage = () => {
       <Board
         tasks={tasks ?? []}
         teams={teams ?? []}
+        people={people ?? []}
         onClickCard={(id) => {
           setSelectedTask(tasks?.find((t) => t.id == id)?.id ?? -1);
           setIsViewingTask(true);
@@ -117,6 +125,7 @@ const BoardPage = () => {
         setIsModalOpen={setIsViewingTask}
         task={tasks?.find((t) => t.id === selectedTask) ?? UndefinedTask}
         teams={teams ?? []}
+        people={people ?? []}
       />
       <TeamListModal
         teams={teams ?? []}

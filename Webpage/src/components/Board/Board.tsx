@@ -1,18 +1,21 @@
 import StyledBoard from "./styles";
 import TaskList from "../TaskList/TaskList";
-import { Divider } from "@mui/material";
+import { Box, Divider} from "@mui/material";
 import Task, { TaskStatus } from "../../entities/Task";
 import { useMemo } from "react";
 import Team from "../../entities/Team";
 import React from "react";
+import Person from "../../entities/Person";
+import PersonTasks from "../PersonTasks/PersonTasks";
 
 interface Props {
   tasks: Task[];
   teams: Team[];
+  people: Person[];
   onClickCard: (taskId: number) => void;
 }
 
-const Board = ({ tasks, teams, onClickCard }: Props) => {
+const Board = ({ tasks, teams, people, onClickCard }: Props) => {
   const tasksByStatus = useMemo(
     () =>
       tasks.reduce(
@@ -35,21 +38,48 @@ const Board = ({ tasks, teams, onClickCard }: Props) => {
   const tasksStatus: Task["status"][] = [...tasksByStatus.keys()];
 
   return (
-    <StyledBoard>
-      <Divider orientation="vertical" flexItem />
-      {tasksStatus.map((status) => (
-        <React.Fragment key={status}>
-          <TaskList
-            header={statusToString(status)}
-            tasks={tasksByStatus.get(status) ?? []}
+    <Box
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+      }}
+    >
+      <Box
+        sx={{
+          height: "100%",
+          marginRight: "20px",
+        }}
+      >
+        {people.map((person) => (
+          <PersonTasks
+            key={person.id}
+            person={person}
+            tasks={tasks.filter((t) => t.assignedToId === person.id)}
             teams={teams}
-            key={status}
             onClickCard={onClickCard}
           />
-          <Divider orientation="vertical" flexItem key={`divider-${status}`}/>
-        </React.Fragment>
-      ))}
-    </StyledBoard>
+        ))}
+      </Box>
+      <StyledBoard>
+        <Divider orientation="vertical" flexItem />
+        {tasksStatus.map((status) => (
+          <React.Fragment key={status}>
+            <TaskList
+              header={statusToString(status)}
+              tasks={tasksByStatus.get(status) ?? []}
+              teams={teams}
+              key={status}
+              onClickCard={onClickCard}
+            />
+            <Divider
+              orientation="vertical"
+              flexItem
+              key={`divider-${status}`}
+            />
+          </React.Fragment>
+        ))}
+      </StyledBoard>
+    </Box>
   );
 };
 

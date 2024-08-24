@@ -24,4 +24,8 @@ public class LogNineHub: Hub {
     public async Task SendUpdatedTeamMessage(int boardId) {
         await Clients.All.SendAsync("ReceiveMessage", $"TeamUpdated:{boardId}");
     }
+
+    public async Task SendCreatedPersonMessage(int newPersonBoardId) {
+        throw new NotImplementedException();
+    }
 }

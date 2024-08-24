@@ -10,7 +10,8 @@ public class AppContext : DbContext {
     public DbSet<JobTask> JobTasks { get; set; }
     public DbSet<Team> Teams { get; set; }
     public DbSet<Board> Boards { get; set; }
-
+    public DbSet<Person> People { get; set; }
+    
     public string DbPath { get; private set; }
 
     public AppContext(ILogger<AppContext> logger) {

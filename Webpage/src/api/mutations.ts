@@ -89,6 +89,7 @@ export interface UpdateTaskParams {
     status: number;
     taskType: number;
     visualId: number;
+    assignedToId?: number;
   };
 }
 

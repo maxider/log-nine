@@ -7,6 +7,7 @@ type Task = {
   description: string;
   status: TaskStatus;
   priority: TaskPriority;
+  assignedToId?: number;
 };
 
 export enum TaskStatus {
