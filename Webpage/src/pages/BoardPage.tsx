@@ -3,7 +3,7 @@ import Board from "../components/Board/Board";
 import { useSocket } from "../hooks/useSocket";
 import { useParams } from "react-router-dom";
 import { Box, Button, Divider, Typography } from "@mui/material";
-import Task, { UndefinedTask } from "../entities/Task";
+import Task, { TaskStatus, UndefinedTask } from "../entities/Task";
 import FiveLinerForm from "../components/FiveLinerForm";
 import { useState } from "react";
 import CreateTaskForm from "../components/CreateTaskForm";
@@ -106,7 +106,7 @@ const BoardPage = () => {
           <PersonTasks
             key={person.id}
             person={person}
-            tasks={tasks.filter((t) => t.assignedToId === person.id)}
+            tasks={tasks.filter((t) =>  t.status != TaskStatus.DONE && t.status != TaskStatus.CANCELLED && t.assignedToId === person.id)}
             teams={teams}
             onClickCard={handleClickCard}
           />
