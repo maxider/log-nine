@@ -27,7 +27,6 @@ const Board = ({ tasks, teams, onClickCard }: Props) => {
           [TaskStatus.ON_SITE, []],
           [TaskStatus.RETURNING, []],
           [TaskStatus.DONE, []],
-          [TaskStatus.CANCELLED, []],
         ])
       ),
     [tasks]
