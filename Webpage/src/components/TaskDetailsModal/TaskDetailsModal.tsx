@@ -4,6 +4,7 @@ import Task from "../../entities/Task";
 import TaskDetailsHeader from "./TaskDetailsHeader";
 import {
   UpdateTaskParams,
+  cancleTaskFn,
   decrementStatus,
   incrementStatus,
   updateTaskFn,
@@ -35,6 +36,11 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
 
   const { mutateAsync: updateTask } = useMutation({
     mutationFn: updateTaskFn,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+
+  const {mutateAsync: cancleTask} = useMutation({
+    mutationFn: cancleTaskFn,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 
@@ -110,6 +116,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
           task={task}
           incrementStat={incrementStat}
           decrementStat={decrementStat}
+          cancelTask={cancleTask}
           onEditButton={() => setIsEditing(true)}
           onCancelEdit={() => {
             setIsEditing(false);
