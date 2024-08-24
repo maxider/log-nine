@@ -7,23 +7,29 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { decrementPriority, incrementPriority } from "../../api/mutations";
 import Team from "../../entities/Team";
 import TeamComboBox from "../TeamComboBox";
+import PersonComboBox from "../PersonComboBox";
+import Person from "../../entities/Person";
 
 interface Props {
   task: Task;
   target: Team;
+  person: Person;
   title: string;
   onChange: (newTitle: string) => void;
   onChangeTargetId: (newTargetId: number) => void;
+  onChangeAssignedToId: (newPersonId: number) => void;
   isEditMode: boolean;
 }
 
 const TaskDetailsHeader = ({
   task,
   target,
+  person,
   title,
   isEditMode,
   onChange,
   onChangeTargetId,
+  onChangeAssignedToId,
 }: Props) => {
   const color = priorityColor(task.priority);
   const queryClient = useQueryClient();
@@ -77,6 +83,13 @@ const TaskDetailsHeader = ({
         }}
       />
       <Divider orientation="vertical" flexItem />
+      <EditablePersonInfo
+        person={person}
+        boardId={task.boardId}
+        isEditMode={isEditMode}
+        setAssignedToId={onChangeAssignedToId}
+      />
+      <Divider orientation="vertical" flexItem />
       <EditableTargetInfo
         team={target}
         isEditMode={isEditMode}
@@ -123,6 +136,13 @@ interface EditableTargetInfoProps {
   setTargetId: (id: number) => void;
 }
 
+interface EditablePersonInfoProps {
+  person: Person;
+  boardId: number;
+  isEditMode: boolean;
+  setAssignedToId: (id: number) => void;
+}
+
 const EditableTargetInfo = ({
   team,
   isEditMode,
@@ -156,6 +176,43 @@ const EditableTargetInfo = ({
           <Typography>
             Sr: {team.srFrequency} Lr: {team.lrFrequency}
           </Typography>
+        </Box>
+      )}
+    </Box>
+  );
+};
+
+const EditablePersonInfo = ({
+  person,
+  boardId,
+  isEditMode,
+  setAssignedToId,
+}: EditablePersonInfoProps) => {
+  return (
+    <Box
+      sx={{
+        width: "300px",
+        minWidth: "200px",
+        paddingX: "20px",
+      }}
+    >
+      {isEditMode ? (
+        <PersonComboBox
+          boardId={boardId.toString()}
+          setPersonId={setAssignedToId}
+          required={false}
+          value={person.id}
+        />
+      ) : (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            paddingX: "20px",
+          }}
+        >
+          <Typography>{person.name}</Typography>
         </Box>
       )}
     </Box>

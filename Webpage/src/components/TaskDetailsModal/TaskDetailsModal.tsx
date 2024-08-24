@@ -14,14 +14,22 @@ import { useEffect, useState } from "react";
 import TaskDetailButtonFooter from "./TaskDetailsButtonFooter";
 import TaskDetailsDescription from "./TaskDetailsDescription";
 import Team, { UndefinedTeam } from "../../entities/Team";
+import Person, { UndefinedPerson } from "../../entities/Person";
 
 interface Props {
   isOpen: boolean;
   setIsModalOpen: (isOpen: boolean) => void;
   task: Task;
   teams: Team[];
+  people: Person[];
 }
-const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
+const TaskDetailsModal = ({
+  isOpen,
+  setIsModalOpen,
+  task,
+  teams,
+  people,
+}: Props) => {
   const queryClient = useQueryClient();
 
   const { mutateAsync: incrementStat } = useMutation({
@@ -39,7 +47,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
 
-  const {mutateAsync: cancleTask} = useMutation({
+  const { mutateAsync: cancleTask } = useMutation({
     mutationFn: cancleTaskFn,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["tasks"] }),
   });
@@ -50,6 +58,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
   const [editDescription, setEditDescription] = useState(task.description);
 
   const [editTargetId, setEditTargetId] = useState(task.targetId);
+  const [editAssignedToId, setEditAssignedToId] = useState(task.assignedToId);
 
   const [hasChanges, setHasChanges] = useState(false);
 
@@ -58,6 +67,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
       setEditTitle(task.title);
       setEditDescription(task.description);
       setEditTargetId(task.targetId);
+      setEditAssignedToId(task.assignedToId);
     }
   }, [task, isEditing]);
 
@@ -74,6 +84,7 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
         status: task.status,
         taskType: 0,
         visualId: task.visualId,
+        assignedToId: editAssignedToId,
       },
     };
     updateTask(params);
@@ -91,6 +102,9 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
         <TaskDetailsHeader
           task={task}
           target={teams.find((t) => t.id === editTargetId) ?? UndefinedTeam}
+          person={
+            people.find((p) => p.id === editAssignedToId) ?? UndefinedPerson
+          }
           title={editTitle}
           isEditMode={isEditing}
           onChange={(t) => {
@@ -99,6 +113,10 @@ const TaskDetailsModal = ({ isOpen, setIsModalOpen, task, teams }: Props) => {
           }}
           onChangeTargetId={(id) => {
             setEditTargetId(id);
+            setHasChanges(true);
+          }}
+          onChangeAssignedToId={(id) => {
+            setEditAssignedToId(id);
             setHasChanges(true);
           }}
         />

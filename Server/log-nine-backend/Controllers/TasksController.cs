@@ -97,6 +97,7 @@ public class TasksController : ControllerBase {
         task.Status = jobTask.Status;
         task.Priority = jobTask.Priority;
         task.TaskType = jobTask.TaskType;
+        task.AssignedTo = await context.People.FindAsync(jobTask.AssignedToId) ?? null;
         await context.SaveChangesAsync();
         await hub.SendUpdatedTaskMessage(jobTask.BoardId);
         return Ok(new JobTaskDTO(task));
@@ -121,4 +122,4 @@ public class TasksController : ControllerBase {
 }
 
 public record struct JobTaskCreationParams(int BoardId, string Title, string Description, int? TargetId,
-    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType);
+    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType, int? AssignedToId);

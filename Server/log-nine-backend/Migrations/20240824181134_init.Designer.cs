@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace LogNineBackend.Migrations
 {
     [DbContext(typeof(AppContext))]
-    [Migration("20240223152516_initial")]
-    partial class initial
+    [Migration("20240824181134_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,6 +44,9 @@ namespace LogNineBackend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int?>("AssignedToId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("BoardId")
                         .HasColumnType("INTEGER");
 
@@ -72,11 +75,31 @@ namespace LogNineBackend.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AssignedToId");
+
                     b.HasIndex("BoardId");
 
                     b.HasIndex("TargetId");
 
                     b.ToTable("JobTasks");
+                });
+
+            modelBuilder.Entity("LogNineBackend.Models.Person", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("BoardId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("People");
                 });
 
             modelBuilder.Entity("LogNineBackend.Models.Team", b =>
@@ -107,6 +130,10 @@ namespace LogNineBackend.Migrations
 
             modelBuilder.Entity("LogNineBackend.Models.JobTask", b =>
                 {
+                    b.HasOne("LogNineBackend.Models.Person", "AssignedTo")
+                        .WithMany()
+                        .HasForeignKey("AssignedToId");
+
                     b.HasOne("LogNineBackend.Models.Board", "Board")
                         .WithMany("Tasks")
                         .HasForeignKey("BoardId")
@@ -116,6 +143,8 @@ namespace LogNineBackend.Migrations
                     b.HasOne("LogNineBackend.Models.Team", "Target")
                         .WithMany()
                         .HasForeignKey("TargetId");
+
+                    b.Navigation("AssignedTo");
 
                     b.Navigation("Board");
 

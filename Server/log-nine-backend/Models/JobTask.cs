@@ -33,12 +33,13 @@ public class JobTask {
     public JobTaskStatus Status { get; set; }
     public JobTaskPriority Priority { get; set; }
     public JobTaskType TaskType { get; set; }
+    public Person? AssignedTo { get; set; }
 }
 
 public record struct JobTaskDTO(int Id, int VisualId, int BoardId, int? TargetId, string Title, string Description,
-    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType) {
+    JobTask.JobTaskStatus Status, JobTask.JobTaskPriority Priority, JobTask.JobTaskType TaskType, int? AssignedToId) {
     public JobTaskDTO(JobTask task) : this(task.Id, task.VisualId, task.BoardId, task.TargetId, task.Title,
         task.Description,
-        task.Status, task.Priority, task.TaskType) {
+        task.Status, task.Priority, task.TaskType, task.AssignedTo?.Id) {
     }
 }

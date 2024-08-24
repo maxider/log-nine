@@ -73,7 +73,8 @@ public class BoardsController : ControllerBase {
             Description = t.Description,
             Status = t.Status,
             Priority = t.Priority,
-            TaskType = t.TaskType
+            TaskType = t.TaskType,
+            AssignedToId = t.AssignedTo != null ? t.AssignedTo.Id : null
         }).ToListAsync();
         return Ok(tasks);
     }
@@ -93,6 +94,17 @@ public class BoardsController : ControllerBase {
             LrFrequency = t.LrFrequency
         }).ToListAsync();
         return Ok(teams);
+    }
+
+    [HttpGet("{id}/people")]
+    public async Task<IActionResult> GetPeople(int id) {
+        var board = await context.Boards.FindAsync(id);
+        if (board == null)
+        {
+            return NotFound();
+        }
+        var people = await context.People.Where(p => p.BoardId == id).Select(p => new PersonDTO(p)).ToListAsync();
+        return Ok(people);
     }
 }
 
