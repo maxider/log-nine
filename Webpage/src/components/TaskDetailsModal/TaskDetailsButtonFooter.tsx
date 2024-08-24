@@ -1,10 +1,12 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, IconButton} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
 import Task, { TaskStatus } from "../../entities/Task";
 
 interface Props {
   task: Task;
   incrementStat: (task: Task) => void;
   decrementStat: (task: Task) => void;
+  cancelTask: (task: Task) => void;
   onEditButton: () => void;
   onCancelEdit: () => void;
   onSave: () => void;
@@ -16,6 +18,7 @@ const TaskDetailButtonFooter = ({
   task,
   incrementStat,
   decrementStat,
+  cancelTask,
   onEditButton,
   onCancelEdit,
   onSave,
@@ -45,10 +48,15 @@ const TaskDetailButtonFooter = ({
       ) : (
         <NormalButtonGroup onClickEdit={onEditButton} />
       )}
-      <OptionalButton
-        onClick={() => incrementStat(task)}
-        text={nextStatus(task.status).replace("_", " ")}
-      />
+      <Box>
+        <IconButton onClick={() => cancelTask(task)} disabled={task.status == TaskStatus.CANCELLED}>
+          <DeleteIcon />
+        </IconButton>
+        <OptionalButton
+          onClick={() => incrementStat(task)}
+          text={nextStatus(task.status).replace("_", " ")}
+        />
+      </Box>
     </Box>
   );
 };
@@ -72,7 +80,7 @@ const prevStatus = (status: TaskStatus) => {
 };
 
 const nextStatus = (status: TaskStatus) => {
-  if (status + 1 > 5) return "";
+  if (status + 1 > 4) return "";
   return TaskStatus[status + 1];
 };
 

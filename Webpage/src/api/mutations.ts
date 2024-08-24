@@ -129,3 +129,21 @@ export const createTeamFn = (params: CreateTeamParams) => {
     .post(`${backendUrl}/Teams`, params)
     .then(() => Promise.resolve());
 };
+
+export const cancleTaskFn = (task: Task) => {
+  const params: UpdateTaskParams = {
+    id: task.id,
+    params: {
+      boardId: task.boardId,
+      title: task.title,
+      description: task.description,
+      targetId: task.targetId,
+      priority: task.priority,
+      status: 5,
+      taskType: 0,
+      visualId: task.visualId,
+    }
+  };
+
+  return updateTaskFn(params)
+}
