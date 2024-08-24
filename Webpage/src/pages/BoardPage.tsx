@@ -153,7 +153,6 @@ const BoardPage = () => {
         <Board
           tasks={tasks ?? []}
           teams={teams ?? []}
-          people={people ?? []}
           onClickCard={handleClickCard}
         />
         <FiveLinerForm
