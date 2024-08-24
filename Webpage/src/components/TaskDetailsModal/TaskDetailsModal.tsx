@@ -2,6 +2,7 @@ import {
   Button,
   Dialog,
   DialogActions,
+  DialogContent,
   DialogTitle,
   Divider,
   Modal,
@@ -112,9 +113,12 @@ const TaskDetailsModal = ({
       <>
         <Dialog open={isCanceling} onClose={() => setIsCanceling(false)}>
           <DialogTitle>
-            Are you sure you want to cancel this task? This can only be undone
-            by an admin.
+            Cancel task "{task.title}"? This action cannot be undone.
           </DialogTitle>
+          <DialogContent>
+            Are you sure you want to cancel this task? This action can only be
+            undone by an admin.
+          </DialogContent>
           <DialogActions>
             <Button
               onClick={() => {
