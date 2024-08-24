@@ -38,28 +38,6 @@ const Board = ({ tasks, teams, people, onClickCard }: Props) => {
   const tasksStatus: Task["status"][] = [...tasksByStatus.keys()];
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "row",
-      }}
-    >
-      <Box
-        sx={{
-          height: "100%",
-          marginRight: "20px",
-        }}
-      >
-        {people.map((person) => (
-          <PersonTasks
-            key={person.id}
-            person={person}
-            tasks={tasks.filter((t) => t.assignedToId === person.id)}
-            teams={teams}
-            onClickCard={onClickCard}
-          />
-        ))}
-      </Box>
       <StyledBoard>
         <Divider orientation="vertical" flexItem />
         {tasksStatus.map((status) => (
@@ -79,7 +57,6 @@ const Board = ({ tasks, teams, people, onClickCard }: Props) => {
           </React.Fragment>
         ))}
       </StyledBoard>
-    </Box>
   );
 };
 

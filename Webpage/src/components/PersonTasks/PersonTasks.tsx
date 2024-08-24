@@ -11,18 +11,29 @@ export interface PersonTasksProps {
   onClickCard: (taskId: number) => void;
 }
 
-const PersonTasks = ({ person, tasks, teams, onClickCard }: PersonTasksProps) => {
+const PersonTasks = ({
+  person,
+  tasks,
+  teams,
+  onClickCard,
+}: PersonTasksProps) => {
   return (
     <Box>
-      <Typography variant="h4">{person.name}</Typography>
+      <Typography variant="h6">{person.name}</Typography>
       <Box>
         {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            task={task}
-            team={teams.find((team) => task.targetId === team.id) ?? UndefinedTeam}
-            onClickCard={onClickCard}
-          />
+          <Box sx={{
+            marginBottom: "10px",
+          }}>
+            <TaskCard
+              key={task.id}
+              task={task}
+              team={
+                teams.find((team) => task.targetId === team.id) ?? UndefinedTeam
+              }
+              onClickCard={onClickCard}
+            />
+          </Box>
         ))}
       </Box>
     </Box>
