@@ -106,7 +106,7 @@ const BoardPage = () => {
           <PersonTasks
             key={person.id}
             person={person}
-            tasks={tasks.filter((t) =>  t.status != TaskStatus.DONE && t.status != TaskStatus.CANCELLED && t.assignedToId === person.id)}
+            tasks={tasks.filter((t) =>  t.status != TaskStatus.DONE && t.status != TaskStatus.CANCELLED && t.assignedToId === person.id).sort((a,b) => b.priority - a.priority)}
             teams={teams}
             onClickCard={handleClickCard}
           />
