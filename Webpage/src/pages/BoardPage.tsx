@@ -164,6 +164,7 @@ const BoardPage = () => {
           isOpen={isCreateTaskFormOpen}
           boardId={boardId ?? "-1"}
           onClose={() => setIsCreateTaskFormOpen(false)}
+          nextVisulId={tasks.length === 0 ? 0 : tasks[tasks.length - 1].visualId + 1}
         />
         <CreatePersonForm
           isOpen={isCreatePersonFormOpen}

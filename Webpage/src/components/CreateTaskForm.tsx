@@ -1,10 +1,27 @@
-import { Box, Button, Modal, Paper, SxProps, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Modal,
+  Paper,
+  SxProps,
+  TextField,
+  Typography,
+} from "@mui/material";
 import FormProps from "../helpers/FormProps";
 import TeamComboBox from "./TeamComboBox";
 import { useState } from "react";
 import useCreateTask from "../hooks/useCreateTask";
 
-const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
+interface CreateTaskFormProps extends FormProps {
+  nextVisulId: number;
+}
+
+const CreateTaskForm = ({
+  isOpen,
+  boardId,
+  onClose,
+  nextVisulId,
+}: CreateTaskFormProps) => {
   //state for the form
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -14,7 +31,7 @@ const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
     setTitle("");
     setDescription("");
     setTargetId(-1);
-  }
+  };
 
   const createTask = useCreateTask();
 
@@ -46,18 +63,33 @@ const CreateTaskForm = ({ isOpen, boardId, onClose }: FormProps) => {
               gap: "10px",
             }}
           >
-            <TextField
-              label="Title"
-              variant="outlined"
-              fullWidth
-              required
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-            />
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                gap: "10px",
+              }}
+            >
+              <TextField
+                label="Title"
+                variant="outlined"
+                fullWidth
+                required
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+              />
+              <Box
+                sx={{ display: "flex", alignItems: "center", minWidth: "50px" }}
+              >
+                <Typography>Id: {nextVisulId}</Typography>
+              </Box>
+            </Box>
             <TeamComboBox
               boardId={boardId}
               setTargetId={setTargetId}
-              required={true} value={targetId}            />
+              required={true}
+              value={targetId}
+            />
             <TextField
               label="Description"
               variant="outlined"
