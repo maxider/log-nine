@@ -1,0 +1,43 @@
+version: "3.8"
+
+# Log-Nine für lognine.grp9.de
+# Nutzt bestehenden Nginx auf Port 443
+
+services:
+  # Backend Server
+  lognine-server:
+    build:
+      context: ./Server
+      dockerfile: ./log-nine-backend/Dockerfile
+    container_name: lognine-server
+    restart: unless-stopped
+    expose:
+      - "8080"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+    networks:
+      - requiem_manager_default
+
+  # Frontend
+  lognine-frontend:
+    build:
+      context: ./Webpage
+      args:
+        - VITE_APP_BACKEND_URL=https://lognine.grp9.de/api
+    container_name: lognine-frontend
+    restart: unless-stopped
+    expose:
+      - "4173"
+    depends_on:
+      - lognine-server
+    networks:
+      - requiem_manager_default
+
+networks:
+  # Nutzt das Docker-Netzwerk deines bestehenden Nginx
+  # Falls der Name anders ist, mit "docker network ls" prüfen
+  requiem_manager_default:
+    external: true
+

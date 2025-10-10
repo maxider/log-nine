@@ -1,9 +1,14 @@
-﻿namespace LogNineBackend.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LogNineBackend.Models;
 
 public class Person {
     public int Id { get; set; }
     public int BoardId { get; set; }
-    public String Name { get; set; }
+    
+    [Required]
+    [StringLength(100, MinimumLength = 1)]
+    public string Name { get; set; } = string.Empty;
 }
 
 public record struct PersonDTO(int Id, int BoardId, String Name) {

@@ -7,15 +7,22 @@ services:
     ports:
       - "8082:8080"
     volumes:
-      - ./db-data:/app/data
+      - ./data:/app/data
+    networks:
+      - log-nine-network
 
   frontend:
     build:
       context: ./Webpage
+      args:
+        - VITE_APP_BACKEND_URL=http://localhost:8082
     ports:
       - "8081:4173"
-    environment:
-      - REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+    depends_on:
+      - server
+    networks:
+      - log-nine-network
 
-volumes:
-  db-data:
+networks:
+  log-nine-network:
+    driver: bridge

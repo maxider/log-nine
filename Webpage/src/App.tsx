@@ -6,6 +6,8 @@ import { CssBaseline, ThemeProvider, createTheme } from "@mui/material";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createSignalRContext } from "react-signalr";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { SnackbarProvider } from "notistack";
+import ErrorBoundary from "./components/ErrorBoundary";
 import backendUrl from "./api/BackendUrl";
 
 const queryClient = new QueryClient({
@@ -13,9 +15,16 @@ const queryClient = new QueryClient({
     queries: {
       refetchOnWindowFocus: false,
       refetchOnMount: false,
-      refetchOnReconnect: false,
+      refetchOnReconnect: true,
+      retry: 2,
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      gcTime: 10 * 60 * 1000, // 10 minutes (formerly cacheTime)
+    },
+    mutations: {
       retry: 1,
-      staleTime: Infinity,
+      onError: (error) => {
+        console.error('Mutation error:', error);
+      },
     },
   },
 });
@@ -30,20 +39,28 @@ function App() {
   });
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <SignalRContext.Provider url={`${backendUrl}/lognine-hub`}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="board/:id" element={<BoardPage />} />
-            </Routes>
-          </BrowserRouter>
-        </ThemeProvider>
-      </SignalRContext.Provider>
-      <ReactQueryDevtools initialIsOpen={true} />
-    </QueryClientProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <SignalRContext.Provider url={`${backendUrl}/lognine-hub`}>
+          <SnackbarProvider 
+            maxSnack={3} 
+            autoHideDuration={3000}
+            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          >
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <BrowserRouter>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="board/:id" element={<BoardPage />} />
+                </Routes>
+              </BrowserRouter>
+            </ThemeProvider>
+          </SnackbarProvider>
+        </SignalRContext.Provider>
+        <ReactQueryDevtools initialIsOpen={true} />
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
 

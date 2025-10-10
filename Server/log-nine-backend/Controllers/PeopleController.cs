@@ -1,5 +1,6 @@
 ﻿using LogNineBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogNineBackend.Controllers;
@@ -9,12 +10,12 @@ namespace LogNineBackend.Controllers;
 public class PeopleController : ControllerBase {
     private readonly ILogger<PeopleController> logger;
     private readonly AppContext context;
-    private readonly LogNineHub hub;
+    private readonly IHubContext<LogNineHub> hubContext;
 
-    public PeopleController(ILogger<PeopleController> logger, AppContext context, LogNineHub hub) {
+    public PeopleController(ILogger<PeopleController> logger, AppContext context, IHubContext<LogNineHub> hubContext) {
         this.logger = logger;
         this.context = context;
-        this.hub = hub;
+        this.hubContext = hubContext;
     }
 
 
@@ -31,7 +32,13 @@ public class PeopleController : ControllerBase {
 
         if (board == null)
         {
-            return NotFound();
+            return NotFound("Board not found");
+        }
+
+        // Validate person name is not empty
+        if (string.IsNullOrWhiteSpace(person.Name))
+        {
+            return BadRequest("Person name cannot be empty");
         }
 
         var newPerson = new Person{
@@ -42,8 +49,8 @@ public class PeopleController : ControllerBase {
         context.People.Add(newPerson);
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
-        await hub.SendCreatedPersonMessage(newPerson.BoardId);
-        return Ok(newPerson);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"PersonCreated:{newPerson.BoardId}");
+        return Ok(new PersonDTO(newPerson));
     }
 }
 

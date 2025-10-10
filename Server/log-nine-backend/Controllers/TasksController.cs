@@ -1,5 +1,6 @@
 ﻿using LogNineBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace LogNineBackend.Controllers;
@@ -9,12 +10,12 @@ namespace LogNineBackend.Controllers;
 public class TasksController : ControllerBase {
     private readonly ILogger<TasksController> logger;
     private readonly AppContext context;
-    private readonly LogNineHub hub;
+    private readonly IHubContext<LogNineHub> hubContext;
     
-    public TasksController(ILogger<TasksController> logger, AppContext context, LogNineHub hub) {
+    public TasksController(ILogger<TasksController> logger, AppContext context, IHubContext<LogNineHub> hubContext) {
         this.logger = logger;
         this.context = context;
-        this.hub = hub;
+        this.hubContext = hubContext;
     }
 
     [HttpGet]
@@ -59,10 +60,28 @@ public class TasksController : ControllerBase {
 
         if (board == null)
         {
-            return NotFound();
+            return NotFound("Board not found");
         }
         
-        //TODO: check if target exists.
+        // Validate target team exists if specified
+        if (jobTask.TargetId.HasValue)
+        {
+            var targetExists = await context.Teams.AnyAsync(t => t.Id == jobTask.TargetId.Value && t.BoardId == jobTask.BoardId);
+            if (!targetExists)
+            {
+                return BadRequest("Target team not found or does not belong to this board");
+            }
+        }
+
+        // Validate assigned person exists if specified
+        if (jobTask.AssignedToId.HasValue)
+        {
+            var personExists = await context.People.AnyAsync(p => p.Id == jobTask.AssignedToId.Value && p.BoardId == jobTask.BoardId);
+            if (!personExists)
+            {
+                return BadRequest("Assigned person not found or does not belong to this board");
+            }
+        }
 
         var visualId = board.VisualIdCounter;
         var newTask = new JobTask{
@@ -73,13 +92,16 @@ public class TasksController : ControllerBase {
             Status = jobTask.Status,
             Priority = jobTask.Priority,
             TaskType = jobTask.TaskType,
-            TargetId = jobTask.TargetId
+            TargetId = jobTask.TargetId,
+            AssignedTo = jobTask.AssignedToId.HasValue 
+                ? await context.People.FindAsync(jobTask.AssignedToId.Value) 
+                : null
         };
         context.JobTasks.Add(newTask);
         board.VisualIdCounter++;
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
-        await hub.SendCreatedTaskMessage(jobTask.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TaskCreated:{jobTask.BoardId}");
         return CreatedAtAction(nameof(GetById), new{ id = newTask.Id }, new JobTaskDTO(newTask));
     }
 
@@ -88,8 +110,29 @@ public class TasksController : ControllerBase {
         var task = await context.JobTasks.FindAsync(id);
         if (task == null)
         {
-            return NotFound();
+            return NotFound("Task not found");
         }
+
+        // Validate target team exists if specified
+        if (jobTask.TargetId.HasValue)
+        {
+            var targetExists = await context.Teams.AnyAsync(t => t.Id == jobTask.TargetId.Value && t.BoardId == jobTask.BoardId);
+            if (!targetExists)
+            {
+                return BadRequest("Target team not found or does not belong to this board");
+            }
+        }
+
+        // Validate assigned person exists if specified
+        if (jobTask.AssignedToId.HasValue)
+        {
+            var personExists = await context.People.AnyAsync(p => p.Id == jobTask.AssignedToId.Value && p.BoardId == jobTask.BoardId);
+            if (!personExists)
+            {
+                return BadRequest("Assigned person not found or does not belong to this board");
+            }
+        }
+
         task.BoardId = jobTask.BoardId;
         task.TargetId = jobTask.TargetId;
         task.Title = jobTask.Title;
@@ -97,9 +140,11 @@ public class TasksController : ControllerBase {
         task.Status = jobTask.Status;
         task.Priority = jobTask.Priority;
         task.TaskType = jobTask.TaskType;
-        task.AssignedTo = await context.People.FindAsync(jobTask.AssignedToId) ?? null;
+        task.AssignedTo = jobTask.AssignedToId.HasValue 
+            ? await context.People.FindAsync(jobTask.AssignedToId.Value) 
+            : null;
         await context.SaveChangesAsync();
-        await hub.SendUpdatedTaskMessage(jobTask.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TaskUpdated:{jobTask.BoardId}");
         return Ok(new JobTaskDTO(task));
     }
 
@@ -116,7 +161,7 @@ public class TasksController : ControllerBase {
         }
         context.JobTasks.Remove(task);
         await context.SaveChangesAsync();
-        await hub.SendUpdatedTaskMessage(task.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TaskUpdated:{task.BoardId}");
         return NoContent();
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace LogNineBackend.Models;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace LogNineBackend.Models;
 
 public class JobTask {
     public enum JobTaskStatus {
@@ -18,18 +20,24 @@ public class JobTask {
 
     public enum JobTaskType {
         Repair = 0,
-        Helicoper = 1,
+        Helicopter = 1,
         Towing = 2
     }
 
     public int Id { get; set; }
     public int VisualId { get; set; }
     public int BoardId { get; set; }
-    public Board Board { get; set; }
-    public int? TargetId { get; set; } = null!;
-    public Team? Target { get; set; } = null!;
-    public string Title { get; set; }
-    public string Description { get; set; }
+    public Board Board { get; set; } = null!;
+    public int? TargetId { get; set; }
+    public Team? Target { get; set; }
+    
+    [Required]
+    [StringLength(200, MinimumLength = 1)]
+    public string Title { get; set; } = string.Empty;
+    
+    [StringLength(2000)]
+    public string Description { get; set; } = string.Empty;
+    
     public JobTaskStatus Status { get; set; }
     public JobTaskPriority Priority { get; set; }
     public JobTaskType TaskType { get; set; }

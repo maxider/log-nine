@@ -12,16 +12,25 @@ const CreatePersonForm = ({ isOpen, boardId, onClose }: FormProps) => {
 
   const createPerson = useCreatePerson();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createPerson({
-      name: name,
-      boardId: parseInt(boardId),
-    });
+    // Validation
+    if (!name.trim() || name.trim().length > 100) {
+      return;
+    }
 
-    resetState();
-    onClose();
+    try {
+      await createPerson({
+        name: name.trim(),
+        boardId: parseInt(boardId),
+      });
+
+      resetState();
+      onClose();
+    } catch (error) {
+      console.error("Error creating person:", error);
+    }
   };
 
   return (
@@ -40,6 +49,7 @@ const CreatePersonForm = ({ isOpen, boardId, onClose }: FormProps) => {
               variant="outlined"
               fullWidth
               required
+              inputProps={{ maxLength: 100 }}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />

@@ -14,7 +14,6 @@ import {
   TextField,
 } from "@mui/material";
 import { useState } from "react";
-import Task from "../entities/Task";
 
 import TeamComboBox from "./TeamComboBox";
 import FormProps from "../helpers/FormProps";
@@ -25,32 +24,25 @@ type DangerLevel = "Rot" | "Gelb" | "Grün";
 const FiveLinerForm = ({ isOpen, boardId, onClose }: FormProps) => {
   const createTask = useCreateTask();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const task: Task = {
-      title: `5L-${order}`,
-      description: `Ortsangabe: ${location}\nEinflug: ${from}\nAusflug: ${to}\nAuftrag:${order}\nGefahrenstufe: ${dangerLevel}\nKennzeichnung Übergabepunkt: ${handoverInfo}\nZusatzinformationen: ${details}`,
-      priority: 1,
-      targetId: targetId,
-      visualId: 232,
-      id: 232,
-      boardId: parseInt(boardId),
-      status: 0,
-    };
+    try {
+      await createTask({
+        boardId: parseInt(boardId),
+        title: `5L-${order}`,
+        description: `Ortsangabe: ${location}\nEinflug: ${from}\nAusflug: ${to}\nAuftrag:${order}\nGefahrenstufe: ${dangerLevel}\nKennzeichnung Übergabepunkt: ${handoverInfo}\nZusatzinformationen: ${details}`,
+        targetId: targetId !== -1 ? targetId : undefined,
+        status: 0,
+        priority: 1,
+        taskType: 0,
+      });
 
-    createTask({
-      boardId: task.boardId,
-      title: task.title,
-      description: task.description,
-      targetId: task.targetId,
-      status: task.status,
-      priority: task.priority,
-      taskType: 0,
-    });
-
-    resetState();
-    onClose();
+      resetState();
+      onClose();
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
   };
 
   const resetState = () => {

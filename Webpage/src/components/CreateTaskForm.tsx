@@ -35,21 +35,25 @@ const CreateTaskForm = ({
 
   const createTask = useCreateTask();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createTask({
-      title: title,
-      boardId: parseInt(boardId),
-      description: description,
-      targetId: targetId,
-      status: 0,
-      priority: 1,
-      taskType: 0,
-    });
+    try {
+      await createTask({
+        title: title,
+        boardId: parseInt(boardId),
+        description: description,
+        targetId: targetId !== -1 ? targetId : undefined,
+        status: 0,
+        priority: 1,
+        taskType: 0,
+      });
 
-    resetState();
-    onClose();
+      resetState();
+      onClose();
+    } catch (error) {
+      console.error("Error creating task:", error);
+    }
   };
 
   return (
@@ -75,6 +79,7 @@ const CreateTaskForm = ({
                 variant="outlined"
                 fullWidth
                 required
+                inputProps={{ maxLength: 200 }}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
               />
@@ -97,6 +102,7 @@ const CreateTaskForm = ({
               multiline
               minRows={3}
               maxRows={4}
+              inputProps={{ maxLength: 2000 }}
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />

@@ -1,1 +1,35 @@
+# Database
 db-data
+data/
+*.db
+*.db-shm
+*.db-wal
+
+# SSL Certificates and Let's Encrypt
+certbot/
+nginx/ssl/
+*.pem
+*.crt
+*.key
+
+# Environment files
+.env.production
+.env.local
+
+# Logs
+*.log
+logs/
+
+# Docker
+docker-compose.override.yml
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
