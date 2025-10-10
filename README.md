@@ -23,7 +23,6 @@ Log-Nine is a Kanban-like board system designed for logistical task management, 
 ```
 
 ## Getting Started
-
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/) (for frontend)
