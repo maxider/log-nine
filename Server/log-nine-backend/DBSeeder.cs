@@ -34,7 +34,7 @@ public static class DbSeeder {
             new JobTask{
                 VisualId = 2, BoardId = 1, TargetId = 2, Title = "Task 2", Description = "Task 2 Description",
                 Status = JobTask.JobTaskStatus.Todo, Priority = JobTask.JobTaskPriority.Medium,
-                TaskType = JobTask.JobTaskType.Helicoper
+                TaskType = JobTask.JobTaskType.Helicopter
             },
             new JobTask{
                 VisualId = 3, BoardId = 1, TargetId = 3, Title = "Task 3", Description = "Task 3 Description",
@@ -49,7 +49,7 @@ public static class DbSeeder {
             new JobTask{
                 VisualId = 5, BoardId = 1, TargetId = 2, Title = "Task 5", Description = "Task 5 Description",
                 Status = JobTask.JobTaskStatus.OnSite, Priority = JobTask.JobTaskPriority.Medium,
-                TaskType = JobTask.JobTaskType.Helicoper
+                TaskType = JobTask.JobTaskType.Helicopter
             },
             new JobTask{
                 VisualId = 6, BoardId = 1, TargetId = 3, Title = "Task 6", Description = "Task 6 Description",
@@ -64,7 +64,7 @@ public static class DbSeeder {
             new JobTask{
                 VisualId = 8, BoardId = 1, TargetId = 2, Title = "Task 8", Description = "Task 8 Description",
                 Status = JobTask.JobTaskStatus.Returning, Priority = JobTask.JobTaskPriority.Medium,
-                TaskType = JobTask.JobTaskType.Helicoper
+                TaskType = JobTask.JobTaskType.Helicopter
             },
             new JobTask{
                 VisualId = 9, BoardId = 1, TargetId = 3, Title = "Task 9", Description = "Task 9 Description",

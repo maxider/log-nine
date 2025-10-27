@@ -1,10 +1,8 @@
 import StyledBoard from "./styles";
 import TaskList from "../TaskList/TaskList";
-import { Divider} from "@mui/material";
 import Task, { TaskStatus } from "../../entities/Task";
 import { useMemo } from "react";
 import Team from "../../entities/Team";
-import React from "react";
 
 interface Props {
   tasks: Task[];
@@ -36,22 +34,14 @@ const Board = ({ tasks, teams, onClickCard }: Props) => {
 
   return (
       <StyledBoard>
-        <Divider orientation="vertical" flexItem />
         {tasksStatus.map((status) => (
-          <React.Fragment key={status}>
-            <TaskList
-              header={statusToString(status)}
-              tasks={tasksByStatus.get(status) ?? []}
-              teams={teams}
-              key={status}
-              onClickCard={onClickCard}
-            />
-            <Divider
-              orientation="vertical"
-              flexItem
-              key={`divider-${status}`}
-            />
-          </React.Fragment>
+          <TaskList
+            header={statusToString(status)}
+            tasks={tasksByStatus.get(status) ?? []}
+            teams={teams}
+            key={status}
+            onClickCard={onClickCard}
+          />
         ))}
       </StyledBoard>
   );

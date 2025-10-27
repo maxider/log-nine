@@ -7,12 +7,17 @@ var options = Parser.Default.ParseArguments<Options>(args).Value;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configure CORS with proper settings
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>() 
+    ?? new[] { "http://localhost:8081", "http://localhost:5173" };
+
 builder.Services.AddCors(options => {
     options.AddPolicy("cors",
         policy => {
-            policy.AllowAnyHeader();
-            policy.AllowAnyMethod();
-            policy.AllowAnyOrigin();
+            policy.WithOrigins(allowedOrigins)
+                .AllowAnyHeader()
+                .AllowAnyMethod()
+                .AllowCredentials();
         });
 });
 
@@ -25,15 +30,18 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<AppContext>();
 builder.Services.AddSignalR();
-builder.Services.AddSingleton<LogNineHub>();
 
 var app = builder.Build();
 
 var logger = app.Services.GetService<ILogger<Program>>();
 
+// Request size limit middleware with configurable size
+var maxRequestSizeKB = builder.Configuration.GetValue<int>("MaxRequestSizeKB", 1024); // Default 1MB
 app.Use((context, next) => {
-    if (context.Request.ContentLength > 10 * 1024)
+    if (context.Request.ContentLength > maxRequestSizeKB * 1024)
     {
+        logger?.LogWarning("Request rejected: Content length {ContentLength} exceeds limit {Limit}", 
+            context.Request.ContentLength, maxRequestSizeKB * 1024);
         context.Response.StatusCode = 413;
         return Task.CompletedTask;
     }
@@ -49,11 +57,7 @@ if (app.Environment.IsDevelopment() || options.UseSwagger)
     app.UseSwaggerUI();
 }
 
-app.UseCors(x => x
-    .AllowAnyMethod()
-    .AllowAnyHeader()
-    .SetIsOriginAllowed(origin => true)
-    .AllowCredentials());
+app.UseCors("cors");
 app.MapControllers();
 
 app.MapHub<LogNineHub>("lognine-hub");
@@ -64,12 +68,24 @@ app.MapHub<LogNineHub>("lognine-hub");
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-
     var context = services.GetRequiredService<AppContext>();
-    if (context.Database.GetPendingMigrations().Any())
+    
+    // Apply all migrations (creates database if it doesn't exist)
+    logger!.LogInformation("Checking for pending migrations...");
+    var pendingMigrations = context.Database.GetPendingMigrations().ToList();
+    
+    if (pendingMigrations.Any())
     {
-        context.Database.Migrate();
+        logger.LogInformation($"Applying {pendingMigrations.Count} pending migrations: {string.Join(", ", pendingMigrations)}");
     }
+    else
+    {
+        logger.LogInformation("No pending migrations found");
+    }
+    
+    // Migrate will create the database and apply all migrations
+    context.Database.Migrate();
+    logger.LogInformation("Database migration completed successfully");
 }
 
 

@@ -1,6 +1,7 @@
 ﻿using LogNineBackend;
 using LogNineBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using AppContext = LogNineBackend.AppContext;
 
@@ -12,11 +13,11 @@ namespace FunWithEF.Controllers;
 public class TeamsController : ControllerBase {
     private readonly ILogger<TeamsController> logger;
     private readonly AppContext context;
-    private readonly LogNineHub hub;
-    public TeamsController(ILogger<TeamsController> logger, AppContext context, LogNineHub hub) {
+    private readonly IHubContext<LogNineHub> hubContext;
+    public TeamsController(ILogger<TeamsController> logger, AppContext context, IHubContext<LogNineHub> hubContext) {
         this.logger = logger;
         this.context = context;
-        this.hub = hub;
+        this.hubContext = hubContext;
     }
 
     [HttpGet]
@@ -38,12 +39,25 @@ public class TeamsController : ControllerBase {
 
     [HttpPost]
     public async Task<IActionResult> Create(TeamCreationParams team) {
+        // Validate board exists
+        var boardExists = await context.Boards.AnyAsync(b => b.Id == team.BoardId);
+        if (!boardExists)
+        {
+            return NotFound("Board not found");
+        }
+
+        // Validate team name is not empty
+        if (string.IsNullOrWhiteSpace(team.Name))
+        {
+            return BadRequest("Team name cannot be empty");
+        }
+
         var newTeam = new Team{
             Name = team.Name, BoardId = team.BoardId, SrFrequency = team.SrFrequency, LrFrequency = team.LrFrequency
         };
         context.Teams.Add(newTeam);
         await context.SaveChangesAsync();
-        await hub.SendCreatedTeamMessage(newTeam.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TeamCreated:{newTeam.BoardId}");
         return CreatedAtAction(nameof(GetById), new{ id = newTeam.Id }, newTeam);
     }
 
@@ -59,7 +73,7 @@ public class TeamsController : ControllerBase {
         teamToUpdate.SrFrequency = team.SrFrequency;
         teamToUpdate.LrFrequency = team.LrFrequency;
         await context.SaveChangesAsync();
-        await hub.SendUpdatedTeamMessage(teamToUpdate.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TeamUpdated:{teamToUpdate.BoardId}");
         return Ok(new TeamDTO(teamToUpdate.Id, teamToUpdate.Name, teamToUpdate.BoardId, teamToUpdate.SrFrequency,
             teamToUpdate.LrFrequency));
     }
@@ -73,7 +87,7 @@ public class TeamsController : ControllerBase {
         }
         context.Teams.Remove(team);
         await context.SaveChangesAsync();
-        await hub.SendCreatedTeamMessage(team.BoardId);
+        await hubContext.Clients.All.SendAsync("ReceiveMessage", $"TeamCreated:{team.BoardId}");
         return NoContent();
     }
 }
