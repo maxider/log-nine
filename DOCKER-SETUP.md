@@ -1,77 +1,77 @@
-# Log-Nine Docker Setup & Test-Anleitung
+# Log-Nine Docker Setup & Testing Guide
 
-Diese Anleitung zeigt, wie du die optimierte Log-Nine Anwendung mit Docker testen kannst.
+This guide shows how to test the optimized Log-Nine application with Docker.
 
-## 📋 Voraussetzungen
+## 📋 Prerequisites
 
-- Docker Desktop installiert ([Download](https://www.docker.com/products/docker-desktop))
-- Docker Compose (normalerweise in Docker Desktop enthalten)
+- Docker Desktop installed ([Download](https://www.docker.com/products/docker-desktop))
+- Docker Compose (usually included in Docker Desktop)
 
-## 🚀 Schnellstart
+## 🚀 Quick Start
 
-### 1. Alle Container bauen und starten
+### 1. Build and Start All Containers
 
 ```bash
 docker compose up --build
 ```
 
-**Was passiert dabei?**
-- Backend wird auf Port `8082` bereitgestellt
-- Frontend wird auf Port `8081` bereitgestellt
-- SQLite-Datenbank wird in einem Docker Volume gespeichert
+**What happens?**
+- Backend is served on port `8082`
+- Frontend is served on port `8081`
+- SQLite database is stored in a Docker volume
 
-### 2. Anwendung öffnen
+### 2. Open Application
 
-Öffne deinen Browser und navigiere zu:
+Open your browser and navigate to:
 
 ```
 http://localhost:8081
 ```
 
-### 3. Container stoppen
+### 3. Stop Containers
 
 ```bash
-# Mit Ctrl+C beenden (wenn im Vordergrund)
-# Oder:
+# Exit with Ctrl+C (if running in foreground)
+# Or:
 docker compose down
 ```
 
-## 🔧 Erweiterte Befehle
+## 🔧 Advanced Commands
 
-### Container im Hintergrund starten
+### Start Containers in Background
 
 ```bash
 docker compose up -d --build
 ```
 
-### Logs anzeigen
+### View Logs
 
 ```bash
-# Alle Container
+# All containers
 docker compose logs -f
 
-# Nur Backend
+# Backend only
 docker compose logs -f server
 
-# Nur Frontend
+# Frontend only
 docker compose logs -f frontend
 ```
 
-### Container neu starten
+### Restart Containers
 
 ```bash
 docker compose restart
 ```
 
-### Container und Volumes komplett entfernen
+### Completely Remove Containers and Volumes
 
 ```bash
 docker compose down -v
 ```
 
-**⚠️ Warnung:** Dies löscht auch die Datenbank!
+**⚠️ Warning:** This also deletes the database!
 
-### Nur neu bauen (ohne zu starten)
+### Only Build (Without Starting)
 
 ```bash
 docker compose build
@@ -79,157 +79,156 @@ docker compose build
 
 ## 🐛 Troubleshooting
 
-### Problem: Port bereits belegt
+### Problem: Port Already in Use
 
-**Fehler:** `Bind for 0.0.0.0:8081 failed: port is already allocated`
+**Error:** `Bind for 0.0.0.0:8081 failed: port is already allocated`
 
-**Lösung:** Ändere die Ports in `compose.yaml`:
+**Solution:** Change the ports in `compose.yaml`:
 
 ```yaml
 services:
   frontend:
     ports:
-      - "8083:4173"  # Ändere 8081 zu 8083
+      - "8083:4173"  # Change 8081 to 8083
 ```
 
-### Problem: Backend nicht erreichbar
+### Problem: Backend Not Reachable
 
-**Prüfe:**
-1. Ist der Server-Container gestartet?
+**Check:**
+1. Is the server container running?
    ```bash
    docker compose ps
    ```
 
-2. Zeige Backend-Logs:
+2. Show backend logs:
    ```bash
    docker compose logs server
    ```
 
-3. Teste Backend direkt:
+3. Test backend directly:
    ```bash
    curl http://localhost:8082/swagger
    ```
 
-### Problem: Frontend zeigt Fehler
+### Problem: Frontend Shows Errors
 
-**Lösung:** Stelle sicher, dass die Backend-URL korrekt ist:
+**Solution:** Make sure the backend URL is correct:
 
-1. Prüfe `compose.yaml` - `VITE_APP_BACKEND_URL` sollte `http://localhost:8082` sein
-2. Baue neu:
+1. Check `compose.yaml` - `VITE_APP_BACKEND_URL` should be `http://localhost:8082`
+2. Rebuild:
    ```bash
    docker compose up --build
    ```
 
-### Problem: Änderungen werden nicht übernommen
+### Problem: Changes Not Applied
 
-**Lösung:** Vollständiger Neuaufbau:
+**Solution:** Complete rebuild:
 
 ```bash
-# Alles stoppen und entfernen
+# Stop and remove everything
 docker compose down
 
-# Images entfernen
+# Remove images
 docker compose rm -f
 
-# Neu bauen ohne Cache
+# Rebuild without cache
 docker compose build --no-cache
 
-# Starten
+# Start
 docker compose up
 ```
 
-## 📊 Nützliche Docker-Befehle
+## 📊 Useful Docker Commands
 
-### Speicherplatz freigeben
+### Free Up Disk Space
 
 ```bash
-# Ungenutzte Images entfernen
+# Remove unused images
 docker image prune -a
 
-# Ungenutzte Volumes entfernen
+# Remove unused volumes
 docker volume prune
 
-# Alles aufräumen (VORSICHT!)
+# Clean up everything (CAUTION!)
 docker system prune -a --volumes
 ```
 
-### Container-Shell öffnen
+### Open Container Shell
 
 ```bash
-# Backend-Container
+# Backend container
 docker compose exec server /bin/bash
 
-# Frontend-Container
+# Frontend container
 docker compose exec frontend /bin/sh
 ```
 
-### Datenbank exportieren
+### Export Database
 
 ```bash
-# SQLite DB aus dem Container kopieren
+# Copy SQLite DB from container
 docker compose cp server:/app/data/log-nine.db ./backup.db
 ```
 
-## 🔒 Produktions-Deployment
+## 🔒 Production Deployment
 
-Für Production-Deployment:
+For production deployment:
 
-1. **Aktualisiere `appsettings.json`** mit Production-CORS-Origins
-2. **Setze sichere Environment-Variablen**
-3. **Verwende einen Reverse Proxy** (nginx/Traefik)
-4. **Aktiviere HTTPS**
-5. **Verwende eine robustere Datenbank** (PostgreSQL/MySQL statt SQLite)
+1. **Update `appsettings.json`** with production CORS origins
+2. **Set secure environment variables**
+3. **Use a reverse proxy** (nginx/Traefik)
+4. **Enable HTTPS**
+5. **Use a more robust database** (PostgreSQL/MySQL instead of SQLite)
 
-## 📝 Optimierungen in dieser Version
+## 📝 Optimizations in This Version
 
 ✅ **Backend:**
-- CORS korrekt konfiguriert
-- Request-Size-Limit anpassbar (1MB Standard)
-- Input-Validation für alle Entities
-- Besseres Error-Handling
+- CORS correctly configured
+- Request size limit adjustable (1MB default)
+- Input validation for all entities
+- Better error handling
 
 ✅ **Frontend:**
-- Toast-Notifications (notistack)
-- Error Boundary für App-weite Fehlerbehandlung
-- SignalR Reconnection-Logic
-- Optimierte React Query Konfiguration
+- Toast notifications (notistack)
+- Error boundary for app-wide error handling
+- SignalR reconnection logic
+- Optimized React Query configuration
 
 ✅ **Docker:**
-- Multi-Stage Build für kleinere Images
-- .dockerignore für schnellere Builds
-- Shared Network zwischen Services
-- Volume-Persistenz für Datenbank
+- Multi-stage build for smaller images
+- .dockerignore for faster builds
+- Shared network between services
+- Volume persistence for database
 
-## 🧪 Tests durchführen
+## 🧪 Running Tests
 
-### Manuelle Tests
+### Manual Tests
 
-1. **Board erstellen:** `http://localhost:8081`
-2. **Team hinzufügen:** "View Teams" → "Create Team"
-3. **Person hinzufügen:** "Add Person"
-4. **Task erstellen:** "Create Task" oder "5-Liner"
-5. **Task zuweisen:** Klicke auf Task → Person zuweisen
-6. **Status ändern:** Pfeile im Task-Card
+1. **Create Board:** `http://localhost:8081`
+2. **Add Team:** "View Teams" → "Create Team"
+3. **Add Person:** "Add Person"
+4. **Create Task:** "Create Task" or "5-Liner"
+5. **Assign Task:** Click on task → assign person
+6. **Change Status:** Arrows in task card
 
-### API-Tests (Swagger)
+### API Tests (Swagger)
 
 ```
 http://localhost:8082/swagger
 ```
 
-Teste alle Endpoints direkt in Swagger UI.
+Test all endpoints directly in Swagger UI.
 
-### Echtzeit-Synchronisation testen
+### Test Real-Time Synchronization
 
-1. Öffne zwei Browser-Tabs mit `http://localhost:8081`
-2. Erstelle einen Task in Tab 1
-3. Der Task sollte automatisch in Tab 2 erscheinen (SignalR)
+1. Open two browser tabs with `http://localhost:8081`
+2. Create a task in tab 1
+3. The task should automatically appear in tab 2 (SignalR)
 
 ## 📞 Support
 
-Bei Problemen:
-1. Prüfe die Container-Logs
-2. Stelle sicher, Docker Desktop läuft
-3. Überprüfe Firewall-Einstellungen
-4. Starte Docker Desktop neu
-
+If you encounter problems:
+1. Check container logs
+2. Make sure Docker Desktop is running
+3. Check firewall settings
+4. Restart Docker Desktop

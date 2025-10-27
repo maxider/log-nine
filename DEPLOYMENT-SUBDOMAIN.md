@@ -1,29 +1,29 @@
-# 🚀 Log-Nine auf lognine.grp9.de deployen
+# 🚀 Deploy Log-Nine to lognine.grp9.de
 
-## Setup für bestehenden Nginx auf Port 443
+## Setup for Existing Nginx on Port 443
 
-Du hast bereits Nginx mit `requiem-guild.com` - wir fügen `lognine.grp9.de` hinzu.
+You already have Nginx with `requiem-guild.com` - we'll add `lognine.grp9.de`.
 
 ---
 
-## 📋 Schritt 1: Cloudflare DNS
+## 📋 Step 1: Cloudflare DNS
 
-1. Gehe zu **Cloudflare Dashboard** für `grp9.de`
+1. Go to **Cloudflare Dashboard** for `grp9.de`
 2. **DNS > Records**
-3. **A-Record hinzufügen**:
+3. **Add A-Record**:
    ```
    Type:    A
    Name:    lognine
-   IPv4:    Deine Server-IP
-   Proxy:   🟠 Proxied (Orange Cloud AN)
+   IPv4:    Your Server IP
+   Proxy:   🟠 Proxied (Orange Cloud ON)
    TTL:     Auto
    ```
 
 ---
 
-## 📦 Schritt 2: Log-Nine Container vorbereiten
+## 📦 Step 2: Prepare Log-Nine Containers
 
-### docker-compose.grp9.yaml erstellen
+### Create docker-compose.grp9.yaml
 
 ```yaml
 version: "3.8"
@@ -58,18 +58,18 @@ services:
     depends_on:
       - lognine-server
     networks:
-      - requiem_manager_default  # Netzwerk deines bestehenden Nginx
+      - requiem_manager_default  # Network of your existing Nginx
 
 networks:
   requiem_manager_default:
-    external: true  # Nutzt das bestehende Nginx-Netzwerk
+    external: true  # Uses the existing Nginx network
 ```
 
 ---
 
-## 🔧 Schritt 3: Nginx-Konfiguration für lognine.grp9.de
+## 🔧 Step 3: Nginx Configuration for lognine.grp9.de
 
-### Neue Datei erstellen: `/path/to/Requiem_Manager/nginx/conf.d/lognine.conf`
+### Create New File: `/path/to/Requiem_Manager/nginx/conf.d/lognine.conf`
 
 ```nginx
 # Log-Nine Subdomain Configuration
@@ -78,7 +78,7 @@ server {
     http2 on;
     server_name lognine.grp9.de;
 
-    # SSL Configuration (gleiche Zertifikate wie requiem-guild.com oder separate)
+    # SSL Configuration (same certificates as requiem-guild.com or separate)
     ssl_certificate /etc/nginx/ssl/grp9.de/fullchain.pem;
     ssl_certificate_key /etc/nginx/ssl/grp9.de/privkey.pem;
     ssl_session_timeout 1d;
@@ -162,120 +162,120 @@ server {
 
 ---
 
-## 🔐 Schritt 4: SSL-Zertifikat für lognine.grp9.de
+## 🔐 Step 4: SSL Certificate for lognine.grp9.de
 
-### Option A: Wildcard-Zertifikat (empfohlen, falls bereits vorhanden)
+### Option A: Wildcard Certificate (recommended, if already available)
 
-Falls du bereits ein Wildcard-Zertifikat für `*.grp9.de` hast, kannst du es nutzen:
+If you already have a wildcard certificate for `*.grp9.de`, you can use it:
 
 ```nginx
 ssl_certificate /etc/nginx/ssl/grp9.de/fullchain.pem;
 ssl_certificate_key /etc/nginx/ssl/grp9.de/privkey.pem;
 ```
 
-### Option B: Neues Zertifikat für lognine.grp9.de
+### Option B: New Certificate for lognine.grp9.de
 
 ```bash
-# Auf dem Server
-docker exec -it <dein-nginx-container> sh
+# On the server
+docker exec -it <your-nginx-container> sh
 
-# Certbot ausführen
+# Run Certbot
 certbot certonly --webroot \
   -w /usr/share/nginx/html \
   -d lognine.grp9.de \
-  --email deine@email.com \
+  --email your@email.com \
   --agree-tos \
   --non-interactive
 
-# Nginx neu laden
-docker exec <dein-nginx-container> nginx -s reload
+# Reload Nginx
+docker exec <your-nginx-container> nginx -s reload
 ```
 
 ---
 
-## 🚀 Schritt 5: Alles starten
+## 🚀 Step 5: Start Everything
 
-### 1. Log-Nine Container starten
+### 1. Start Log-Nine Containers
 
 ```bash
 cd /path/to/log-nine
 docker-compose -f docker-compose.grp9.yaml up --build -d
 ```
 
-### 2. Nginx neu laden
+### 2. Reload Nginx
 
 ```bash
-# Nginx-Container-Name herausfinden
+# Find Nginx container name
 docker ps | grep nginx
 
-# Nginx-Konfiguration testen
+# Test Nginx configuration
 docker exec <nginx-container-name> nginx -t
 
-# Nginx neu laden
+# Reload Nginx
 docker exec <nginx-container-name> nginx -s reload
 
-# ODER: Nginx-Container neustarten
+# OR: Restart Nginx container
 docker restart <nginx-container-name>
 ```
 
 ---
 
-## ✅ Schritt 6: Testen
+## ✅ Step 6: Test
 
 ```bash
-# DNS-Auflösung prüfen
+# Check DNS resolution
 nslookup lognine.grp9.de
 
-# HTTPS testen
+# Test HTTPS
 curl -I https://lognine.grp9.de
 
-# Im Browser öffnen
+# Open in browser
 https://lognine.grp9.de
 ```
 
 ---
 
-## 🔧 Admin-Passwort ändern
+## 🔧 Change Admin Password
 
-**WICHTIG**: Ändere das Admin-Passwort!
+**IMPORTANT**: Change the admin password!
 
 ```bash
 nano Server/log-nine-backend/appsettings.json
 ```
 
-Ändere:
+Change:
 ```json
-"AdminPassword": "dein-sicheres-passwort"
+"AdminPassword": "your-secure-password"
 ```
 
-Dann Container neustarten:
+Then restart container:
 ```bash
 docker restart lognine-server
 ```
 
 ---
 
-## 🛠️ Wartung
+## 🛠️ Maintenance
 
-### Logs anschauen
+### View Logs
 ```bash
 docker logs -f lognine-server
 docker logs -f lognine-frontend
 ```
 
-### Updates deployen
+### Deploy Updates
 ```bash
 cd /path/to/log-nine
 git pull
 docker-compose -f docker-compose.grp9.yaml up --build -d
 ```
 
-### Container neustarten
+### Restart Containers
 ```bash
 docker restart lognine-server lognine-frontend
 ```
 
-### Datenbank sichern
+### Backup Database
 ```bash
 docker exec lognine-server \
   cp /app/data/data.db /app/data/backup-$(date +%Y%m%d).db
@@ -288,41 +288,41 @@ docker exec lognine-server \
 ### Problem: "502 Bad Gateway"
 
 ```bash
-# Prüfe, ob Container laufen
+# Check if containers are running
 docker ps | grep lognine
 
-# Prüfe Container-Logs
+# Check container logs
 docker logs lognine-server
 docker logs lognine-frontend
 
-# Prüfe Netzwerk
+# Check network
 docker network inspect requiem_manager_default
 ```
 
 ### Problem: "Container not found"
 
 ```bash
-# Netzwerk-Name herausfinden
+# Find network name
 docker network ls | grep requiem
 
-# In docker-compose.grp9.yaml korrigieren
+# Correct in docker-compose.grp9.yaml
 networks:
-  <richtiger-netzwerk-name>:
+  <correct-network-name>:
     external: true
 ```
 
-### Problem: SSL-Zertifikat-Fehler
+### Problem: SSL Certificate Error
 
 ```bash
-# Zertifikat-Pfad prüfen
+# Check certificate path
 docker exec <nginx-container> ls -la /etc/nginx/ssl/
 
-# Falls Zertifikat fehlt, neu erstellen (siehe Schritt 4)
+# If certificate is missing, create new one (see Step 4)
 ```
 
 ---
 
-## 📊 Netzwerk-Architektur
+## 📊 Network Architecture
 
 ```
 Internet
@@ -338,18 +338,18 @@ Nginx Container (requiem_manager)
 
 ---
 
-## 🎯 Checkliste
+## 🎯 Checklist
 
-- ✅ Cloudflare DNS: A-Record für `lognine` → Server-IP
-- ✅ docker-compose.grp9.yaml erstellt
-- ✅ Nginx-Config `/nginx/conf.d/lognine.conf` erstellt
-- ✅ SSL-Zertifikat für lognine.grp9.de
-- ✅ Admin-Passwort geändert
-- ✅ Log-Nine Container gestartet
-- ✅ Nginx neu geladen
-- ✅ https://lognine.grp9.de funktioniert
+- ✅ Cloudflare DNS: A-Record for `lognine` → Server IP
+- ✅ docker-compose.grp9.yaml created
+- ✅ Nginx config `/nginx/conf.d/lognine.conf` created
+- ✅ SSL certificate for lognine.grp9.de
+- ✅ Admin password changed
+- ✅ Log-Nine containers started
+- ✅ Nginx reloaded
+- ✅ https://lognine.grp9.de working
 
 ---
 
-**Fertig!** Log-Nine läuft jetzt auf **https://lognine.grp9.de** 🚀
+**Done!** Log-Nine is now running on **https://lognine.grp9.de** 🚀
 

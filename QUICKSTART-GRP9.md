@@ -1,73 +1,73 @@
-# ⚡ Log-Nine auf lognine.grp9.de - Quick Start
+# ⚡ Log-Nine on lognine.grp9.de - Quick Start
 
-## 🎯 5 Minuten Setup
+## 🎯 5-Minute Setup
 
 ### 1️⃣ Cloudflare DNS
 ```
 Cloudflare Dashboard → grp9.de → DNS
-A-Record: lognine → Deine Server-IP (🟠 Orange Cloud AN)
+A-Record: lognine → Your Server IP (🟠 Orange Cloud ON)
 ```
 
-### 2️⃣ Auf dem Server
+### 2️⃣ On the Server
 
 ```bash
 cd /opt/log-nine
 
-# 1. Netzwerk-Name prüfen (sollte "requiem_manager_default" sein)
+# 1. Check network name (should be "requiem_manager_default")
 docker network ls | grep requiem
 
-# 2. Falls anders, in docker-compose.grp9.yaml anpassen
+# 2. If different, adjust in docker-compose.grp9.yaml
 
-# 3. Admin-Passwort ändern
+# 3. Change admin password
 nano Server/log-nine-backend/appsettings.json
-# Ändere "AdminPassword": "dein-sicheres-passwort"
+# Change "AdminPassword": "your-secure-password"
 
-# 4. Log-Nine starten
+# 4. Start Log-Nine
 docker-compose -f docker-compose.grp9.yaml up --build -d
 ```
 
-### 3️⃣ Nginx-Config hinzufügen
+### 3️⃣ Add Nginx Config
 
 ```bash
-# 1. Config kopieren
+# 1. Copy config
 cp nginx-lognine.conf /path/to/Requiem_Manager/nginx/conf.d/lognine.conf
 
-# 2. SSL-Pfad anpassen (falls nötig)
+# 2. Adjust SSL path (if necessary)
 nano /path/to/Requiem_Manager/nginx/conf.d/lognine.conf
-# Prüfe ssl_certificate Pfade
+# Check ssl_certificate paths
 
-# 3. Nginx neu laden
+# 3. Reload Nginx
 docker exec <nginx-container-name> nginx -t
 docker exec <nginx-container-name> nginx -s reload
 ```
 
-### 4️⃣ SSL-Zertifikat (falls noch nicht vorhanden)
+### 4️⃣ SSL Certificate (if not already available)
 
 ```bash
-# Falls kein Wildcard-Zertifikat für *.grp9.de vorhanden
+# If no wildcard certificate for *.grp9.de available
 docker exec <nginx-container-name> sh
 
 certbot certonly --webroot \
   -w /usr/share/nginx/html \
   -d lognine.grp9.de \
-  --email deine@email.com \
+  --email your@email.com \
   --agree-tos
 
 exit
 docker exec <nginx-container-name> nginx -s reload
 ```
 
-### 5️⃣ Testen!
+### 5️⃣ Test!
 
 ```bash
 curl -I https://lognine.grp9.de
 ```
 
-Öffne: **https://lognine.grp9.de** 🎉
+Open: **https://lognine.grp9.de** 🎉
 
 ---
 
-## 🔧 Nützliche Befehle
+## 🔧 Useful Commands
 
 ```bash
 # Logs
@@ -77,7 +77,7 @@ docker logs -f lognine-frontend
 # Status
 docker ps | grep lognine
 
-# Neustart
+# Restart
 docker restart lognine-server lognine-frontend
 
 # Updates
@@ -88,20 +88,19 @@ docker-compose -f docker-compose.grp9.yaml up --build -d
 
 ---
 
-## 🆘 Probleme?
+## 🆘 Problems?
 
 **"502 Bad Gateway"**
 ```bash
-docker ps | grep lognine              # Container laufen?
-docker logs lognine-server            # Fehler im Log?
-docker network ls | grep requiem      # Netzwerk korrekt?
+docker ps | grep lognine              # Containers running?
+docker logs lognine-server            # Error in log?
+docker network ls | grep requiem      # Network correct?
 ```
 
 **"Connection refused"**
 ```bash
-nslookup lognine.grp9.de              # DNS korrekt?
-docker exec <nginx> nginx -t          # Nginx-Config OK?
+nslookup lognine.grp9.de              # DNS correct?
+docker exec <nginx> nginx -t          # Nginx config OK?
 ```
 
-Ausführliche Anleitung: **DEPLOYMENT-SUBDOMAIN.md**
-
+Detailed guide: **DEPLOYMENT-SUBDOMAIN.md**

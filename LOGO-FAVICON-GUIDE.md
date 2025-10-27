@@ -1,89 +1,89 @@
-# 🎨 Logo & Favicon Anleitung
+# 🎨 Logo & Favicon Guide
 
-## 📍 Aktueller Stand
+## 📍 Current State
 
-✅ **Header-Logo**: Zeigt jetzt `/WischNine.png`  
-✅ **Favicon**: Nutzt `/wn-sm.png`
+✅ **Header Logo**: Now showing `/WischNine.png`  
+✅ **Favicon**: Using `/wn-sm.png`
 
 ---
 
-## 🖼️ Eigenes Logo einbinden
+## 🖼️ Adding Your Own Logo
 
-### Schritt 1: Logo-Datei vorbereiten
+### Step 1: Prepare Logo File
 
-**Empfohlene Formate:**
-- **PNG** mit transparentem Hintergrund (bevorzugt)
-- **SVG** für beste Skalierung
-- **Größe**: Min. 200px Höhe für gute Qualität
+**Recommended Formats:**
+- **PNG** with transparent background (preferred)
+- **SVG** for best scaling
+- **Size**: Min. 200px height for good quality
 
-### Schritt 2: Logo hochladen
+### Step 2: Upload Logo
 
 ```bash
-# Dein Logo in den public/ Ordner kopieren
+# Copy your logo to the public/ folder
 Webpage/public/
-├── dein-logo.png     ← Dein neues Logo hier
-├── dein-logo.svg     ← Oder als SVG
+├── your-logo.png     ← Your new logo here
+├── your-logo.svg     ← Or as SVG
 └── ...
 ```
 
-### Schritt 3: Logo im Code anpassen
+### Step 3: Adjust Logo in Code
 
-**Datei**: `Webpage/src/pages/Home.tsx` (Zeile 391-400)
+**File**: `Webpage/src/pages/Home.tsx` (Line 391-400)
 
 ```tsx
 <Box
   component="img"
-  src="/dein-logo.png"        ← Dateiname ändern
+  src="/your-logo.png"        ← Change filename
   alt="Log-Nine Logo"
   sx={{
-    height: 50,                 ← Höhe anpassen (in Pixeln)
+    height: 50,                 ← Adjust height (in pixels)
     width: "auto",
     objectFit: "contain",
   }}
 />
 ```
 
-**Verschiedene Größen:**
+**Different Sizes:**
 ```tsx
-height: 40,    // Klein
-height: 50,    // Standard (aktuell)
-height: 60,    // Groß
-height: 80,    // Extra groß
+height: 40,    // Small
+height: 50,    // Standard (current)
+height: 60,    // Large
+height: 80,    // Extra large
 ```
 
 ---
 
-## 🎯 Favicon ändern
+## 🎯 Change Favicon
 
-### Schritt 1: Favicon-Dateien vorbereiten
+### Step 1: Prepare Favicon Files
 
-**Benötigte Formate:**
-- **favicon.ico** (16x16, 32x32, 48x48) - für Browser
-- **PNG** (192x192, 512x512) - für Mobile/PWA
-- **SVG** - für moderne Browser
+**Required Formats:**
+- **favicon.ico** (16x16, 32x32, 48x48) - for browsers
+- **PNG** (192x192, 512x512) - for mobile/PWA
+- **SVG** - for modern browsers
 
-**Empfohlene Tools:**
-- https://realfavicongenerator.net/ (generiert alle Größen)
-- https://favicon.io/ (einfach)
+**Recommended Tools:**
+- https://realfavicongenerator.net/ (generates all sizes)
+- https://favicon.io/ (simple)
 
-### Schritt 2: Favicon-Dateien hochladen
+### Step 2: Upload Favicon Files
 
 ```bash
 Webpage/public/
-├── favicon.ico       ← Browser-Favicon
-├── favicon.png       ← PNG-Version
+├── favicon.ico       ← Browser favicon
+├── favicon.png       ← PNG version
 └── ...
 ```
 
-### Schritt 3: In index.html eintragen
+### Step 3: Add to index.html
 
-**Datei**: `Webpage/index.html` (Zeile 5)
+**File**: `Webpage/index.html` (Line 5)
 
 ```html
 <link rel="icon" type="image/png" href="/favicon.png" />
 ```
 
-**Für mehrere Größen:**
+**For Multiple Sizes:**
 ```html
 <head>
   <meta charset="UTF-8" />
@@ -101,38 +101,38 @@ Webpage/public/
 
 ---
 
-## 🎨 Weitere Logo-Positionen
+## 🎨 Other Logo Positions
 
-### Board-Cards (Home-Seite)
+### Board Cards (Home Page)
 
-**Aktuell**: `DashboardIcon` (Material UI)  
-**Zeile**: 610
+**Current**: `DashboardIcon` (Material UI)  
+**Line**: 610
 
 ```tsx
-// Aktuell
+// Current
 <DashboardIcon sx={{ color: "#64b5f6", fontSize: 36, flexShrink: 0 }} />
 
-// Mit eigenem Logo
+// With your own logo
 <Box
   component="img"
-  src="/dein-logo-klein.png"
+  src="/your-logo-small.png"
   alt="Logo"
   sx={{ height: 36, width: 36, objectFit: "contain" }}
 />
 ```
 
-### "No Boards" Platzhalter
+### "No Boards" Placeholder
 
-**Zeile**: 661
+**Line**: 661
 
 ```tsx
-// Aktuell
+// Current
 <DashboardIcon sx={{ fontSize: 80, color: "rgba(255,255,255,0.1)", marginBottom: 2 }} />
 
-// Mit eigenem Logo
+// With your own logo
 <Box
   component="img"
-  src="/dein-logo.png"
+  src="/your-logo.png"
   alt="Logo"
   sx={{ 
     height: 80, 
@@ -145,55 +145,55 @@ Webpage/public/
 
 ---
 
-## 🔄 Container neu bauen
+## 🔄 Rebuild Container
 
-Nach Logo-Änderungen:
+After logo changes:
 
 ```bash
-# Lokal testen
+# Test locally
 docker compose down
 docker compose up --build
 
-# Auf Server (Production)
+# On server (production)
 docker-compose -f docker-compose.grp9.yaml down
 docker-compose -f docker-compose.grp9.yaml up --build -d
 ```
 
 ---
 
-## 📦 Beispiel: Komplett eigenes Logo
+## 📦 Example: Complete Custom Logo
 
-### 1. Dateien vorbereiten
+### 1. Prepare Files
 
 ```
-dein-logo.png          (Haupt-Logo, min. 200px hoch)
-dein-logo-klein.png    (Icon-Version, 64x64)
-favicon.ico            (Browser-Favicon)
-favicon.png            (512x512 für PWA)
+your-logo.png          (Main logo, min. 200px high)
+your-logo-small.png    (Icon version, 64x64)
+favicon.ico            (Browser favicon)
+favicon.png            (512x512 for PWA)
 ```
 
-### 2. Hochladen
+### 2. Upload
 
 ```bash
-cp dein-logo.png Webpage/public/
-cp dein-logo-klein.png Webpage/public/
+cp your-logo.png Webpage/public/
+cp your-logo-small.png Webpage/public/
 cp favicon.ico Webpage/public/
 cp favicon.png Webpage/public/
 ```
 
-### 3. Code anpassen
+### 3. Adjust Code
 
-**Home.tsx (Zeile 393)**:
+**Home.tsx (Line 393)**:
 ```tsx
-src="/dein-logo.png"
+src="/your-logo.png"
 ```
 
-**index.html (Zeile 5)**:
+**index.html (Line 5)**:
 ```html
 <link rel="icon" type="image/png" href="/favicon.png" />
 ```
 
-### 4. Neu bauen
+### 4. Rebuild
 
 ```bash
 docker compose up --build -d
@@ -201,69 +201,68 @@ docker compose up --build -d
 
 ---
 
-## 🎯 Schnell-Checkliste
+## 🎯 Quick Checklist
 
-- [ ] Logo vorbereitet (PNG/SVG, min. 200px)
-- [ ] Logo nach `Webpage/public/` kopiert
-- [ ] `src="/dein-logo.png"` in Home.tsx geändert
-- [ ] Favicon vorbereitet (16x16, 32x32, etc.)
-- [ ] Favicon nach `Webpage/public/` kopiert
-- [ ] `href="/favicon.png"` in index.html geändert
-- [ ] Container neu gebaut
-- [ ] Im Browser getestet (Shift + F5 für Cache-Clear)
+- [ ] Logo prepared (PNG/SVG, min. 200px)
+- [ ] Logo copied to `Webpage/public/`
+- [ ] `src="/your-logo.png"` changed in Home.tsx
+- [ ] Favicon prepared (16x16, 32x32, etc.)
+- [ ] Favicon copied to `Webpage/public/`
+- [ ] `href="/favicon.png"` changed in index.html
+- [ ] Container rebuilt
+- [ ] Tested in browser (Shift + F5 to clear cache)
 
 ---
 
 ## 🆘 Troubleshooting
 
-**Problem**: Logo wird nicht angezeigt
+**Problem**: Logo Not Displayed
 
 ```bash
-# Prüfe, ob Datei im Container ist
+# Check if file is in container
 docker exec lognine-frontend ls /app/public/
 
-# Cache im Browser löschen
-Strg + Shift + R (Windows)
+# Clear browser cache
+Ctrl + Shift + R (Windows)
 Cmd + Shift + R (Mac)
 ```
 
-**Problem**: Logo zu groß/klein
+**Problem**: Logo Too Large/Small
 
 ```tsx
-// Größe anpassen in Home.tsx
+// Adjust size in Home.tsx
 sx={{
-  height: 50,     // ← Diese Zahl ändern
+  height: 50,     // ← Change this number
   width: "auto",
 }}
 ```
 
-**Problem**: Favicon wird nicht aktualisiert
+**Problem**: Favicon Not Updated
 
 ```bash
-# Browser-Cache komplett löschen
-# Oder in Inkognito-Modus testen
+# Clear browser cache completely
+# Or test in incognito mode
 ```
 
 ---
 
-## 💡 Design-Tipps
+## 💡 Design Tips
 
-**Header-Logo:**
-- Höhe: 40-60px ideal
-- Transparenter Hintergrund (PNG)
-- Hell oder farbig (Hintergrund ist dunkel)
+**Header Logo:**
+- Height: 40-60px ideal
+- Transparent background (PNG)
+- Light or colorful (background is dark)
 
-**Board-Card Icon:**
-- Quadratisch (1:1 Ratio)
-- 32x32 bis 48x48 Pixel
-- Einfaches Design (gut erkennbar)
+**Board Card Icon:**
+- Square (1:1 ratio)
+- 32x32 to 48x48 pixels
+- Simple design (easily recognizable)
 
 **Favicon:**
-- Einfach & erkennbar bei 16x16
-- Kontrastreiche Farben
-- Vermeidet zu viele Details
+- Simple & recognizable at 16x16
+- High-contrast colors
+- Avoid too many details
 
 ---
 
-**Viel Erfolg beim Branding! 🎨**
-
+**Good luck with your branding! 🎨**
